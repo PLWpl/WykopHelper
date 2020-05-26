@@ -1,12 +1,63 @@
 /**
+ * Add styles
+ */
+const trollsArrayUnique = JSON.parse(localStorage.getItem("unique"));
+const styleMarkup = `
+<style>
+  .buttonPISList {
+    display: inline-block;
+    padding: .1rem .5rem;
+    border: 1px solid #999;
+    cursor: pointer;
+    margin-left: 1.5rem;
+    color: gray;
+    border-radius: .3rem;
+    box-shadow: 1px 1px #575757;
+  }
+  .buttonPISList:hover {
+    border-color: green;
+  }
+  .buttonPISList-clicked {
+    border-color: green;
+  }
+  .pis-badge {
+    color: red;
+    font-weight: bold;
+    margin-right: .5rem;
+  }
+</style>
+`;
+const profileNameElements = document.querySelectorAll("li div.author");
+const buttonMarkup = `<span class="buttonPISList">Add Troll</span>`;
+
+const markTrolls = () => {
+  const badgeOfShame = '<span class="pis-badge">PiSior</span>'
+
+  try {
+    profileNameElements.forEach((element) => {
+      const nick = element.querySelector(".showProfileSummary > b").innerText;
+
+      if (trollsArrayUnique.includes(nick)) {
+        element.insertAdjacentHTML("afterbegin", badgeOfShame);
+      }
+    });
+  } catch {}
+
+};
+
+document.querySelector('body').insertAdjacentHTML('afterbegin', styleMarkup);
+markTrolls();
+
+/**
  * Add button next to nick - WORKS
  */
-const profileNameElements = document.querySelectorAll("li div.author");
-const buttonMarkup = `<span class="buttonPISList" style="display:inline-block;padding:.1rem .5rem; border:1px solid #999;cursor:pointer;margin-left: 1.5rem;color: gray;border-radius: .3rem;box-shadow: 1px 1px #575757;">Add Troll</span>`;
 
-profileNameElements.forEach((element) =>
-  element.insertAdjacentHTML("beforeend", buttonMarkup)
-);
+
+profileNameElements.forEach((element) => {
+  if (!element.querySelector('.pis-badge')) {
+    element.insertAdjacentHTML("beforeend", buttonMarkup)
+  }
+});
 
 document.getElementById("itemsStream").addEventListener("click", (event) => {
   let uniqueSet;
@@ -41,6 +92,9 @@ document.getElementById("itemsStream").addEventListener("click", (event) => {
       .querySelector(".showProfileSummary > b").innerText;
     const link = event.target.closest(".author").querySelector("a + a").href;
 
+    event.target.classList.add('buttonPISList-clicked');
+    event.target.innerText = 'OK';
+
     if (checkUniqness(nick)) {
       trolls.push({ nick: nick, link: link });
     }
@@ -49,26 +103,15 @@ document.getElementById("itemsStream").addEventListener("click", (event) => {
   const stringTrolls = JSON.stringify(trolls);
 
   localStorage.setItem("trolls", stringTrolls);
+
+  markTrolls();
 });
 
 // get array of trolls, check website for them and make it visible on wykop
 
-const trollsArrayUnique = JSON.parse(localStorage.getItem("unique"));
 
-const markTrolls = () => {
-  const badgeOfShame = '<span class="">'
 
-  try {
-    profileNameElements.forEach((element) => {
-      const nick = element.querySelector(".showProfileSummary > b").innerText;
 
-      if (trollsArrayUnique.includes(nick)) {
-        element.insertAdjacentHTML("afterbegin", "<b>TROL</b>");
-      }
-    });
-  } catch {}
-
-};
 
 // <!-- The core Firebase JS SDK is always required and must be listed first -->
 // <script src="https://www.gstatic.com/firebasejs/7.14.2/firebase-app.js"></script>

@@ -1,0 +1,36 @@
+<form class="settings">
+  <fieldset>
+    <h4>Znakuj Trola - Ustawienia</h4>
+    <div class="space">
+      <div class="row">
+        <input
+          class="checkbox"
+          type="checkbox"
+          name="troll[import_troll_list]"
+          id="importTrolls"
+        />
+        <label class="inline" for="static_header">Zaciągaj listę troli z serwera</label>
+      </div>
+      <div class="row">
+        <input
+          class="checkbox"
+          type="checkbox"
+          name="troll[hide_trolls]"
+          id="hideTrolls"
+        />
+        <label class="inline" for="static_header">Usuwaj wszystkie trole</label>
+      </div>
+    </div>
+  </fieldset>
+
+  <div class="mark-bg space">
+    <fieldset class="row buttons">
+      <p>
+        <button class="submit trolls-settings-submit">
+          <i class="fa fa-spinner fa-spin" style="display: none;"></i> Zapisz
+          ustawienia
+        </button>
+      </p>
+    </fieldset>
+  </div>
+</form>
