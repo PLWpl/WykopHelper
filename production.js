@@ -50,16 +50,16 @@
 
     const settingsMenu = '<li><a href="https://www.wykop.pl/ustawienia/trolls/"><span>Znakuj Trola</span></a></li>';
 
-    // document.querySelector("#site > .wrapper form.settings").innerHTML = '';
-    // document.querySelector("#site > .wrapper form.settings").innerHTML = settingsMarkup;
-    // document.querySelector("#site > .wrapper nav ul").insertAdjacentHTML('beforeend', settingsMenu);
+    document.querySelector("#site > .wrapper form.settings").innerHTML = '';
+    document.querySelector("#site > .wrapper form.settings").innerHTML = settingsMarkup;
+    document.querySelector("#site > .wrapper nav ul").insertAdjacentHTML('beforeend', settingsMenu);
     
   }
 
   if (
     location.href.indexOf("/mikroblog/") > -1 ||
-    location.href.indexOf("/wpis/") ||
-    location.href.indexOf("/link/") ||
+    location.href.indexOf("/wpis/") > -1 ||
+    location.href.indexOf("/link/") > -1 ||
     location.href === "https://wykop.pl" ||
     location.href === "https://www.wykop.pl"
   ) {
@@ -69,43 +69,45 @@
     const trollsArrayUnique = JSON.parse(localStorage.getItem("unique"));
     const styleMarkup = `
   <style>
-    .buttonPISList {
+    .trolls {
       display: inline-block;
       padding: .2rem .2rem;
       border: 1px solid #999;
       cursor: pointer;
-      margin-left: 1.5rem;
+      margin-left: .5rem;
       color: gray;
       border-radius: .3rem;
       box-shadow: 1px 1px #575757;
       font-size: .7rem;
       line-height: .7rem;
     }
-    .buttonPISList:hover {
+    .trolls:hover {
       border-color: green;
     }
-    .buttonPISList-clicked {
+    .trolls-clicked {
       border-color: green;
     }
-    .pis-badge {
+    .troll-badge {
       color: red;
       font-weight: bold;
-      margin-right: .5rem;
+      margin-right: .3rem;
+      border: 1px solid currentColor;
+      padding: .1rem .2rem;
     }
   </style>
   `;
     const profileNameElements = document.querySelectorAll("li div.author");
-    const buttonMarkup = `<span class="buttonPISList">Add Troll</span>`;
+    const buttonMarkup = `<span class="trolls">Add Troll</span>`;
 
     const markTrolls = () => {
-      const badgeOfShame = '<span class="pis-badge">PiSior</span>';
+      const badgeOfShame = '<span class="troll-badge">Troll</span>';
 
       try {
         profileNameElements.forEach((element) => {
           const nick = element.querySelector(".showProfileSummary > b")
             .innerText;
 
-          if (trollsArrayUnique.includes(nick)) {
+          if (trollsArrayUnique.includes(nick) && !element.querySelector(`.troll-badge`)) {
             element.insertAdjacentHTML("afterbegin", badgeOfShame);
           }
         });
@@ -114,7 +116,7 @@
     };
 
     const updateView = () => {
-      
+      location.reload(); 
     }
 
     document
@@ -123,11 +125,11 @@
     markTrolls();
 
     /**
-     * Add button next to nick
+     * Add button next to nick 
      */
 
     profileNameElements.forEach((element) => {
-      if (!element.querySelector(".pis-badge")) {
+      if (!element.querySelector(".troll-badge")) {
         element.insertAdjacentHTML("beforeend", buttonMarkup);
       }
     });
@@ -161,16 +163,17 @@
           }
         };
 
-        if (event.target.classList.contains("buttonPISList")) {
+        if (event.target.classList.contains("trolls")) {
           const nick = event.target
             .closest(".author")
             .querySelector(".showProfileSummary > b").innerText;
           const link = event.target.closest(".author").querySelector("a + a")
             .href;
 
-          event.target.classList.add("buttonPISList-clicked");
+          event.target.classList.add("trolls-clicked");
           event.target.innerText = "OK";
           markTrolls();
+          updateView();
 
           if (checkUniqness(nick)) {
             trolls.push({ nick: nick, link: link });
