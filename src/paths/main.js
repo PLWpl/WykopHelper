@@ -1,55 +1,7 @@
-// ==UserScript==
-// @name         Wykopowe trole - DEV
-// @namespace    http://tampermonkey.net/
-// @version      0.2
-// @description  try to take over the world!
-// @author       You
-// @match        https://www.wykop.pl/*
-// @grant        none
-// ==/UserScript==
+import { styles } from '../constants/styles.js';
+import { buttonMarkup, badge } from '../constants/minorMarkup.js'
 
-(function () {
-  "use strict";
-
-  /**
-   * Styles markup
-   */
-  const styles = `
-  .buttonWH {
-    display: inline-block;
-    padding: .2rem .2rem;
-    border: 1px solid #999;
-    cursor: pointer;
-    margin-left: .5rem;
-    color: gray;
-    border-radius: .3rem;
-    box-shadow: 1px 1px #575757;
-    font-size: .7rem;
-    line-height: .7rem;
-  }
-  .buttonWH:hover {
-    border-color: green;
-  }
-  .buttonWH--clicked {
-    border-color: green;
-  }
-  .badge--troll {
-    color: red;
-    font-weight: bold;
-    margin-right: .3rem;
-    border: 1px solid currentColor;
-    padding: .1rem .2rem;
-  }`;
-
-  const buttonMarkup = `<span class="buttonWH">Add Troll</span>`;
-
-  /**
-   * Helper methods and functions, not directly related to the script's purpose
-   */
-  String.prototype.capitalize = function() {
-    return this.charAt(0).toUpperCase() + this.slice(1);
-  }
-
+export const mainFunctionality = () => {
   const parseToObject = string => JSON.parse(string);
   const stringifyObject = object => JSON.stringify(object);
 
@@ -63,23 +15,20 @@
   /**
    * Functions. No explanation when easy-to-read, self-explanatory one-liner
    */
-  
-  //returns SPAN element with badge element. If no parameter is provided, it will return default "Troll" badge. 
-  const badge = (name = 'troll') => `<span class="badge badge--${name.toLowerCase()}">${name.toLowerCase().capitalize()}</span>`;
     
   //checks if user of provided nick is already in uniqueNicksSet array
   const isTroll = nick => !!(uniqueNicksSet.includes(nick));
 
   // checks if provided nick has already been entered into the list. If it hasn't, it pushes it to the uniqueNicksSet array.
   const addNickToUniqueNicksArray = nick => {
-      uniqueNicksSet.push(nick);
-      localStorage.setItem("uniqueNicks", stringifyObject(uniqueNicksSet));
+    uniqueNicksSet.push(nick);
+    localStorage.setItem("uniqueNicks", stringifyObject(uniqueNicksSet));
   };
 
   // adds nick to trolls array of objects along with the link
   const addNickToTrollsArray = (nick, link) => {
-      trolls.push({ nick: nick, link: link });
-      localStorage.setItem("trolls", stringifyObject(trolls));
+    trolls.push({ nick: nick, link: link });
+    localStorage.setItem("trolls", stringifyObject(trolls));
   }
 
   const addNickToArrays = (nick, link) => {
@@ -94,7 +43,7 @@
 
   //used on element - preferably one returned from getAllNickElements() - returns string with nick name.
   const getNick = el => el.querySelector(".showProfileSummary > b")
-  .innerText;
+    .innerText;
 
   const reloadPage = () => location.reload();
 
@@ -114,7 +63,7 @@
   }
 
   //inject styles. Parameter must be a string of CSS without any html tags
-  const injectStyles = (styles) => {
+  const injectStyles = styles => {
     const styleMarkup = `<style> ${styles} </style>`;
     document.body.insertAdjacentHTML('afterbegin', styleMarkup);
   }
@@ -123,14 +72,12 @@
   const prepareLocalStorage = () => {
     if (localStorage.getItem("trolls")) {
       trolls = parseToObject(localStorage.getItem("trolls"));
-      console.log('trolls object prepared')
     } else {
       trolls = [];
     }
 
     if (localStorage.getItem("uniqueNicks")) {
       uniqueNicksSet = parseToObject(localStorage.getItem("uniqueNicks"));
-      console.log('unique array prepared')
     } else {
       uniqueNicksSet = [];
     }
@@ -146,7 +93,6 @@
 
         if (isTroll(nick) && isNotAwarded(element)) {
           element.insertAdjacentHTML('afterbegin', badge(type));
-          console.log('users marked')
         }
         else {
           element.insertAdjacentHTML("beforeend", buttonMarkup);
@@ -155,13 +101,13 @@
     }
     catch (e) {
       //supress the error
-      console.warn(e);
     }
   }
 
   // checks if user is writing any new comment. If not, reloads the page. If yes, prompts the user for decision.
   const updateView = () => {
     if (!isTextareaEmpty()) {
+      // eslint-disable-next-line no-alert, max-len
       if (window.confirm('Wykryłem, że możesz właśnie pisać komentarz. Kliknięcie "OK" spowoduje odświeżenie strony i utratę tworzonego tekstu! Jeśli klikniesz "anuluj", odśwież później stronę ręcznie, by zobaczyć nowo-oznaczonego trola.')) {
         reloadPage();
       }
@@ -175,16 +121,11 @@
   const addNewTroll = event => {
     if (event.target.classList.contains("buttonWH")) {
       prepareLocalStorage();
-      console.log(event, event.target)
       const nick = getNick(event.target.closest(".author"));
       const link = event.target.closest(".author").querySelector("a + a").href;
 
-      console.log(nick, link)
-
       event.target.classList.add("buttonWH--clicked");
       event.target.innerText = "OK";
-
-      console.log('is troll? ', isTroll(nick))
 
       addNickToArrays(nick, link);
 
@@ -203,8 +144,7 @@
   // on button click, add new troll
   document
     .getElementById("itemsStream")
-    .addEventListener("click", (event) => {
+    .addEventListener("click", event => {
       addNewTroll(event);
-  });
-  
-})();
+    });
+}

@@ -10,7 +10,7 @@ Functions are needed for the following tasks (each function has a single respons
 ~~8. Check if badge already awarded~~
 ~~10. (?) Reloading page - check if that's even needed~~
 ~~11. Checking if nick is on trolls list~~
-12. Add troll to the list
+~Add troll to the list~~
 ~~13. Inject styles~~
 
 New features:
