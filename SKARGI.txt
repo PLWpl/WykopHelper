@@ -1,0 +1,3 @@
+ - button zły
+ - przy doczytywaniu komci ajaxem nowe komcie nie mają elementów skryptu
+ - nie da się usunąć usera z listy trolli

@@ -2,12 +2,11 @@ export const styles = `
 .buttonWH {
   display: inline-block;
   padding: .2rem .2rem;
-  border: 1px solid #999;
+  border: 1px solid #9999996e;
   cursor: pointer;
   margin-left: .5rem;
-  color: gray;
+  color: #808080ba;
   border-radius: .3rem;
-  box-shadow: 1px 1px #575757;
   font-size: .7rem;
   line-height: .7rem;
 }

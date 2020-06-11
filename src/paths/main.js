@@ -1,5 +1,5 @@
-import { styles } from '../constants/styles.js';
-import { buttonMarkup, badge } from '../constants/minorMarkup.js'
+import { styles } from '../markup/styles.js';
+import { buttonMarkup, badge } from '../markup/minor.js'
 
 export const mainFunctionality = () => {
   const parseToObject = string => JSON.parse(string);
@@ -50,6 +50,9 @@ export const mainFunctionality = () => {
   // used on author element, returned from getAllNickElements(), checks if person has already been marked with a badge
   const isNotAwarded = element => !(element.querySelector('.badge'));
 
+  // used on author element, returned from getAllNickElements(), checks if person has already been given a button
+  const hasButtonAppended = element => !!(element.querySelector('.buttonWH'));
+
   // checks if any textarea on a page is empty, to prevent reloading of a page while user might be attempting to write some comment or similar
   const isTextareaEmpty = () => {
     const replyForm = document.querySelector('.replyForm textarea');
@@ -94,7 +97,7 @@ export const mainFunctionality = () => {
         if (isTroll(nick) && isNotAwarded(element)) {
           element.insertAdjacentHTML('afterbegin', badge(type));
         }
-        else {
+        else if (!hasButtonAppended(element)) {
           element.insertAdjacentHTML("beforeend", buttonMarkup);
         }
       });
@@ -119,19 +122,26 @@ export const mainFunctionality = () => {
   // fired on clicking a button "Add troll". 
   // First, get nick of the author. Then, get link of the offending comment. 
   const addNewTroll = event => {
-    if (event.target.classList.contains("buttonWH")) {
-      prepareLocalStorage();
-      const nick = getNick(event.target.closest(".author"));
-      const link = event.target.closest(".author").querySelector("a + a").href;
+    prepareLocalStorage();
+    const nick = getNick(event.target.closest(".author"));
+    const link = event.target.closest(".author").querySelector("a + a").href;
 
-      event.target.classList.add("buttonWH--clicked");
-      event.target.innerText = "OK";
+    event.target.classList.add("buttonWH--clicked");
+    event.target.innerText = "✔";
+    addNickToArrays(nick, link);
 
-      addNickToArrays(nick, link);
-
-      updateView();
-    }
+    updateView();
   }
+
+  // const removeTroll = event => {
+  //   prepareLocalStorage();
+  //   //just a mockup from quokka, needs to be adjusted for the actual use
+  //   for (let [index, item] of trolls.entries()) {
+  //     if (item.nick === 'zofia') {
+  //       delete trolls[index];
+  //     }
+  //   }
+  // }
 
   /**
    * Above is setup. Actual job gets done below
@@ -143,8 +153,20 @@ export const mainFunctionality = () => {
 
   // on button click, add new troll
   document
-    .getElementById("itemsStream")
-    .addEventListener("click", event => {
-      addNewTroll(event);
+    .getElementById('itemsStream')
+    .addEventListener('click', event => {
+      const target = event.target;
+      if (target.classList.contains('buttonWH')) {
+        addNewTroll(event);
+      }
+      if (target.classList.contains('affect') && target.closest('.more')) {
+        setTimeout(() =>{
+          prepareLocalStorage();
+          markUsers();
+        }, 500)  
+      }
     });
+
+  //on button click, mark users
+  document.querySelector('.more > .affect')
 }
