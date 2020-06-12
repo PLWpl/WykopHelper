@@ -1,0 +1,1 @@
+export const isTroll = nick => !!(uniqueNicksSet.includes(nick));
