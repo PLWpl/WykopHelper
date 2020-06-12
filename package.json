@@ -12,5 +12,8 @@
     "babel-eslint": "^10.1.0",
     "rollup-plugin-eslint": "^7.0.0",
     "rollup-plugin-terser": "^6.1.0"
+  },
+  "dependencies": {
+    "tippy.js": "^6.2.3"
   }
 }

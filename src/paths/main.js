@@ -1,5 +1,7 @@
 import { styles } from '../markup/styles.js';
-import { buttonMarkup, badge } from '../markup/minor.js'
+import { buttonMarkup, badge } from '../markup/minor.js';
+import { modalMarkup } from '../markup/modal.js';
+import { addModal } from '../vendor/addModal.js';
 
 export const mainFunctionality = () => {
   const parseToObject = string => JSON.parse(string);
@@ -142,6 +144,24 @@ export const mainFunctionality = () => {
   //     }
   //   }
   // }
+
+  // gets user data from objects inside trolls array. For now the only useful data returned is link to the offending post
+  const getNickData = nick => {
+    prepareLocalStorage();
+    for (let item of trolls) {
+      if (item.nick === nick) {
+        return { link: item.link, nick: item.nick };
+      }
+    }
+  }
+
+  // shows modal with troll info/options
+  // eslint-disable-next-line 
+  const showUserModal = element => {
+    const nick = getNick(element);
+    const userData = getNickData(nick);
+    addModal(element, modalMarkup(userData.link, userData.nick));
+  }
 
   /**
    * Above is setup. Actual job gets done below
