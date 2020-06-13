@@ -18,13 +18,14 @@ module.exports = {
   'no-param-reassign': 'off', // https://eslint.org/docs/rules/no-param-reassign
   'vars-on-top': 'off', // https://eslint.org/docs/rules/vars-on-top
   'wrap-iife': ['error', 'inside', { functionPrototypeMethods: false }], // https://eslint.org/docs/rules/wrap-iife
+  'no-unused-vars': 'warn', // https://eslint.org/docs/rules/no-unused-vars
 
   /* stylistic issues */
   'consistent-this': ['error', '_this'], // https://eslint.org/docs/rules/consistent-this
   'func-names': 'off', // https://eslint.org/docs/rules/func-names
   'indent': ['error', 2, { SwitchCase: 1 }], // https://eslint.org/docs/rules/indent
   'max-depth': ['error', 4], // https://eslint.org/docs/rules/max-depth
-  'max-len': ['error', 120, 2, { ignoreComments: true }], // https://eslint.org/docs/rules/max-len
+  'max-len': ['warn', 120, 2, { ignoreComments: true }], // https://eslint.org/docs/rules/max-len
   'max-nested-callbacks': [2, 4], // https://eslint.org/docs/rules/max-nested-callbacks
   'max-params': ['error', 5], // https://eslint.org/docs/rules/max-params
   'no-bitwise': ['error', { int32Hint: true }], // https://eslint.org/docs/rules/no-bitwise

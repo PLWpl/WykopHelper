@@ -9,12 +9,14 @@ export const styles = `
   border-radius: .3rem;
   font-size: .7rem;
   line-height: .7rem;
+  transition: .3s all;
 }
 .buttonWH:hover {
   border-color: green;
 }
 .buttonWH--clicked {
   border-color: green;
+  opacity: 0;
 }
 .badge--troll {
   color: red;
