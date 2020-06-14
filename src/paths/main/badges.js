@@ -100,7 +100,7 @@ export const mainFunctionality = () => {
         const nick = getNick(element);
 
         if (isTroll(nick) && isNotAwarded(element)) {
-          element.insertAdjacentHTML('afterbegin', badge(type));
+          element.insertAdjacentHTML('afterbegin', badge(nick, type));
         }
         else if (!hasButtonAppended(element)) {
           element.insertAdjacentHTML("beforeend", buttonMarkup);
@@ -120,7 +120,7 @@ export const mainFunctionality = () => {
         const nick = getNick(element);
 
         if (isTroll(nick) && isNotAwarded(element)) {
-          element.insertAdjacentHTML('afterbegin', badge());
+          element.insertAdjacentHTML('afterbegin', badge(nick));
         }
         if (isTroll(nick) && isNotAwarded(element) && element.querySelector('buttonWH') && !element.querySelector('buttonWH--clicked')) {
           element.querySelector('.buttonWH').remove();
@@ -149,15 +149,18 @@ export const mainFunctionality = () => {
     updateView();
   }
 
-  // const removeTroll = event => {
-  //   prepareLocalStorage();
-  //   //just a mockup from quokka, needs to be adjusted for the actual use
-  //   for (let [index, item] of trolls.entries()) {
-  //     if (item.nick === 'zofia') {
-  //       delete trolls[index];
-  //     }
-  //   }
-  // }
+  const removeTroll = nick => {
+    prepareLocalStorage();
+    for (let [index, item] of trolls.entries()) {
+      if (item.nick === nick) {
+        delete trolls[index];
+        localStorage.setItem("trolls", stringifyObject(trolls));
+      }
+    }
+    uniqueNicksSet = uniqueNicksSet.filter(el => el !== nick);
+    localStorage.setItem("uniqueNicks", stringifyObject(uniqueNicksSet));
+    updateView();
+  }
 
   // gets user data from objects inside trolls array. For now the only useful data returned is link to the offending post
   const getNickData = nick => {
@@ -172,7 +175,7 @@ export const mainFunctionality = () => {
   // shows modal with troll info/options
   // eslint-disable-next-line 
   const showUserModal = element => {
-    const nick = getNick(element);
+    const nick = document.querySelector(element).dataset.whusername;
     const userData = getNickData(nick);
     addModal(element, modalMarkup(userData.link, userData.nick));
   }
@@ -200,8 +203,14 @@ export const mainFunctionality = () => {
         }, 500)  
       }
       if (target.classList.contains('badge')) {
-        let nickElement = getNickElement(event);
-        showUserModal(nickElement);
+        const nick = target.dataset.whusername;
+        showUserModal(`[data-whusername='${nick}']`);
+      }
+      if (target.classList.contains('modalWH-button--remove')) {
+        //eslint-disable-next-line
+        console.log(target);
+        const nick = target.dataset.whuserremove;
+        removeTroll(nick);
       }
     });
 }

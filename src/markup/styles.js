@@ -18,10 +18,21 @@ export const styles = `
   border-color: green;
   opacity: 0;
 }
-.badge--troll {
+.badge {
   color: red;
   font-weight: bold;
   margin-right: .3rem;
   border: 1px solid currentColor;
   padding: .1rem .2rem;
+}
+.modalWH-button {
+  display: inline-block;
+  padding: .4rem .8rem;
+  border: 1px solid #9999996e;
+  cursor: pointer;
+  color: #808080ba;
+  border-radius: .3rem;
+  font-size: 1rem;
+  line-height: 1rem;
+  transition: .3s all;
 }`;

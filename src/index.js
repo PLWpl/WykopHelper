@@ -1,5 +1,5 @@
 import { injectScripts } from './utils/injectVendors.js';
-import { mainFunctionality } from './paths/main/main.js';
+import { mainFunctionality } from './paths/main/badges.js';
 import { isPathForMain } from './pathCheck/index.js';
 import { updateAlert } from './utils/updateAlert.js';
 

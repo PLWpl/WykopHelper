@@ -1,9 +1,9 @@
 export const modalMarkup = (link, nick) => `
-<div class="wh__modal">
-  <h1 class="wh__modal-title">Info</h1>
-  <p class="wh__modal-text">Powód oznaczenia: 
-    <a href="${link}" target="_blank" data-whuser-remove="${nick}">${nick} link</a>
+<div class="modalWH">
+  <h1 class="modalWH-title">Info</h1>
+  <p class="modalWH-text">Powód oznaczenia: 
+    <a href="${link}" target="_blank">link</a>
   </p>
-  <span class="wh__modal-button">Usuń oznaczenie</span>
+  <span class="modalWH-button modalWH-button--remove" data-whuserremove="${nick}">Usuń oznaczenie</span>
 </div>
 `;
