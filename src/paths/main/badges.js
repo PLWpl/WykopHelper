@@ -122,7 +122,10 @@ export const mainFunctionality = () => {
         if (isTroll(nick) && isNotAwarded(element)) {
           element.insertAdjacentHTML('afterbegin', badge(nick));
         }
-        if (isTroll(nick) && isNotAwarded(element) && element.querySelector('buttonWH') && !element.querySelector('buttonWH--clicked')) {
+        if (isTroll(nick) 
+          && isNotAwarded(element) 
+          && element.querySelector('buttonWH') 
+          && !element.querySelector('buttonWH--clicked')) {
           element.querySelector('.buttonWH').remove();
         }
       });
@@ -167,6 +170,7 @@ export const mainFunctionality = () => {
       // eslint-disable-next-line
       Swal.fire({
         title: 'Hej!',
+        // eslint-disable-next-line
         text: 'Wygląda na to, że jesteś w trakcie pisania komentarza. Kliknij "Anuluj", żeby dokończyć pisanie i ręcznie odświeżyć stronę później (to konieczne by zniknęła odznaka przy nicku użytkownika). Jeśli to pomyłka, i nie masz nic przeciw odświeżeniu strony, naciśnij "OK".',
         icon: 'warning',
         showCancelButton: true,

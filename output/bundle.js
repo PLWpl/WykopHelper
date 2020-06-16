@@ -1,31 +1,5 @@
 'use strict';
 
-const injectScripts = () => {
-  // const URLS = [
-  //   'https://cdn.jsdelivr.net/npm/sweetalert2@9',
-  //   'https://unpkg.com/@popperjs/core@2',
-  //   'https://unpkg.com/tippy.js@6'
-  // ]
-  
-  // const appendScript = src => {
-  //   const script = document.createElement('script');
-  //   script.type = 'text/javascript';
-  //   script.src = src;
-  //   script.async = false;
-  //   script.defer = false;
-  //   document.head.insertBefore(script, document.head.childNodes[0]);
-  // };
-  
-  // URLS.forEach(src => appendScript(src));
-
-  const markup = `
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
-    <script type="text/javascript" src="https://unpkg.com/@popperjs/core@2"></script>
-    <script type="text/javascript" src="https://unpkg.com/tippy.js@6"></script>
-  `;
-  document.body.insertAdjacentHTML('beforeend', markup);
-};
-
 const styles = `
 .buttonWH {
   display: inline-block;
@@ -393,6 +367,8 @@ const updateAlert = () => {
   }
 };
 
+// import { injectScripts } from './utils/injectVendors.js';
+
 /**
    * Helper methods and functions, not directly related to the script's purpose
    */
@@ -400,7 +376,7 @@ String.prototype.capitalize = function() {
   return this.charAt(0).toUpperCase() + this.slice(1);
 };
 //injects vendor scripts
-setTimeout(injectScripts, 100);
+// setTimeout(injectScripts, 100)
 
 setTimeout(()=>{
   //shows alert if app has been updated
