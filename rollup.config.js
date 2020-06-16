@@ -34,6 +34,23 @@ export default {
         banner('@downloadURL  http://plw.usermd.net/whhelper.js'),
         banner('@updateURL    http://plw.usermd.net/whhelper.js'),
         banner('@version      <%= pkg.version %>'),
+        banner('@name         Wykopowe trole'),
+        banner('==UserScript=='),
+      ]
+    },
+    {
+      file: 'output/whhelper-DEV.js',
+      format: 'iife',
+      name: 'outputVersionDEV',
+      plugins: [
+        banner('==/UserScript=='),
+        banner('@grant        none'),
+        banner('@match        https://www.wykop.pl/*'),
+        banner('@author       <%= pkg.author %>'),
+        banner('@description  Zestaw narzędzi pomocnych na wykopie.'),
+        banner('@downloadURL  http://plw.usermd.net/whhelper.js'),
+        banner('@updateURL    http://plw.usermd.net/whhelper.js'),
+        banner('@version      <%= pkg.version %>'),
         banner('@name         Wykopowe trole - DEV'),
         banner('==UserScript=='),
       ]

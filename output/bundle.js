@@ -1,22 +1,29 @@
 'use strict';
 
 const injectScripts = () => {
-  const URLS = [
-    'https://cdn.jsdelivr.net/npm/sweetalert2@9',
-    'https://unpkg.com/@popperjs/core@2',
-    'https://unpkg.com/tippy.js@6'
-  ];
+  // const URLS = [
+  //   'https://cdn.jsdelivr.net/npm/sweetalert2@9',
+  //   'https://unpkg.com/@popperjs/core@2',
+  //   'https://unpkg.com/tippy.js@6'
+  // ]
   
-  const appendScript = src => {
-    const script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.src = src;
-    script.async = false;
-    script.defer = false;
-    document.head.insertBefore(script, document.head.childNodes[0]);
-  };
+  // const appendScript = src => {
+  //   const script = document.createElement('script');
+  //   script.type = 'text/javascript';
+  //   script.src = src;
+  //   script.async = false;
+  //   script.defer = false;
+  //   document.head.insertBefore(script, document.head.childNodes[0]);
+  // };
   
-  URLS.forEach(src => appendScript(src));
+  // URLS.forEach(src => appendScript(src));
+
+  const markup = `
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+    <script type="text/javascript" src="https://unpkg.com/@popperjs/core@2"></script>
+    <script type="text/javascript" src="https://unpkg.com/tippy.js@6"></script>
+  `;
+  document.body.insertAdjacentHTML('beforeend', markup);
 };
 
 const styles = `
@@ -58,7 +65,7 @@ const styles = `
   transition: .3s all;
 }`;
 
-const buttonMarkup = `<span class="buttonWH">Troll</span>`;
+const buttonMarkup = `<span class="buttonWH">Oznacz</span>`;
 
 //returns SPAN element with badge element. If no parameter is provided, it will return default "Troll" badge.
 // eslint-disable-next-line max-len 
@@ -129,11 +136,26 @@ const mainFunctionality = () => {
   //used on element - preferably one returned from getAllNickElements() - returns string with nick name.
   const getNick = el => el.querySelector(".showProfileSummary > b").innerText;
 
+  const reloadPage = () => location.reload();
+
   // used on author element, returned from getAllNickElements(), checks if person has already been marked with a badge
   const isNotAwarded = element => !(element.querySelector('.badge'));
 
   // used on author element, returned from getAllNickElements(), checks if person has already been given a button
   const hasButtonAppended = element => !!(element.querySelector('.buttonWH'));
+
+  // checks if any textarea on a page is empty, to prevent reloading of a page while user might be attempting to write some comment or similar
+
+  const isTextareaEmpty = () => {
+    const replyForm = document.querySelector('.replyForm textarea');
+    const commentForm = document.querySelector('#commentFormContainer textarea');
+
+    if ((replyForm && replyForm.value !== "") || (commentForm && commentForm.value !== "")) {
+      return false;
+    } else {
+      return true;
+    }
+  };
 
   //inject styles. Parameter must be a string of CSS without any html tags
   const injectStyles = styles => {
@@ -158,7 +180,7 @@ const mainFunctionality = () => {
 
   // goes through all user elements on a page and checks, if user nicks are present in uniqueNicksSet array. If they are, AND they haven't yet been awarded a badge, it injects the badge.
   // takes optional parameter of type, possibly for future expansions of this script.
-  const markUsers = (type = 'Troll') => {
+  const markUsers = (type = 'Debil') => {
     try {
       const elements = getAllNickElements();
       elements.forEach(element =>{
@@ -219,20 +241,49 @@ const mainFunctionality = () => {
     for (let [index, item] of trolls.entries()) {
       if (item.nick === nick) {
         delete trolls[index];
+        trolls = trolls.filter(el => el != null);
         localStorage.setItem("trolls", stringifyObject(trolls));
       }
     }
     uniqueNicksSet = uniqueNicksSet.filter(el => el !== nick);
     localStorage.setItem("uniqueNicks", stringifyObject(uniqueNicksSet));
-    updateView();
+    
+    if (isTextareaEmpty) {
+      reloadPage();
+    } else {
+      // eslint-disable-next-line
+      Swal.fire({
+        title: 'Hej!',
+        text: 'Wygląda na to, że jesteś w trakcie pisania komentarza. Kliknij "Anuluj", żeby dokończyć pisanie i ręcznie odświeżyć stronę później (to konieczne by zniknęła odznaka przy nicku użytkownika). Jeśli to pomyłka, i nie masz nic przeciw odświeżeniu strony, naciśnij "OK".',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Odśwież',
+        cancelButtonText: 'Anuluj',
+      }).then(result => {
+        if (result.value) {
+          reloadPage();
+        }
+      });
+    }
   };
 
   // gets user data from objects inside trolls array. For now the only useful data returned is link to the offending post
   const getNickData = nick => {
     prepareLocalStorage();
-    for (let item of trolls) {
-      if (item.nick === nick) {
-        return { link: item.link, nick: item.nick };
+    // for (let item of trolls) {
+    //   if (item.nick === nick) {
+    //     return { link: item.link, nick: item.nick };
+    //   } else if (item == undefined || item == null || !item) {
+    //     continue;
+    //   }
+    // }
+    for (let i = 0; i < trolls.length; i++) {
+      if (trolls[i].nick === nick) {
+        return { link: trolls[i].link, nick: trolls[i].nick };
+      } else if (trolls[i] === undefined || trolls[i] === null) {
+        continue;
       }
     }
   };
@@ -245,6 +296,15 @@ const mainFunctionality = () => {
     addModal(element, modalMarkup(userData.link, userData.nick));
   };
 
+  const initializeModal = () => {
+    if (document.querySelector('.badge')) {
+      document.querySelectorAll('.badge').forEach(el => {
+        const nick = el.dataset.whusername;
+        setTimeout(showUserModal(`[data-whusername='${nick}']`), 1150);
+      });
+    }
+  };
+
   /**
    * Above is setup. Actual job gets done below
    */
@@ -252,6 +312,7 @@ const mainFunctionality = () => {
   injectStyles(styles);
   prepareLocalStorage();
   markUsers();
+  initializeModal();
 
   // on button click, add new troll
   document
@@ -267,16 +328,29 @@ const mainFunctionality = () => {
           markUsers();
         }, 500);  
       }
-      if (target.classList.contains('badge')) {
-        const nick = target.dataset.whusername;
-        showUserModal(`[data-whusername='${nick}']`);
-      }
+      // if (target.classList.contains('badge')) {
+      //   const nick = target.dataset.whusername;
+      //   showUserModal(`[data-whusername='${nick}']`);
+      // }
       if (target.classList.contains('modalWH-button--remove')) {
         //eslint-disable-next-line
         console.log(target);
         const nick = target.dataset.whuserremove;
         removeTroll(nick);
       }
+    });
+  // window.addEventListener('load', () => {
+  //   if (document.querySelector('.badge')) {
+  //     document.querySelectorAll('.badge').forEach(el => {
+  //       const nick = el.dataset.whusername;
+  //       showUserModal(`[data-whusername='${nick}']`);
+  //     });
+  //   }
+  // })
+  document
+    .getElementById('itemsStream')
+    .addEventListener('mouseover', event => {
+      // handle modals on hover - shouldn't it happen on its own?
     });
 };
 
@@ -326,8 +400,7 @@ String.prototype.capitalize = function() {
   return this.charAt(0).toUpperCase() + this.slice(1);
 };
 //injects vendor scripts
-injectScripts();
-
+setTimeout(injectScripts, 100);
 
 setTimeout(()=>{
   //shows alert if app has been updated
@@ -337,4 +410,4 @@ setTimeout(()=>{
   if (isPathForMain()) {
     mainFunctionality();
   }
-}, 250);
+}, 350);

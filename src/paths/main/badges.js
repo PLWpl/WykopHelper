@@ -93,7 +93,7 @@ export const mainFunctionality = () => {
 
   // goes through all user elements on a page and checks, if user nicks are present in uniqueNicksSet array. If they are, AND they haven't yet been awarded a badge, it injects the badge.
   // takes optional parameter of type, possibly for future expansions of this script.
-  const markUsers = (type = 'Troll') => {
+  const markUsers = (type = 'Debil') => {
     try {
       const elements = getAllNickElements();
       elements.forEach(element =>{
@@ -154,23 +154,52 @@ export const mainFunctionality = () => {
     for (let [index, item] of trolls.entries()) {
       if (item.nick === nick) {
         delete trolls[index];
+        trolls = trolls.filter(el => el != null);
         localStorage.setItem("trolls", stringifyObject(trolls));
       }
     }
     uniqueNicksSet = uniqueNicksSet.filter(el => el !== nick);
     localStorage.setItem("uniqueNicks", stringifyObject(uniqueNicksSet));
-    updateView();
+    
+    if (isTextareaEmpty) {
+      reloadPage();
+    } else {
+      // eslint-disable-next-line
+      Swal.fire({
+        title: 'Hej!',
+        text: 'Wygląda na to, że jesteś w trakcie pisania komentarza. Kliknij "Anuluj", żeby dokończyć pisanie i ręcznie odświeżyć stronę później (to konieczne by zniknęła odznaka przy nicku użytkownika). Jeśli to pomyłka, i nie masz nic przeciw odświeżeniu strony, naciśnij "OK".',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Odśwież',
+        cancelButtonText: 'Anuluj',
+      }).then(result => {
+        if (result.value) {
+          reloadPage();
+        }
+      })
+    }
   }
 
   // gets user data from objects inside trolls array. For now the only useful data returned is link to the offending post
   const getNickData = nick => {
     prepareLocalStorage();
-    for (let item of trolls) {
-      if (item.nick === nick) {
-        return { link: item.link, nick: item.nick };
+    // for (let item of trolls) {
+    //   if (item.nick === nick) {
+    //     return { link: item.link, nick: item.nick };
+    //   } else if (item == undefined || item == null || !item) {
+    //     continue;
+    //   }
+    // }
+    for (let i = 0; i < trolls.length; i++) {
+      if (trolls[i].nick === nick) {
+        return { link: trolls[i].link, nick: trolls[i].nick };
+      } else if (trolls[i] === undefined || trolls[i] === null) {
+        continue;
       }
     }
-  }
+  };
 
   // shows modal with troll info/options
   // eslint-disable-next-line 
@@ -180,6 +209,15 @@ export const mainFunctionality = () => {
     addModal(element, modalMarkup(userData.link, userData.nick));
   }
 
+  const initializeModal = () => {
+    if (document.querySelector('.badge')) {
+      document.querySelectorAll('.badge').forEach(el => {
+        const nick = el.dataset.whusername;
+        setTimeout(showUserModal(`[data-whusername='${nick}']`), 1150);
+      });
+    }
+  }
+
   /**
    * Above is setup. Actual job gets done below
    */
@@ -187,6 +225,7 @@ export const mainFunctionality = () => {
   injectStyles(styles);
   prepareLocalStorage();
   markUsers();
+  initializeModal();
 
   // on button click, add new troll
   document
@@ -202,15 +241,28 @@ export const mainFunctionality = () => {
           markUsers();
         }, 500)  
       }
-      if (target.classList.contains('badge')) {
-        const nick = target.dataset.whusername;
-        showUserModal(`[data-whusername='${nick}']`);
-      }
+      // if (target.classList.contains('badge')) {
+      //   const nick = target.dataset.whusername;
+      //   showUserModal(`[data-whusername='${nick}']`);
+      // }
       if (target.classList.contains('modalWH-button--remove')) {
         //eslint-disable-next-line
         console.log(target);
         const nick = target.dataset.whuserremove;
         removeTroll(nick);
       }
+    });
+  // window.addEventListener('load', () => {
+  //   if (document.querySelector('.badge')) {
+  //     document.querySelectorAll('.badge').forEach(el => {
+  //       const nick = el.dataset.whusername;
+  //       showUserModal(`[data-whusername='${nick}']`);
+  //     });
+  //   }
+  // })
+  document
+    .getElementById('itemsStream')
+    .addEventListener('mouseover', event => {
+      // handle modals on hover - shouldn't it happen on its own?
     });
 }

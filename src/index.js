@@ -10,8 +10,7 @@ String.prototype.capitalize = function() {
   return this.charAt(0).toUpperCase() + this.slice(1);
 }
 //injects vendor scripts
-injectScripts();
-
+setTimeout(injectScripts, 100)
 
 setTimeout(()=>{
   //shows alert if app has been updated
@@ -21,5 +20,5 @@ setTimeout(()=>{
   if (isPathForMain()) {
     mainFunctionality();
   }
-}, 250);
+}, 350);
 
