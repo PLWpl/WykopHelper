@@ -1,4 +1,4 @@
-/* eslint-disable no-undef */
+/* eslint-disable no-undef, max-len */
 export const updateAlert = () => {
   const version = 0.21;
 

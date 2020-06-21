@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "rollup --config"
+    "build": "rollup --config",
+    "eslint": "npx eslint src"
   },
   "author": "PLW",
   "license": "ISC",

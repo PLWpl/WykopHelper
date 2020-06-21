@@ -3,7 +3,7 @@ import { buttonMarkup, badge } from '../../markup/minor.js';
 import { modalMarkup } from '../../markup/modal.js';
 import { addModal } from '../../utils/addModal.js';
 
-export const mainFunctionality = () => {
+export const handleBadges = () => {
   const parseToObject = string => JSON.parse(string);
   const stringifyObject = object => JSON.stringify(object);
 
@@ -46,8 +46,6 @@ export const mainFunctionality = () => {
   
   //used on element - preferably one returned from getAllNickElements() - returns string with nick name.
   const getNick = el => el.querySelector(".showProfileSummary > b").innerText;
-  
-  const getNickElement = event => event.target.closest(".author");
 
   const reloadPage = () => location.reload();
 
@@ -189,13 +187,6 @@ export const mainFunctionality = () => {
   // gets user data from objects inside trolls array. For now the only useful data returned is link to the offending post
   const getNickData = nick => {
     prepareLocalStorage();
-    // for (let item of trolls) {
-    //   if (item.nick === nick) {
-    //     return { link: item.link, nick: item.nick };
-    //   } else if (item == undefined || item == null || !item) {
-    //     continue;
-    //   }
-    // }
     for (let i = 0; i < trolls.length; i++) {
       if (trolls[i].nick === nick) {
         return { link: trolls[i].link, nick: trolls[i].nick };
@@ -245,28 +236,11 @@ export const mainFunctionality = () => {
           markUsers();
         }, 500)  
       }
-      // if (target.classList.contains('badge')) {
-      //   const nick = target.dataset.whusername;
-      //   showUserModal(`[data-whusername='${nick}']`);
-      // }
       if (target.classList.contains('modalWH-button--remove')) {
         //eslint-disable-next-line
         console.log(target);
         const nick = target.dataset.whuserremove;
         removeTroll(nick);
       }
-    });
-  // window.addEventListener('load', () => {
-  //   if (document.querySelector('.badge')) {
-  //     document.querySelectorAll('.badge').forEach(el => {
-  //       const nick = el.dataset.whusername;
-  //       showUserModal(`[data-whusername='${nick}']`);
-  //     });
-  //   }
-  // })
-  document
-    .getElementById('itemsStream')
-    .addEventListener('mouseover', event => {
-      // handle modals on hover - shouldn't it happen on its own?
     });
 }
