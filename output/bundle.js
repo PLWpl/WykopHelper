@@ -28,7 +28,7 @@ const styles = `
   padding: .1rem .2rem;
 }
 .modalWH-button {
-  display: inline-block;
+  display: block;
   padding: .4rem .8rem;
   border: 1px solid #9999996e;
   cursor: pointer;
@@ -37,6 +37,21 @@ const styles = `
   font-size: 1rem;
   line-height: 1rem;
   transition: .3s all;
+}
+.author .modalWH-text {
+  position: relative;
+  margin-bottom: .5rem;
+  top: unset;
+  right: unset;
+  left: unset;
+  bottom: unset;
+}
+.tippy-box {
+  width: 20rem;
+}
+.tippy-content {
+  display: flex;
+  flex-direction: column;
 }`;
 
 const buttonMarkup = `<span class="buttonWH">Oznacz</span>`;
@@ -46,13 +61,10 @@ const buttonMarkup = `<span class="buttonWH">Oznacz</span>`;
 const badge = (nick, name = 'debil') => `<span class="badge badge--${name.toLowerCase()}" data-whusername="${nick}">${name.toLowerCase().capitalize()}</span>`;
 
 const modalMarkup = (link, nick) => `
-<div class="modalWH">
-  <h1 class="modalWH-title">Info</h1>
-  <p class="modalWH-text">Powód oznaczenia: 
+  <p class="modalWH-text">Pow&oacute;d oznaczenia: 
     <a href="${link}" target="_blank">link</a>
   </p>
-  <span class="modalWH-button modalWH-button--remove" data-whuserremove="${nick}">Usuń oznaczenie</span>
-</div>
+  <span class="modalWH-button modalWH-button--remove" data-whuserremove="${nick}">Usu&#x0144; oznaczenie</span>
 `;
 
 const addModal = (element, content) => {
@@ -183,7 +195,10 @@ const mainFunctionality = () => {
         if (isTroll(nick) && isNotAwarded(element)) {
           element.insertAdjacentHTML('afterbegin', badge(nick));
         }
-        if (isTroll(nick) && isNotAwarded(element) && element.querySelector('buttonWH') && !element.querySelector('buttonWH--clicked')) {
+        if (isTroll(nick) 
+          && isNotAwarded(element) 
+          && element.querySelector('buttonWH') 
+          && !element.querySelector('buttonWH--clicked')) {
           element.querySelector('.buttonWH').remove();
         }
       });
@@ -228,12 +243,13 @@ const mainFunctionality = () => {
       // eslint-disable-next-line
       Swal.fire({
         title: 'Hej!',
-        text: 'Wygląda na to, że jesteś w trakcie pisania komentarza. Kliknij "Anuluj", żeby dokończyć pisanie i ręcznie odświeżyć stronę później (to konieczne by zniknęła odznaka przy nicku użytkownika). Jeśli to pomyłka, i nie masz nic przeciw odświeżeniu strony, naciśnij "OK".',
+        // eslint-disable-next-line
+        text: 'Wygl&#x0105;da na to, &#x017c;e jeste&#x015b; w trakcie pisania komentarza. Kliknij &quot;Anuluj&quot;, &#x017c;eby doko&#x0144;czy&#x0107; pisanie i r&#x0119;cznie od&#x015b;wie&#x017c;y&#x0107; stron&#x0119; p&oacute;&#x017a;niej (to konieczne by znikn&#x0119;&#x0142;a odznaka przy nicku u&#x017c;ytkownika). Je&#x015b;li to pomy&#x0142;ka, i nie masz nic przeciw od&#x015b;wie&#x017c;eniu strony, naci&#x015b;nij &quot;OK&quot;.',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
-        confirmButtonText: 'Odśwież',
+        confirmButtonText: 'Od&#x015b;wie&#x017c;',
         cancelButtonText: 'Anuluj',
       }).then(result => {
         if (result.value) {
@@ -345,12 +361,12 @@ const isPathForMain = () => {
 
 /* eslint-disable no-undef */
 const updateAlert = () => {
-  const version = 0.123;
+  const version = 0.21;
 
   if (localStorage.getItem('WHupdate') && localStorage.getItem('WHupdate') < version) {
     Swal.fire({
       title: 'WykopHelper zaktualizowany!',
-      html: 'Dodatek WykopHelper został właśnie zaktualizowany. Wprowadzone zmiany to: <br><ul style="margin-top:1rem; list-style-type:square"><li style="text-align:left;margin-left:2rem">nowy sposób komunikowania o aktualizacjach :)</li></ul>',
+      html: 'Dodatek WykopHelper zosta&#x0142; w&#x0142;a&#x015b;nie zaktualizowany. Wprowadzone zmiany to: <br><ul style="margin-top:1rem; list-style-type:square"><li style="text-align:left;margin-left:2rem">po najechaniu na odznakę usera pojawi się modal z linkiem do posta, przy którym został oznaczony</li><li style="text-align:left;margin-left:2rem">W modalu - button do usuwania oznaczenia</li><li style="text-align:left;margin-left:2rem">Nowy spos&oacute;b komunikowania o aktualizacjach</li><li style="text-align:left;margin-left:2rem">mniejsze i wi&#x0119;ksze poprawki poprawiaj&#x0105;ce stabilno&#x015b;&#x0107; i niezawodno&#x015b;&#x0107;</li></ul>',
       icon: 'info',
       confirmButtonText: 'Okej!'
     });
@@ -359,7 +375,7 @@ const updateAlert = () => {
   else if (!localStorage.getItem('WHupdate')) {
     Swal.fire({
       title: 'WykopHelper zainstalowany!',
-      html: 'Miłego użytkowania dodatku! Jeśli masz jakiekolwiek problemy, pytania lub sugestie, zgłoś je <a href="https://github.com/PLWpl/wykopoweTrole/issues" target="_blank">tutaj.</a>',
+      html: 'Mi&#x0142;ego u&#x017c;ytkowania dodatku! Je&#x015b;li masz jakiekolwiek problemy, pytania lub sugestie, zg&#x0142;o&#x015b; je <a href="https://github.com/PLWpl/wykopoweTrole/issues" target="_blank">tutaj.</a>',
       icon: 'success',
       confirmButtonText: 'Super!'
     });
@@ -367,23 +383,16 @@ const updateAlert = () => {
   }
 };
 
-// import { injectScripts } from './utils/injectVendors.js';
-
 /**
    * Helper methods and functions, not directly related to the script's purpose
    */
 String.prototype.capitalize = function() {
   return this.charAt(0).toUpperCase() + this.slice(1);
 };
-//injects vendor scripts
-// setTimeout(injectScripts, 100)
 
-setTimeout(()=>{
-  //shows alert if app has been updated
-  updateAlert();
+//shows alert if app has been updated
+updateAlert();
 
-
-  if (isPathForMain()) {
-    mainFunctionality();
-  }
-}, 350);
+if (isPathForMain()) {
+  mainFunctionality();
+}

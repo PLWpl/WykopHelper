@@ -26,7 +26,7 @@ export const styles = `
   padding: .1rem .2rem;
 }
 .modalWH-button {
-  display: inline-block;
+  display: block;
   padding: .4rem .8rem;
   border: 1px solid #9999996e;
   cursor: pointer;
@@ -35,4 +35,19 @@ export const styles = `
   font-size: 1rem;
   line-height: 1rem;
   transition: .3s all;
+}
+.author .modalWH-text {
+  position: relative;
+  margin-bottom: .5rem;
+  top: unset;
+  right: unset;
+  left: unset;
+  bottom: unset;
+}
+.tippy-box {
+  width: 20rem;
+}
+.tippy-content {
+  display: flex;
+  flex-direction: column;
 }`;

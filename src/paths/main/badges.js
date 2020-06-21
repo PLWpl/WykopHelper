@@ -171,12 +171,12 @@ export const mainFunctionality = () => {
       Swal.fire({
         title: 'Hej!',
         // eslint-disable-next-line
-        text: 'Wygląda na to, że jesteś w trakcie pisania komentarza. Kliknij "Anuluj", żeby dokończyć pisanie i ręcznie odświeżyć stronę później (to konieczne by zniknęła odznaka przy nicku użytkownika). Jeśli to pomyłka, i nie masz nic przeciw odświeżeniu strony, naciśnij "OK".',
+        text: 'Wygl&#x0105;da na to, &#x017c;e jeste&#x015b; w trakcie pisania komentarza. Kliknij &quot;Anuluj&quot;, &#x017c;eby doko&#x0144;czy&#x0107; pisanie i r&#x0119;cznie od&#x015b;wie&#x017c;y&#x0107; stron&#x0119; p&oacute;&#x017a;niej (to konieczne by znikn&#x0119;&#x0142;a odznaka przy nicku u&#x017c;ytkownika). Je&#x015b;li to pomy&#x0142;ka, i nie masz nic przeciw od&#x015b;wie&#x017c;eniu strony, naci&#x015b;nij &quot;OK&quot;.',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
-        confirmButtonText: 'Odśwież',
+        confirmButtonText: 'Od&#x015b;wie&#x017c;',
         cancelButtonText: 'Anuluj',
       }).then(result => {
         if (result.value) {
