@@ -1,4 +1,4 @@
-import { mainFunctionality } from './paths/main.js';
+import { handleBadges } from './paths/main/badges.js';
 import { isPathForMain } from './pathCheck/index.js';
 import { updateAlert } from './utils/updateAlert.js';
 
@@ -13,5 +13,5 @@ String.prototype.capitalize = function() {
 updateAlert();
 
 if (isPathForMain()) {
-  mainFunctionality();
+  handleBadges();
 }

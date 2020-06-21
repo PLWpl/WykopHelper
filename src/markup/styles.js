@@ -9,17 +9,45 @@ export const styles = `
   border-radius: .3rem;
   font-size: .7rem;
   line-height: .7rem;
+  transition: .3s all;
 }
 .buttonWH:hover {
   border-color: green;
 }
 .buttonWH--clicked {
   border-color: green;
+  opacity: 0;
 }
-.badge--troll {
+.badge {
   color: red;
   font-weight: bold;
   margin-right: .3rem;
   border: 1px solid currentColor;
   padding: .1rem .2rem;
+}
+.modalWH-button {
+  display: block;
+  padding: .4rem .8rem;
+  border: 1px solid #9999996e;
+  cursor: pointer;
+  color: #808080ba;
+  border-radius: .3rem;
+  font-size: 1rem;
+  line-height: 1rem;
+  transition: .3s all;
+}
+.author .modalWH-text {
+  position: relative;
+  margin-bottom: .5rem;
+  top: unset;
+  right: unset;
+  left: unset;
+  bottom: unset;
+}
+.tippy-box {
+  width: 20rem;
+}
+.tippy-content {
+  display: flex;
+  flex-direction: column;
 }`;

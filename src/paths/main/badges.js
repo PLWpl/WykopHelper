@@ -1,7 +1,9 @@
-import { styles } from '../markup/styles.js';
-import { buttonMarkup, badge } from '../markup/minor.js'
+import { styles } from '../../markup/styles.js';
+import { buttonMarkup, badge } from '../../markup/minor.js';
+import { modalMarkup } from '../../markup/modal.js';
+import { addModal } from '../../utils/addModal.js';
 
-export const mainFunctionality = () => {
+export const handleBadges = () => {
   const parseToObject = string => JSON.parse(string);
   const stringifyObject = object => JSON.stringify(object);
 
@@ -41,9 +43,9 @@ export const mainFunctionality = () => {
   // function returns a nodeList with all <div> elements containing line with nick, time since comment made, [+][-]
   const getAllNickElements = () => document.querySelectorAll("li div.author");
 
+  
   //used on element - preferably one returned from getAllNickElements() - returns string with nick name.
-  const getNick = el => el.querySelector(".showProfileSummary > b")
-    .innerText;
+  const getNick = el => el.querySelector(".showProfileSummary > b").innerText;
 
   const reloadPage = () => location.reload();
 
@@ -54,6 +56,7 @@ export const mainFunctionality = () => {
   const hasButtonAppended = element => !!(element.querySelector('.buttonWH'));
 
   // checks if any textarea on a page is empty, to prevent reloading of a page while user might be attempting to write some comment or similar
+
   const isTextareaEmpty = () => {
     const replyForm = document.querySelector('.replyForm textarea');
     const commentForm = document.querySelector('#commentFormContainer textarea');
@@ -88,14 +91,14 @@ export const mainFunctionality = () => {
 
   // goes through all user elements on a page and checks, if user nicks are present in uniqueNicksSet array. If they are, AND they haven't yet been awarded a badge, it injects the badge.
   // takes optional parameter of type, possibly for future expansions of this script.
-  const markUsers = (type = 'Troll') => {
+  const markUsers = (type = 'Debil') => {
     try {
       const elements = getAllNickElements();
       elements.forEach(element =>{
         const nick = getNick(element);
 
         if (isTroll(nick) && isNotAwarded(element)) {
-          element.insertAdjacentHTML('afterbegin', badge(type));
+          element.insertAdjacentHTML('afterbegin', badge(nick, type));
         }
         else if (!hasButtonAppended(element)) {
           element.insertAdjacentHTML("beforeend", buttonMarkup);
@@ -109,13 +112,24 @@ export const mainFunctionality = () => {
 
   // checks if user is writing any new comment. If not, reloads the page. If yes, prompts the user for decision.
   const updateView = () => {
-    if (!isTextareaEmpty()) {
-      // eslint-disable-next-line no-alert, max-len
-      if (window.confirm('Wykryłem, że możesz właśnie pisać komentarz. Kliknięcie "OK" spowoduje odświeżenie strony i utratę tworzonego tekstu! Jeśli klikniesz "anuluj", odśwież później stronę ręcznie, by zobaczyć nowo-oznaczonego trola.')) {
-        reloadPage();
-      }
-    } else {
-      reloadPage();
+    try {
+      const elements = getAllNickElements();
+      elements.forEach(element =>{
+        const nick = getNick(element);
+
+        if (isTroll(nick) && isNotAwarded(element)) {
+          element.insertAdjacentHTML('afterbegin', badge(nick));
+        }
+        if (isTroll(nick) 
+          && isNotAwarded(element) 
+          && element.querySelector('buttonWH') 
+          && !element.querySelector('buttonWH--clicked')) {
+          element.querySelector('.buttonWH').remove();
+        }
+      });
+    }
+    catch (e) {
+      //supress the error
     }
   }
 
@@ -128,20 +142,76 @@ export const mainFunctionality = () => {
 
     event.target.classList.add("buttonWH--clicked");
     event.target.innerText = "✔";
+    setTimeout(() => {
+      event.target.remove();
+    }, 700)
     addNickToArrays(nick, link);
 
     updateView();
   }
 
-  // const removeTroll = event => {
-  //   prepareLocalStorage();
-  //   //just a mockup from quokka, needs to be adjusted for the actual use
-  //   for (let [index, item] of trolls.entries()) {
-  //     if (item.nick === 'zofia') {
-  //       delete trolls[index];
-  //     }
-  //   }
-  // }
+  const removeTroll = nick => {
+    prepareLocalStorage();
+    for (let [index, item] of trolls.entries()) {
+      if (item.nick === nick) {
+        delete trolls[index];
+        trolls = trolls.filter(el => el != null);
+        localStorage.setItem("trolls", stringifyObject(trolls));
+      }
+    }
+    uniqueNicksSet = uniqueNicksSet.filter(el => el !== nick);
+    localStorage.setItem("uniqueNicks", stringifyObject(uniqueNicksSet));
+    
+    if (isTextareaEmpty) {
+      reloadPage();
+    } else {
+      // eslint-disable-next-line
+      Swal.fire({
+        title: 'Hej!',
+        // eslint-disable-next-line
+        text: 'Wygl&#x0105;da na to, &#x017c;e jeste&#x015b; w trakcie pisania komentarza. Kliknij &quot;Anuluj&quot;, &#x017c;eby doko&#x0144;czy&#x0107; pisanie i r&#x0119;cznie od&#x015b;wie&#x017c;y&#x0107; stron&#x0119; p&oacute;&#x017a;niej (to konieczne by znikn&#x0119;&#x0142;a odznaka przy nicku u&#x017c;ytkownika). Je&#x015b;li to pomy&#x0142;ka, i nie masz nic przeciw od&#x015b;wie&#x017c;eniu strony, naci&#x015b;nij &quot;OK&quot;.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Od&#x015b;wie&#x017c;',
+        cancelButtonText: 'Anuluj',
+      }).then(result => {
+        if (result.value) {
+          reloadPage();
+        }
+      })
+    }
+  }
+
+  // gets user data from objects inside trolls array. For now the only useful data returned is link to the offending post
+  const getNickData = nick => {
+    prepareLocalStorage();
+    for (let i = 0; i < trolls.length; i++) {
+      if (trolls[i].nick === nick) {
+        return { link: trolls[i].link, nick: trolls[i].nick };
+      } else if (trolls[i] === undefined || trolls[i] === null) {
+        continue;
+      }
+    }
+  };
+
+  // shows modal with troll info/options
+  // eslint-disable-next-line 
+  const showUserModal = element => {
+    const nick = document.querySelector(element).dataset.whusername;
+    const userData = getNickData(nick);
+    addModal(element, modalMarkup(userData.link, userData.nick));
+  }
+
+  const initializeModal = () => {
+    if (document.querySelector('.badge')) {
+      document.querySelectorAll('.badge').forEach(el => {
+        const nick = el.dataset.whusername;
+        setTimeout(showUserModal(`[data-whusername='${nick}']`), 1150);
+      });
+    }
+  }
 
   /**
    * Above is setup. Actual job gets done below
@@ -150,6 +220,7 @@ export const mainFunctionality = () => {
   injectStyles(styles);
   prepareLocalStorage();
   markUsers();
+  initializeModal();
 
   // on button click, add new troll
   document
@@ -165,8 +236,11 @@ export const mainFunctionality = () => {
           markUsers();
         }, 500)  
       }
+      if (target.classList.contains('modalWH-button--remove')) {
+        //eslint-disable-next-line
+        console.log(target);
+        const nick = target.dataset.whuserremove;
+        removeTroll(nick);
+      }
     });
-
-  //on button click, mark users
-  document.querySelector('.more > .affect')
 }
