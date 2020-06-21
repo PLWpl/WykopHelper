@@ -1,5 +1,6 @@
+import isPath from './pathCheck/index.js';
 import { handleBadges } from './paths/main/badges.js';
-import { isPathForMain } from './pathCheck/index.js';
+import { handleSettings, handleWhSettings } from './paths/settings.js';
 import { updateAlert } from './utils/updateAlert.js';
 
 /**
@@ -12,6 +13,12 @@ String.prototype.capitalize = function() {
 //shows alert if app has been updated
 updateAlert();
 
-if (isPathForMain()) {
+if (isPath.main()) {
   handleBadges();
+}
+if (isPath.settings()) {
+  handleSettings();
+}
+if (isPath.whSettings()) {
+  handleWhSettings();
 }

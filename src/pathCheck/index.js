@@ -1,6 +1,8 @@
 const path = location.href;
 
-export const isPathForMain = () => {
+const isPath = {};
+
+isPath.main = () => {
   if (
     path.indexOf('wykop.pl/link/') > -1
     || path.indexOf('wykop.pl/mikroblog/') > -1
@@ -12,3 +14,10 @@ export const isPathForMain = () => {
   }
   return false;
 }
+
+isPath.settings = () => !!(path.indexOf('wykop.pl/ustawienia/') > -1);
+
+isPath.whSettings = () => !!(path.indexOf('wykop.pl/ustawienia/wykophelper') > -1);
+
+
+export default isPath;

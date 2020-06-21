@@ -92,7 +92,7 @@
     });
   };
 
-  const mainFunctionality = () => {
+  const handleBadges = () => {
     const parseToObject = string => JSON.parse(string);
     const stringifyObject = object => JSON.stringify(object);
 
@@ -276,13 +276,6 @@
     // gets user data from objects inside trolls array. For now the only useful data returned is link to the offending post
     const getNickData = nick => {
       prepareLocalStorage();
-      // for (let item of trolls) {
-      //   if (item.nick === nick) {
-      //     return { link: item.link, nick: item.nick };
-      //   } else if (item == undefined || item == null || !item) {
-      //     continue;
-      //   }
-      // }
       for (let i = 0; i < trolls.length; i++) {
         if (trolls[i].nick === nick) {
           return { link: trolls[i].link, nick: trolls[i].nick };
@@ -332,10 +325,6 @@
             markUsers();
           }, 500);  
         }
-        // if (target.classList.contains('badge')) {
-        //   const nick = target.dataset.whusername;
-        //   showUserModal(`[data-whusername='${nick}']`);
-        // }
         if (target.classList.contains('modalWH-button--remove')) {
           //eslint-disable-next-line
           console.log(target);
@@ -343,24 +332,79 @@
           removeTroll(nick);
         }
       });
-    // window.addEventListener('load', () => {
-    //   if (document.querySelector('.badge')) {
-    //     document.querySelectorAll('.badge').forEach(el => {
-    //       const nick = el.dataset.whusername;
-    //       showUserModal(`[data-whusername='${nick}']`);
-    //     });
-    //   }
-    // })
-    document
-      .getElementById('itemsStream')
-      .addEventListener('mouseover', event => {
-        // handle modals on hover - shouldn't it happen on its own?
-      });
+  };
+
+  const settingsMarkup = `
+  <fieldset>
+    <h4>WykopHelper - Ustawienia</h4>
+    <div class="space">
+      <div class="row">
+        <input
+          class="checkbox"
+          type="checkbox"
+          name="wh[hide_marked_user]"
+          id="hideMarkedUser"
+        />
+        <label class="inline" for="static_header"
+          >Ukrywaj treści oznakowanych użytkowników (tak jak na czarnej liście)</label
+        >
+      </div>
+      <div class="row">
+        <input
+          class="checkbox"
+          type="checkbox"
+          name="wh[warn_on_reload]"
+          id="warnOnReload"
+        />
+        <label class="inline" for="static_header">Ostrzegaj przy próbie zamknięcia/przeładowania strony gdy wykryto pisanie komentarza</label>
+      </div>
+      <div class="row">
+        <input
+          class="checkbox"
+          type="checkbox"
+          name="wh[remove_all_marked]"
+          id="removeAllMarked"
+        />
+        <label class="inline" for="static_header">Usuń wszystkich oznaczonych użytkowników [AKCJA NIEODWRACALNA]</label>
+      </div>
+    </div>
+  </fieldset>
+
+  <div class="mark-bg space">
+    <fieldset class="row buttons">
+      <p>
+        <button class="submit trolls-settings-submit">
+          <i class="fa fa-spinner fa-spin" style="display: none;"></i> Zapisz
+          ustawienia
+        </button>
+      </p>
+    </fieldset>
+  </div>
+`;
+
+  const settingsNav = `<li class="whSettingsLink"><a href="https://www.wykop.pl/ustawienia/wykophelper/"><span><strong>WykopHelper</strong> &#10024;</span></a></li>`;
+
+  const handleSettings = () => {
+    document.querySelector('#site .nav > ul > li:last-child').insertAdjacentHTML('beforeend', settingsNav);
+  };
+
+  const handleWhSettings = () => {
+    document.querySelector('#site .nav > ul .active').classList.remove('active');
+    document.querySelector('.whSettingsLink').classList.add('active');
+    
+    const settingsFormElement = document.querySelector('#site .grid-main .settings');
+
+    settingsFormElement.innerHTML = '';
+    settingsFormElement.innerHTML = settingsMarkup;
+    settingsFormElement.removeAttribute('method');
+    settingsFormElement.removeAttribute('action');
   };
 
   const path = location.href;
 
-  const isPathForMain = () => {
+  const isPath = {};
+
+  isPath.main = () => {
     if (
       path.indexOf('wykop.pl/link/') > -1
       || path.indexOf('wykop.pl/mikroblog/') > -1
@@ -373,7 +417,11 @@
     return false;
   };
 
-  /* eslint-disable no-undef */
+  isPath.settings = () => !!(path.indexOf('wykop.pl/ustawienia/') > -1);
+
+  isPath.whSettings = () => !!(path.indexOf('wykop.pl/ustawienia/wykophelper') > -1);
+
+  /* eslint-disable no-undef, max-len */
   const updateAlert = () => {
     const version = 0.21;
 
@@ -407,8 +455,14 @@
   //shows alert if app has been updated
   updateAlert();
 
-  if (isPathForMain()) {
-    mainFunctionality();
+  if (isPath.main()) {
+    handleBadges();
+  }
+  if (isPath.settings()) {
+    handleSettings();
+  }
+  if (isPath.whSettings()) {
+    handleWhSettings();
   }
 
 }());
