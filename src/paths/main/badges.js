@@ -1,12 +1,14 @@
+import STORAGE_KEY_NAMES from '../../constants/localStorageKeyNames';
+import DOM_SELECTORS from '../../constants//domSelectors';
+
 import { styles } from '../../markup/styles.js';
 import { buttonMarkup, badge } from '../../markup/minor.js';
 import { modalMarkup } from '../../markup/modal.js';
 import { addModal } from '../../utils/addModal.js';
 
-export const handleBadges = () => {
-  const parseToObject = string => JSON.parse(string);
-  const stringifyObject = object => JSON.stringify(object);
+const { BADGE: DOM } = DOM_SELECTORS;
 
+export const handleBadges = () => {
   /**
    * uniqueNicksSet - an array keeping nicks of all users added to the troll list. It exists so that before adding any user on a list we can easily check if they haven't already been added, using simple includes() method.
    * trolls - an object with user nicks and links to an offending posts.
@@ -24,13 +26,13 @@ export const handleBadges = () => {
   // checks if provided nick has already been entered into the list. If it hasn't, it pushes it to the uniqueNicksSet array.
   const addNickToUniqueNicksArray = nick => {
     uniqueNicksSet.push(nick);
-    localStorage.setItem("uniqueNicks", stringifyObject(uniqueNicksSet));
+    localStorage.setItem(STORAGE_KEY_NAMES.UNIQUE_USERS, JSON.stringify(uniqueNicksSet));
   };
 
   // adds nick to trolls array of objects along with the link
   const addNickToTrollsArray = (nick, link) => {
     trolls.push({ nick: nick, link: link });
-    localStorage.setItem("trolls", stringifyObject(trolls));
+    localStorage.setItem(STORAGE_KEY_NAMES.MARKED_USERS, JSON.stringify(trolls));
   }
 
   const addNickToArrays = (nick, link) => {
@@ -41,25 +43,25 @@ export const handleBadges = () => {
   }
 
   // function returns a nodeList with all <div> elements containing line with nick, time since comment made, [+][-]
-  const getAllNickElements = () => document.querySelectorAll("li div.author");
+  const getAllNickElements = () => document.querySelectorAll(`.${DOM.NICK_ELEMENTS}`);
 
   
   //used on element - preferably one returned from getAllNickElements() - returns string with nick name.
-  const getNick = el => el.querySelector(".showProfileSummary > b").innerText;
+  const getNick = el => el.querySelector(`.${DOM.NICK}`).innerText;
 
   const reloadPage = () => location.reload();
 
   // used on author element, returned from getAllNickElements(), checks if person has already been marked with a badge
-  const isNotAwarded = element => !(element.querySelector('.badge'));
+  const isNotAwarded = element => !(element.querySelector(`.${DOM.BADGE}`));
 
   // used on author element, returned from getAllNickElements(), checks if person has already been given a button
-  const hasButtonAppended = element => !!(element.querySelector('.buttonWH'));
+  const hasButtonAppended = element => !!(element.querySelector(`.${DOM.MARK_BUTTON}`));
 
   // checks if any textarea on a page is empty, to prevent reloading of a page while user might be attempting to write some comment or similar
 
   const isTextareaEmpty = () => {
-    const replyForm = document.querySelector('.replyForm textarea');
-    const commentForm = document.querySelector('#commentFormContainer textarea');
+    const replyForm = document.querySelector(`.${DOM.REPLY_FORM}`);
+    const commentForm = document.querySelector(`.${DOM.COMMENT_FORM}`);
 
     if ((replyForm && replyForm.value !== "") || (commentForm && commentForm.value !== "")) {
       return false;
@@ -76,14 +78,14 @@ export const handleBadges = () => {
 
   // prepares localStorage. Checks if trolls and uniqueNicksSet are already present and saved to localStorage. If so, it parses it to arrays. If not, it initializes empty ones.
   const prepareLocalStorage = () => {
-    if (localStorage.getItem("trolls")) {
-      trolls = parseToObject(localStorage.getItem("trolls"));
+    if (localStorage.getItem(STORAGE_KEY_NAMES.MARKED_USERS)) {
+      trolls = JSON.parse(localStorage.getItem(STORAGE_KEY_NAMES.MARKED_USERS));
     } else {
       trolls = [];
     }
 
-    if (localStorage.getItem("uniqueNicks")) {
-      uniqueNicksSet = parseToObject(localStorage.getItem("uniqueNicks"));
+    if (localStorage.getItem(STORAGE_KEY_NAMES.UNIQUE_USERS)) {
+      uniqueNicksSet = JSON.parse(localStorage.getItem(STORAGE_KEY_NAMES.UNIQUE_USERS));
     } else {
       uniqueNicksSet = [];
     }
@@ -122,9 +124,9 @@ export const handleBadges = () => {
         }
         if (isTroll(nick) 
           && isNotAwarded(element) 
-          && element.querySelector('buttonWH') 
-          && !element.querySelector('buttonWH--clicked')) {
-          element.querySelector('.buttonWH').remove();
+          && element.querySelector(`.${DOM.MARK_BUTTON}`) 
+          && !element.querySelector(`.${DOM.MARK_BUTTON_CLICKED}`)) {
+          element.querySelector(`.${DOM.MARK_BUTTON}`).remove();
         }
       });
     }
@@ -137,10 +139,10 @@ export const handleBadges = () => {
   // First, get nick of the author. Then, get link of the offending comment. 
   const addNewTroll = event => {
     prepareLocalStorage();
-    const nick = getNick(event.target.closest(".author"));
-    const link = event.target.closest(".author").querySelector("a + a").href;
+    const nick = getNick(event.target.closest(`.${DOM.NICK_ELEMENT}`));
+    const link = event.target.closest(`.${DOM.NICK_ELEMENT}`).querySelector("a + a").href;
 
-    event.target.classList.add("buttonWH--clicked");
+    event.target.classList.add(DOM.MARK_BUTTON_CLICKED);
     event.target.innerText = "✔";
     setTimeout(() => {
       event.target.remove();
@@ -156,11 +158,11 @@ export const handleBadges = () => {
       if (item.nick === nick) {
         delete trolls[index];
         trolls = trolls.filter(el => el != null);
-        localStorage.setItem("trolls", stringifyObject(trolls));
+        localStorage.setItem(STORAGE_KEY_NAMES.MARKED_USERS, JSON.stringify(trolls));
       }
     }
     uniqueNicksSet = uniqueNicksSet.filter(el => el !== nick);
-    localStorage.setItem("uniqueNicks", stringifyObject(uniqueNicksSet));
+    localStorage.setItem(STORAGE_KEY_NAMES.UNIQUE_USERS, JSON.stringify(uniqueNicksSet));
     
     if (isTextareaEmpty) {
       reloadPage();
@@ -205,10 +207,10 @@ export const handleBadges = () => {
   }
 
   const initializeModal = () => {
-    if (document.querySelector('.badge')) {
-      document.querySelectorAll('.badge').forEach(el => {
+    if (document.querySelector(`.${DOM.BADGE}`)) {
+      document.querySelectorAll(`.${DOM.BADGE}`).forEach(el => {
         const nick = el.dataset.whusername;
-        setTimeout(showUserModal(`[data-whusername='${nick}']`), 1150);
+        setTimeout(showUserModal(DOM.DATASET.USERNAME(nick)), 1150);
       });
     }
   }
@@ -227,7 +229,7 @@ export const handleBadges = () => {
     .getElementById('itemsStream')
     .addEventListener('click', event => {
       const target = event.target;
-      if (target.classList.contains('buttonWH')) {
+      if (target.classList.contains(DOM.MARK_BUTTON)) {
         addNewTroll(event);
       }
       if (target.classList.contains('affect') && target.closest('.more')) {
@@ -236,7 +238,7 @@ export const handleBadges = () => {
           markUsers();
         }, 500)  
       }
-      if (target.classList.contains('modalWH-button--remove')) {
+      if (target.classList.contains(DOM.MODAL_BUTTON_REMOVE)) {
         //eslint-disable-next-line
         console.log(target);
         const nick = target.dataset.whuserremove;
