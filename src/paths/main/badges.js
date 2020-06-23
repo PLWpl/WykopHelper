@@ -1,10 +1,11 @@
 import STORAGE_KEY_NAMES from '../../constants/localStorageKeyNames';
 import DOM_SELECTORS from '../../constants//domSelectors';
 
-import { styles } from '../../markup/styles.js';
+import { stylesBadge } from '../../markup/styles.js';
 import { buttonMarkup, badge } from '../../markup/minor.js';
 import { modalMarkup } from '../../markup/modal.js';
 import { addModal } from '../../utils/addModal.js';
+import { injectStyles } from '../../utils/inject.js';
 
 const { BADGE: DOM } = DOM_SELECTORS;
 
@@ -68,12 +69,6 @@ export const handleBadges = () => {
     } else {
       return true;
     }
-  }
-
-  //inject styles. Parameter must be a string of CSS without any html tags
-  const injectStyles = styles => {
-    const styleMarkup = `<style> ${styles} </style>`;
-    document.body.insertAdjacentHTML('afterbegin', styleMarkup);
   }
 
   // prepares localStorage. Checks if trolls and uniqueNicksSet are already present and saved to localStorage. If so, it parses it to arrays. If not, it initializes empty ones.
@@ -219,7 +214,7 @@ export const handleBadges = () => {
    * Above is setup. Actual job gets done below
    */
 
-  injectStyles(styles);
+  injectStyles(stylesBadge);
   prepareLocalStorage();
   markUsers();
   initializeModal();

@@ -17,7 +17,10 @@ const DOM_SELECTORS = {
     LAST_NAV_ELEMENT: '#site .nav > ul > li:last-child',
     ACTIVE_NAV_ELEMENT: '#site .nav > ul .active',
     SETTINGS_FORM_ELEMENT: '#site .grid-main .settings',
-    WH_NAV_SETTINGS_LINK: 'whSettingsLink'
+    WH_NAV_SETTINGS_LINK: 'whSettingsLink',
+    WH_USER_TABLE: 'tableWH',
+    WH_USER_TABLE_CONTAINER: 'tableWH__container',
+    WH_USER_TABLE_BODY: 'tableWH__body'
   }
 };
 
