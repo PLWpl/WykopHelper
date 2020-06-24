@@ -206,11 +206,11 @@
     };
 
     // function returns a nodeList with all <div> elements containing line with nick, time since comment made, [+][-]
-    const getAllNickElements = () => document.querySelectorAll(`.${DOM.NICK_ELEMENTS}`);
+    const getAllNickElements = () => document.querySelectorAll(DOM.NICK_ELEMENTS);
 
     
     //used on element - preferably one returned from getAllNickElements() - returns string with nick name.
-    const getNick = el => el.querySelector(`.${DOM.NICK}`).innerText;
+    const getNick = el => el.querySelector(DOM.NICK).innerText;
 
     const reloadPage = () => location.reload();
 
@@ -223,8 +223,8 @@
     // checks if any textarea on a page is empty, to prevent reloading of a page while user might be attempting to write some comment or similar
 
     const isTextareaEmpty = () => {
-      const replyForm = document.querySelector(`.${DOM.REPLY_FORM}`);
-      const commentForm = document.querySelector(`.${DOM.COMMENT_FORM}`);
+      const replyForm = document.querySelector(DOM.REPLY_FORM);
+      const commentForm = document.querySelector(DOM.COMMENT_FORM);
 
       if ((replyForm && replyForm.value !== "") || (commentForm && commentForm.value !== "")) {
         return false;
