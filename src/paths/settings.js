@@ -22,6 +22,7 @@ export const handleWhSettings = () => {
       WARN_ON_RELOAD: false,
     }
   };
+  const settingsFormElement = document.querySelector(DOM.SETTINGS_FORM_ELEMENT);
 
   const prepareLocalStorage = (...types) => {
     if ([...types].length < 1 || [...types].includes('settings')) {
@@ -66,14 +67,12 @@ export const handleWhSettings = () => {
   }
 
   const toggleUserTableVisibility = () => {
-    document.querySelector(`.${DOM.WH_USER_TABLE_CONTAINER}`).classList.toggle('tableWH__container--hidden');
+    document.querySelector(`.${DOM.WH_USER_TABLE_CONTAINER}`).classList.toggle(`.${DOM.WH_USER_TABLE_CONTAINER}--hidden`);
   }
 
   const renderSettings = () => {
     document.querySelector(DOM.ACTIVE_NAV_ELEMENT).classList.remove('active');
     document.querySelector(`.${DOM.WH_NAV_SETTINGS_LINK}`).classList.add('active');
-    
-    const settingsFormElement = document.querySelector(DOM.SETTINGS_FORM_ELEMENT);
   
     settingsFormElement.innerHTML = '';
     settingsFormElement.innerHTML = settingsMarkup;
@@ -84,16 +83,26 @@ export const handleWhSettings = () => {
     generateUserTables();
   };
 
-  //temporaru, until proper event handler & propagation is implemented
-  const handleForm = () => {
-    document.getElementById('showMarkedUserTable').addEventListener('change', toggleUserTableVisibility)
+  //temporary, until proper event handler & propagation is implemented
+  const handleForm = event => {
+    if ((event.target.nodeName === 'input' || event.target.nodeName === 'label') && (event.target.id !== 'showMarkedUserTable' || event.target.getAttribute('for') !== 'showMarkedUserTable')) {
+      settings[event.target.id || event.target.getAttribute('for')] = !settings[event.target.id || event.target.getAttribute('for')];
+      console.log(settings)
+    }
+    if (event.target.id !== 'showMarkedUserTable' || event.target.getAttribute('for') !== 'showMarkedUserTable') {
+      toggleUserTableVisibility();
+    }
+  }
+
+  const listenForSettingsChange = () => {
+    settingsFormElement.addEventListener('change', handleForm(event));
   }
 
   const init = () => {
     injectStyles(stylesSettings);
     renderSettings();
     prepareLocalStorage();
-    handleForm();
+    listenForSettingsChange();
   }
 
   init();

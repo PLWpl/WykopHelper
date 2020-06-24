@@ -146,10 +146,10 @@
   const badge = (nick, name = 'debil') => `<span class="badge badge--${name.toLowerCase()}" data-whusername="${nick}">${name.toLowerCase().capitalize()}</span>`;
 
   const modalMarkup = (link, nick) => `
-  <p class="modalWH-text">Pow&oacute;d oznaczenia: 
+  <p class="modalWH-text">Powód  oznaczenia: 
     <a href="${link}" target="_blank">link</a>
   </p>
-  <span class="modalWH-button modalWH-button--remove" data-whuserremove="${nick}">Usu&#x0144; oznaczenie</span>
+  <span class="modalWH-button modalWH-button--remove" data-whuserremove="${nick}">Usuń oznaczenie</span>
 `;
 
   const addModal = (element, content) => {
@@ -300,7 +300,7 @@
       const link = event.target.closest(`.${DOM.NICK_ELEMENT}`).querySelector("a + a").href;
 
       event.target.classList.add(DOM.MARK_BUTTON_CLICKED);
-      event.target.innerText = "✔";
+      event.target.innerText = "\u2714";
       setTimeout(() => {
         event.target.remove();
       }, 700);
@@ -417,7 +417,7 @@
           disabled
         />
         <label class="settings__crossed inline" for="XhideMarkedUser"
-          >Ukrywaj tre&#x15B;ci oznakowanych u&#x17C;ytkownik&#xF3;w (tak jak na czarnej li&#x15B;cie)</label
+          >Ukrywaj treści oznakowanych użytkowników (tak jak na czarnej liście)</label
         >
       </div>
       <div class="row">
@@ -428,7 +428,7 @@
           id="warnOnReload"
           disabled
         />
-        <label class="settings__crossed inline" for="XwarnOnReload">Ostrzegaj przy pr&#xF3;bie zamkni&#x119;cia/prze&#x142;adowania strony gdy wykryto pisanie komentarza</label>
+        <label class="settings__crossed inline" for="XwarnOnReload">Ostrzegaj przy próbie zamknięcia/przeładowania strony gdy wykryto pisanie komentarza</label>
       </div>
       <div class="row">
         <input
@@ -438,7 +438,7 @@
           id="removeAllMarked"
           disabled
         />
-        <label class="settings__crossed inline" for="XremoveAllMarked">Usu&#x144; wszystkich oznaczonych u&#x17C;ytkownik&#xF3;w [AKCJA NIEODWRACALNA]</label>
+        <label class="settings__crossed inline" for="XremoveAllMarked">Usuń wszystkich oznaczonych użytkowników [AKCJA NIEODWRACALNA]</label>
       </div>
       <div class="row">
         <input
@@ -447,7 +447,7 @@
           name="wh[show_marked_user_table]"
           id="showMarkedUserTable"
         />
-        <label class="inline" for="showMarkedUserTable">Poka&#x17C; tabel&#x119; z oznaczonymi u&#x17C;ytkownikami</label>
+        <label class="inline" for="showMarkedUserTable">Pokaż tabelę z oznaczonymi użytkownikami</label>
       </div>
     </div>
   </fieldset>
@@ -455,7 +455,7 @@
 
   const settingsUserTable = `
 <div class="tableWH__container tableWH__container--hidden">
-  <h4 class="tableWH__heading">WykopHelper - Lista oznaczonych u&#x17C;ytkownik&#xF3;w</h4>
+  <h4 class="tableWH__heading">WykopHelper - Lista oznaczonych użytkowników</h4>
   <table class="tableWH">
     <thead class="tableWH__head">
       <tr>
@@ -491,6 +491,7 @@
         WARN_ON_RELOAD: false,
       }
     };
+    const settingsFormElement = document.querySelector(DOM$1.SETTINGS_FORM_ELEMENT);
 
     const prepareLocalStorage = (...types) => {
       if ([...types].length < 1 || [...types].includes('settings')) {
@@ -535,14 +536,12 @@
     };
 
     const toggleUserTableVisibility = () => {
-      document.querySelector(`.${DOM$1.WH_USER_TABLE_CONTAINER}`).classList.toggle('tableWH__container--hidden');
+      document.querySelector(`.${DOM$1.WH_USER_TABLE_CONTAINER}`).classList.toggle(`.${DOM$1.WH_USER_TABLE_CONTAINER}--hidden`);
     };
 
     const renderSettings = () => {
       document.querySelector(DOM$1.ACTIVE_NAV_ELEMENT).classList.remove('active');
       document.querySelector(`.${DOM$1.WH_NAV_SETTINGS_LINK}`).classList.add('active');
-      
-      const settingsFormElement = document.querySelector(DOM$1.SETTINGS_FORM_ELEMENT);
     
       settingsFormElement.innerHTML = '';
       settingsFormElement.innerHTML = settingsMarkup;
@@ -553,16 +552,26 @@
       generateUserTables();
     };
 
-    //temporaru, until proper event handler & propagation is implemented
-    const handleForm = () => {
-      document.getElementById('showMarkedUserTable').addEventListener('change', toggleUserTableVisibility);
+    //temporary, until proper event handler & propagation is implemented
+    const handleForm = event => {
+      if ((event.target.nodeName === 'input' || event.target.nodeName === 'label') && (event.target.id !== 'showMarkedUserTable' || event.target.getAttribute('for') !== 'showMarkedUserTable')) {
+        settings[event.target.id || event.target.getAttribute('for')] = !settings[event.target.id || event.target.getAttribute('for')];
+        console.log(settings);
+      }
+      if (event.target.id !== 'showMarkedUserTable' || event.target.getAttribute('for') !== 'showMarkedUserTable') {
+        toggleUserTableVisibility();
+      }
+    };
+
+    const listenForSettingsChange = () => {
+      settingsFormElement.addEventListener('change', handleForm(event));
     };
 
     const init = () => {
       injectStyles(stylesSettings);
       renderSettings();
       prepareLocalStorage();
-      handleForm();
+      listenForSettingsChange();
     };
 
     init();
@@ -575,7 +584,7 @@
     if (localStorage.getItem('WHupdate') && localStorage.getItem('WHupdate') < version) {
       Swal.fire({
         title: 'WykopHelper zaktualizowany!',
-        html: 'Dodatek WykopHelper zosta&#x0142; w&#x0142;a&#x015b;nie zaktualizowany. Wprowadzone zmiany to: <br><ul style="margin-top:1rem; list-style-type:square"><li style="text-align:left;margin-left:2rem">w ustawieniach (wykopu) pojawi&#x142;a si&#x119; zak&#x142;adka &#x22;WykopHelper&#x22; - tam docelowo znajd&#x105; si&#x119; wszystkie opcje konfiguracyjne dodatku. Aktualnie funkcjonuje jedynie podgl&#x105;d listy wszystkich oznaczonych u&#x17C;ytkownik&#xF3;w.</li></ul>',
+        html: 'Dodatek WykopHelper zosta\u0142 w\u0142a\u015Bnie zaktualizowany. Wprowadzone zmiany to: <br><ul style="margin-top:1rem; list-style-type:square"><li style="text-align:left;margin-left:2rem">w ustawieniach (wykopu) pojawi&#x142;a si&#x119; zak&#x142;adka &#x22;WykopHelper&#x22; - tam docelowo znajd&#x105; si&#x119; wszystkie opcje konfiguracyjne dodatku. Aktualnie funkcjonuje jedynie podgl&#x105;d listy wszystkich oznaczonych u&#x17C;ytkownik&#xF3;w.</li></ul>',
         icon: 'info',
         confirmButtonText: 'Okej!'
       });

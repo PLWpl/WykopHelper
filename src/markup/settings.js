@@ -11,7 +11,7 @@ export const settingsMarkup = `
           disabled
         />
         <label class="settings__crossed inline" for="XhideMarkedUser"
-          >Ukrywaj tre&#x15B;ci oznakowanych u&#x17C;ytkownik&#xF3;w (tak jak na czarnej li&#x15B;cie)</label
+          >Ukrywaj treści oznakowanych użytkowników (tak jak na czarnej liście)</label
         >
       </div>
       <div class="row">
@@ -22,7 +22,7 @@ export const settingsMarkup = `
           id="warnOnReload"
           disabled
         />
-        <label class="settings__crossed inline" for="XwarnOnReload">Ostrzegaj przy pr&#xF3;bie zamkni&#x119;cia/prze&#x142;adowania strony gdy wykryto pisanie komentarza</label>
+        <label class="settings__crossed inline" for="XwarnOnReload">Ostrzegaj przy próbie zamknięcia/przeładowania strony gdy wykryto pisanie komentarza</label>
       </div>
       <div class="row">
         <input
@@ -32,7 +32,7 @@ export const settingsMarkup = `
           id="removeAllMarked"
           disabled
         />
-        <label class="settings__crossed inline" for="XremoveAllMarked">Usu&#x144; wszystkich oznaczonych u&#x17C;ytkownik&#xF3;w [AKCJA NIEODWRACALNA]</label>
+        <label class="settings__crossed inline" for="XremoveAllMarked">Usuń wszystkich oznaczonych użytkowników [AKCJA NIEODWRACALNA]</label>
       </div>
       <div class="row">
         <input
@@ -41,7 +41,7 @@ export const settingsMarkup = `
           name="wh[show_marked_user_table]"
           id="showMarkedUserTable"
         />
-        <label class="inline" for="showMarkedUserTable">Poka&#x17C; tabel&#x119; z oznaczonymi u&#x17C;ytkownikami</label>
+        <label class="inline" for="showMarkedUserTable">Pokaż tabelę z oznaczonymi użytkownikami</label>
       </div>
     </div>
   </fieldset>
@@ -49,7 +49,7 @@ export const settingsMarkup = `
 
 export const settingsUserTable = `
 <div class="tableWH__container tableWH__container--hidden">
-  <h4 class="tableWH__heading">WykopHelper - Lista oznaczonych u&#x17C;ytkownik&#xF3;w</h4>
+  <h4 class="tableWH__heading">WykopHelper - Lista oznaczonych użytkowników</h4>
   <table class="tableWH">
     <thead class="tableWH__head">
       <tr>
