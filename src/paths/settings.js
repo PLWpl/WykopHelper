@@ -19,7 +19,8 @@ export const handleWhSettings = () => {
       DEFAULT_COLOR: 'red'
     },
     GENERAL: {
-      WARN_ON_RELOAD: false,
+      WARN_ON_RELOAD: true,
+      WARN_ON_SUSPECTED_RUSSIAN_PROPAGANDA: true,
     }
   };
   const settingsFormElement = document.querySelector(DOM.SETTINGS_FORM_ELEMENT);
@@ -30,6 +31,7 @@ export const handleWhSettings = () => {
         settings = JSON.parse(localStorage.getItem(STORAGE_KEY_NAMES.WH_SETTINGS));
       } else {
         settings = initialSettings;
+        localStorage.setItem(STORAGE_KEY_NAMES.WH_SETTINGS, JSON.stringify(settings));
       }
     } else if ([...types].includes('markedUsers')) {
       if (localStorage.getItem(STORAGE_KEY_NAMES.MARKED_USERS)) {
@@ -45,6 +47,13 @@ export const handleWhSettings = () => {
       }
     }
   };
+
+  const wipeAllMarkedUsers = () => {
+    uniqueNicksSet = [];
+    trolls = [];
+    localStorage.setItem(STORAGE_KEY_NAMES.UNIQUE_USERS, JSON.stringify(uniqueNicksSet));
+    localStorage.setItem(STORAGE_KEY_NAMES.MARKED_USERS, JSON.stringify(trolls));
+  }
 
   const generateUserTables = () => {
     prepareLocalStorage('markedUsers');
@@ -67,7 +76,14 @@ export const handleWhSettings = () => {
   }
 
   const toggleUserTableVisibility = () => {
-    document.querySelector(`.${DOM.WH_USER_TABLE_CONTAINER}`).classList.toggle(`.${DOM.WH_USER_TABLE_CONTAINER}--hidden`);
+    document.querySelector(`.${DOM.WH_USER_TABLE_CONTAINER}`)
+      .classList.toggle(`${DOM.WH_USER_TABLE_CONTAINER}--hidden`);
+
+    if (document.querySelector(`.${DOM.WH_USER_TABLE_CONTAINER}--hidden`)) {
+      document.getElementById('showAllMarked').textContent = 'Pokaż wszystkich oznaczonych użytkowników';
+    } else {
+      document.getElementById('showAllMarked').textContent = 'Schowaj tabelę';
+    }
   }
 
   const renderSettings = () => {
@@ -83,26 +99,38 @@ export const handleWhSettings = () => {
     generateUserTables();
   };
 
-  //temporary, until proper event handler & propagation is implemented
-  const handleForm = event => {
-    if ((event.target.nodeName === 'input' || event.target.nodeName === 'label') && (event.target.id !== 'showMarkedUserTable' || event.target.getAttribute('for') !== 'showMarkedUserTable')) {
-      settings[event.target.id || event.target.getAttribute('for')] = !settings[event.target.id || event.target.getAttribute('for')];
-      console.log(settings)
-    }
-    if (event.target.id !== 'showMarkedUserTable' || event.target.getAttribute('for') !== 'showMarkedUserTable') {
-      toggleUserTableVisibility();
-    }
-  }
+  const handleSettingsForm = () => {
+    settingsFormElement.addEventListener('change', event => {
+      const category = event.target.getAttribute('category');
+      const name = event.target.name;
 
-  const listenForSettingsChange = () => {
-    settingsFormElement.addEventListener('change', handleForm(event));
+      if (event.target.id !== 'showMarkedUserTable' && event.target.getAttribute('category') !== 'SPECIAL') {
+        settings[category][name] = !settings[category][name];
+        localStorage.setItem(STORAGE_KEY_NAMES.WH_SETTINGS, JSON.stringify(settings));
+      }
+    });
+
+    settingsFormElement.addEventListener('click', event => {
+      if (event.target.id === 'showAllMarked') {
+        event.preventDefault();
+        toggleUserTableVisibility();
+      }
+      if (event.target.id === 'allowWipeAllMarked') {
+        document.getElementById('whsettings__remove-all-marked').disabled = false;
+        document.getElementById('whsettings__remove-all-marked').style.opacity = 1;
+      }
+      if (event.target.id === 'whsettings__remove-all-marked') {
+        event.preventDefault();
+        wipeAllMarkedUsers();
+      }
+    })
   }
 
   const init = () => {
     injectStyles(stylesSettings);
     renderSettings();
     prepareLocalStorage();
-    listenForSettingsChange();
+    handleSettingsForm();
   }
 
   init();

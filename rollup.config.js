@@ -39,7 +39,7 @@ export default {
         banner('@downloadURL  http://plw.usermd.net/whhelper.js'),
         banner('@updateURL    http://plw.usermd.net/whhelper.js'),
         banner('@version      <%= pkg.version %>'),
-        banner('@name         Wykopowe trole'),
+        banner('@name         WykopHelper'),
         banner('==UserScript=='),
       ]
     },
@@ -59,7 +59,7 @@ export default {
         banner('@downloadURL  http://plw.usermd.net/whhelper.js'),
         banner('@updateURL    http://plw.usermd.net/whhelper.js'),
         banner('@version      <%= pkg.version %>'),
-        banner('@name         Wykopowe trole - DEV'),
+        banner('@name         WykopHelper - DEV'),
         banner('==UserScript=='),
       ]
     }

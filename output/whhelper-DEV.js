@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         Wykopowe trole - DEV
+// @name         WykopHelper - DEV
 // @version      0.22
 // @updateURL    http://plw.usermd.net/whhelper.js
 // @downloadURL  http://plw.usermd.net/whhelper.js
@@ -23,7 +23,7 @@
         path.indexOf("wykop.pl/mikroblog/") > -1 ||
         path.indexOf("wykop.pl/wpis/") > -1 ||
         path.indexOf("wykop.pl/moj/") > -1 ||
-        path.indexOf("wykop.pl/tag/wpisy") > -1
+        path.indexOf("wykop.pl/tag/") > -1
       ) {
         return true;
       }
@@ -405,52 +405,67 @@
   };
 
   const settingsMarkup = `
-  <fieldset>
-    <h4>WykopHelper - Ustawienia</h4>
-    <div class="space">
-      <div class="row">
-        <input
-          class="checkbox"
-          type="checkbox"
-          name="wh[hide_marked_user]"
-          id="hideMarkedUser"
-          disabled
-        />
-        <label class="settings__crossed inline" for="XhideMarkedUser"
-          >Ukrywaj treści oznakowanych użytkowników (tak jak na czarnej liście)</label
-        >
-      </div>
-      <div class="row">
-        <input
-          class="checkbox"
-          type="checkbox"
-          name="wh[warn_on_reload]"
-          id="warnOnReload"
-          disabled
-        />
-        <label class="settings__crossed inline" for="XwarnOnReload">Ostrzegaj przy próbie zamknięcia/przeładowania strony gdy wykryto pisanie komentarza</label>
-      </div>
-      <div class="row">
-        <input
-          class="checkbox"
-          type="checkbox"
-          name="wh[remove_all_marked]"
-          id="removeAllMarked"
-          disabled
-        />
-        <label class="settings__crossed inline" for="XremoveAllMarked">Usuń wszystkich oznaczonych użytkowników [AKCJA NIEODWRACALNA]</label>
-      </div>
-      <div class="row">
-        <input
-          class="checkbox"
-          type="checkbox"
-          name="wh[show_marked_user_table]"
-          id="showMarkedUserTable"
-        />
-        <label class="inline" for="showMarkedUserTable">Pokaż tabelę z oznaczonymi użytkownikami</label>
-      </div>
+<fieldset>
+  <h4>WykopHelper - Ustawienia</h4>
+<!-- GENERAL -->
+  <div class="space settings--general">
+    <div class="row">
+      <input
+        class="checkbox"
+        type="checkbox"
+        category="GENERAL"
+        name="WARN_ON_RELOAD"
+        id="warnOnReload"
+        checked
+      />
+      <label class="inline" for="warnOnReload">Ostrzegaj przy próbie zamknięcia/przeładowania strony gdy wykryto pisanie komentarza</label>
     </div>
-  </fieldset>
+    <div class="row">
+      <input
+        class="checkbox"
+        type="checkbox"
+        category="GENERAL"
+        name="WARN_ON_SUSPECTED_RUSSIAN_PROPAGANDA"
+        id="warnOnRussian"
+        checked
+      />
+      <label class="inline" for="warnOnRussian">Oznaczaj znaleziska ze źródeł podejrzewanych o szerzenie Rosyjskiej propagandy [<a href="#">Więcej -></a>]</label>
+    </div>
+  </div>
+<!--  BADGE -->
+  <div class="space settings--badge">
+    <div class="row">
+      <input
+        class="checkbox"
+        type="checkbox"
+        category="BADGE"
+        name="HIDE_MARKED_USERS"
+        id="hideMarkedUser"
+      />
+      <label class="inline" for="hideMarkedUser">Ukrywaj treści oznakowanych użytkowników (tak jak na czarnej liście)</label>
+    </div>
+  </div>
+<!-- SPECIAL -->
+  <div class="space settings--special">
+    <div class="row">
+      <small>Jeśli chcesz wyczyścić listę oznaczonych wcześniej użytkowników, możesz to zrobić poniżej. W związku z tym, że jest to akcja nieodwracalna, musisz najpierw potwierdzić, że na pewno taki jest Twój cel - odblokowany zostanie wówczas przycisk, którym usuniesz ze swojej listy wszystkich użytkowników. Uwaga - po kliknięciu przycisku akcja wykonywana jest natychmiast, bez dodatkowych potwierdzeń!</small>
+      <input
+        class="checkbox"
+        type="checkbox"
+        category="SPECIAL"
+        name="ALLOW_WIPE_MARKED_LIST"
+        id="allowWipeAllMarked"
+      />
+      <label class="inline" for="allowWipeAllMarked">Zaznacz by odblokować możliwość wyczyszczenia listy</label>
+    </div>
+    <div class="row space">
+      <button style="opacity:0.4" id="whsettings__remove-all-marked" disabled>Wyczyść</button>
+    </div>
+    <div class="row space">
+      <button class="button" id="showAllMarked">Pokaż wszystkich oznaczonych użytkowników</button>
+    </div>
+  </div>
+</fieldset>
 `;
 
   const settingsUserTable = `
@@ -488,7 +503,8 @@
         DEFAULT_COLOR: 'red'
       },
       GENERAL: {
-        WARN_ON_RELOAD: false,
+        WARN_ON_RELOAD: true,
+        WARN_ON_SUSPECTED_RUSSIAN_PROPAGANDA: true,
       }
     };
     const settingsFormElement = document.querySelector(DOM$1.SETTINGS_FORM_ELEMENT);
@@ -499,6 +515,7 @@
           settings = JSON.parse(localStorage.getItem(STORAGE_KEY_NAMES.WH_SETTINGS));
         } else {
           settings = initialSettings;
+          localStorage.setItem(STORAGE_KEY_NAMES.WH_SETTINGS, JSON.stringify(settings));
         }
       } else if ([...types].includes('markedUsers')) {
         if (localStorage.getItem(STORAGE_KEY_NAMES.MARKED_USERS)) {
@@ -513,6 +530,13 @@
           uniqueNicksSet = [];
         }
       }
+    };
+
+    const wipeAllMarkedUsers = () => {
+      uniqueNicksSet = [];
+      trolls = [];
+      localStorage.setItem(STORAGE_KEY_NAMES.UNIQUE_USERS, JSON.stringify(uniqueNicksSet));
+      localStorage.setItem(STORAGE_KEY_NAMES.MARKED_USERS, JSON.stringify(trolls));
     };
 
     const generateUserTables = () => {
@@ -536,7 +560,14 @@
     };
 
     const toggleUserTableVisibility = () => {
-      document.querySelector(`.${DOM$1.WH_USER_TABLE_CONTAINER}`).classList.toggle(`.${DOM$1.WH_USER_TABLE_CONTAINER}--hidden`);
+      document.querySelector(`.${DOM$1.WH_USER_TABLE_CONTAINER}`)
+        .classList.toggle(`${DOM$1.WH_USER_TABLE_CONTAINER}--hidden`);
+
+      if (document.querySelector(`.${DOM$1.WH_USER_TABLE_CONTAINER}--hidden`)) {
+        document.getElementById('showAllMarked').textContent = 'Poka\u017C wszystkich oznaczonych u\u017Cytkownik\xF3w';
+      } else {
+        document.getElementById('showAllMarked').textContent = 'Schowaj tabel\u0119';
+      }
     };
 
     const renderSettings = () => {
@@ -552,26 +583,38 @@
       generateUserTables();
     };
 
-    //temporary, until proper event handler & propagation is implemented
-    const handleForm = event => {
-      if ((event.target.nodeName === 'input' || event.target.nodeName === 'label') && (event.target.id !== 'showMarkedUserTable' || event.target.getAttribute('for') !== 'showMarkedUserTable')) {
-        settings[event.target.id || event.target.getAttribute('for')] = !settings[event.target.id || event.target.getAttribute('for')];
-        console.log(settings);
-      }
-      if (event.target.id !== 'showMarkedUserTable' || event.target.getAttribute('for') !== 'showMarkedUserTable') {
-        toggleUserTableVisibility();
-      }
-    };
+    const handleSettingsForm = () => {
+      settingsFormElement.addEventListener('change', event => {
+        const category = event.target.getAttribute('category');
+        const name = event.target.name;
 
-    const listenForSettingsChange = () => {
-      settingsFormElement.addEventListener('change', handleForm(event));
+        if (event.target.id !== 'showMarkedUserTable' && event.target.getAttribute('category') !== 'SPECIAL') {
+          settings[category][name] = !settings[category][name];
+          localStorage.setItem(STORAGE_KEY_NAMES.WH_SETTINGS, JSON.stringify(settings));
+        }
+      });
+
+      settingsFormElement.addEventListener('click', event => {
+        if (event.target.id === 'showAllMarked') {
+          event.preventDefault();
+          toggleUserTableVisibility();
+        }
+        if (event.target.id === 'allowWipeAllMarked') {
+          document.getElementById('whsettings__remove-all-marked').disabled = false;
+          document.getElementById('whsettings__remove-all-marked').style.opacity = 1;
+        }
+        if (event.target.id === 'whsettings__remove-all-marked') {
+          event.preventDefault();
+          wipeAllMarkedUsers();
+        }
+      });
     };
 
     const init = () => {
       injectStyles(stylesSettings);
       renderSettings();
       prepareLocalStorage();
-      listenForSettingsChange();
+      handleSettingsForm();
     };
 
     init();
