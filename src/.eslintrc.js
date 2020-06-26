@@ -12,7 +12,8 @@ module.exports = {
   'curly': ['error', 'all'], // https://eslint.org/docs/rules/curly
   'global-require': 0, // https://eslint.org/docs/rules/global-require
   'no-alert': 'warn', // https://eslint.org/docs/rules/no-alert
-  'no-console': 'error', // https://eslint.org/docs/rules/no-console
+  'no-console': 'warn', // https://eslint.org/docs/rules/no-console
+  'no-debugger': 'warn', // https://eslint.org/docs/rules/no-debugger
   'no-div-regex': 'error', // https://eslint.org/docs/rules/no-div-regex
   'no-new': 'off', // https://eslint.org/docs/rules/no-new
   'no-param-reassign': 'off', // https://eslint.org/docs/rules/no-param-reassign

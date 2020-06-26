@@ -1,6 +1,59 @@
 'use strict';
 
-const styles = `
+const path = location.href;
+
+const isPath = {
+  main: () => {
+    if (
+      path.indexOf("wykop.pl/link/") > -1 ||
+      path.indexOf("wykop.pl/mikroblog/") > -1 ||
+      path.indexOf("wykop.pl/wpis/") > -1 ||
+      path.indexOf("wykop.pl/moj/") > -1 ||
+      path.indexOf("wykop.pl/tag/") > -1
+    ) {
+      return true;
+    }
+    return false;
+  },
+
+  settings: () => !!(path.indexOf("wykop.pl/ustawienia/") > -1),
+  
+  whSettings: () => !!(path.indexOf("wykop.pl/ustawienia/wykophelper") > -1),
+};
+
+const STORAGE_KEY_NAMES = {
+  MARKED_USERS: 'trolls',
+  UNIQUE_USERS: 'uniqueNicks',
+  WH_SETTINGS: 'whsettings',
+};
+
+const DOM_SELECTORS = {
+  BADGE: {
+    NICK_ELEMENTS: 'li div.author',
+    NICK_ELEMENT: 'author',
+    NICK: '.showProfileSummary > b',
+    BADGE: 'badge',
+    MARK_BUTTON: 'buttonWH',
+    MARK_BUTTON_CLICKED: 'buttonWH--clicked',
+    REPLY_FORM: '.replyForm textarea',
+    COMMENT_FORM: '#commentFormContainer textarea',
+    DATASET: {
+      USERNAME: nick => `[data-whusername='${nick}`,
+    },
+    MODAL_BUTTON_REMOVE: 'modalWH-button--remove',
+  },
+  SETTINGS: {
+    LAST_NAV_ELEMENT: '#site .nav > ul > li:last-child',
+    ACTIVE_NAV_ELEMENT: '#site .nav > ul .active',
+    SETTINGS_FORM_ELEMENT: '#site .grid-main .settings',
+    WH_NAV_SETTINGS_LINK: 'whSettingsLink',
+    WH_USER_TABLE: 'tableWH',
+    WH_USER_TABLE_CONTAINER: 'tableWH__container',
+    WH_USER_TABLE_BODY: 'tableWH__body'
+  }
+};
+
+const stylesBadge = `
 .buttonWH {
   display: inline-block;
   padding: .2rem .2rem;
@@ -52,6 +105,24 @@ const styles = `
 .tippy-content {
   display: flex;
   flex-direction: column;
+}
+`;
+
+const stylesSettings = `
+.tableWH__container {
+  padding: 1rem;
+}
+.tableWH__container--hidden {
+  display: none;
+}
+.tableWH__head {
+  font-weight: bold;
+  border-bottom: 2px solid currentColor;
+}
+.settings__crossed {
+  opacity: .4;
+  text-decoration: line-through;
+  cursor: not-allowed;
 }`;
 
 const buttonMarkup = `<span class="buttonWH">Oznacz</span>`;
@@ -61,10 +132,10 @@ const buttonMarkup = `<span class="buttonWH">Oznacz</span>`;
 const badge = (nick, name = 'debil') => `<span class="badge badge--${name.toLowerCase()}" data-whusername="${nick}">${name.toLowerCase().capitalize()}</span>`;
 
 const modalMarkup = (link, nick) => `
-  <p class="modalWH-text">Pow&oacute;d oznaczenia: 
+  <p class="modalWH-text">Powód  oznaczenia: 
     <a href="${link}" target="_blank">link</a>
   </p>
-  <span class="modalWH-button modalWH-button--remove" data-whuserremove="${nick}">Usu&#x0144; oznaczenie</span>
+  <span class="modalWH-button modalWH-button--remove" data-whuserremove="${nick}">Usuń oznaczenie</span>
 `;
 
 const addModal = (element, content) => {
@@ -78,10 +149,15 @@ const addModal = (element, content) => {
   });
 };
 
-const mainFunctionality = () => {
-  const parseToObject = string => JSON.parse(string);
-  const stringifyObject = object => JSON.stringify(object);
+//inject styles. Parameter must be a string of CSS without any html tags
+const injectStyles = styles => {
+  const styleMarkup = `<style> ${styles} </style>`;
+  document.body.insertAdjacentHTML('afterbegin', styleMarkup);
+};
 
+const { BADGE: DOM } = DOM_SELECTORS;
+
+const handleBadges = () => {
   /**
    * uniqueNicksSet - an array keeping nicks of all users added to the troll list. It exists so that before adding any user on a list we can easily check if they haven't already been added, using simple includes() method.
    * trolls - an object with user nicks and links to an offending posts.
@@ -99,13 +175,13 @@ const mainFunctionality = () => {
   // checks if provided nick has already been entered into the list. If it hasn't, it pushes it to the uniqueNicksSet array.
   const addNickToUniqueNicksArray = nick => {
     uniqueNicksSet.push(nick);
-    localStorage.setItem("uniqueNicks", stringifyObject(uniqueNicksSet));
+    localStorage.setItem(STORAGE_KEY_NAMES.UNIQUE_USERS, JSON.stringify(uniqueNicksSet));
   };
 
   // adds nick to trolls array of objects along with the link
   const addNickToTrollsArray = (nick, link) => {
     trolls.push({ nick: nick, link: link });
-    localStorage.setItem("trolls", stringifyObject(trolls));
+    localStorage.setItem(STORAGE_KEY_NAMES.MARKED_USERS, JSON.stringify(trolls));
   };
 
   const addNickToArrays = (nick, link) => {
@@ -116,25 +192,25 @@ const mainFunctionality = () => {
   };
 
   // function returns a nodeList with all <div> elements containing line with nick, time since comment made, [+][-]
-  const getAllNickElements = () => document.querySelectorAll("li div.author");
+  const getAllNickElements = () => document.querySelectorAll(DOM.NICK_ELEMENTS);
 
   
   //used on element - preferably one returned from getAllNickElements() - returns string with nick name.
-  const getNick = el => el.querySelector(".showProfileSummary > b").innerText;
+  const getNick = el => el.querySelector(DOM.NICK).innerText;
 
   const reloadPage = () => location.reload();
 
   // used on author element, returned from getAllNickElements(), checks if person has already been marked with a badge
-  const isNotAwarded = element => !(element.querySelector('.badge'));
+  const isNotAwarded = element => !(element.querySelector(`.${DOM.BADGE}`));
 
   // used on author element, returned from getAllNickElements(), checks if person has already been given a button
-  const hasButtonAppended = element => !!(element.querySelector('.buttonWH'));
+  const hasButtonAppended = element => !!(element.querySelector(`.${DOM.MARK_BUTTON}`));
 
   // checks if any textarea on a page is empty, to prevent reloading of a page while user might be attempting to write some comment or similar
 
   const isTextareaEmpty = () => {
-    const replyForm = document.querySelector('.replyForm textarea');
-    const commentForm = document.querySelector('#commentFormContainer textarea');
+    const replyForm = document.querySelector(DOM.REPLY_FORM);
+    const commentForm = document.querySelector(DOM.COMMENT_FORM);
 
     if ((replyForm && replyForm.value !== "") || (commentForm && commentForm.value !== "")) {
       return false;
@@ -143,22 +219,16 @@ const mainFunctionality = () => {
     }
   };
 
-  //inject styles. Parameter must be a string of CSS without any html tags
-  const injectStyles = styles => {
-    const styleMarkup = `<style> ${styles} </style>`;
-    document.body.insertAdjacentHTML('afterbegin', styleMarkup);
-  };
-
   // prepares localStorage. Checks if trolls and uniqueNicksSet are already present and saved to localStorage. If so, it parses it to arrays. If not, it initializes empty ones.
   const prepareLocalStorage = () => {
-    if (localStorage.getItem("trolls")) {
-      trolls = parseToObject(localStorage.getItem("trolls"));
+    if (localStorage.getItem(STORAGE_KEY_NAMES.MARKED_USERS)) {
+      trolls = JSON.parse(localStorage.getItem(STORAGE_KEY_NAMES.MARKED_USERS));
     } else {
       trolls = [];
     }
 
-    if (localStorage.getItem("uniqueNicks")) {
-      uniqueNicksSet = parseToObject(localStorage.getItem("uniqueNicks"));
+    if (localStorage.getItem(STORAGE_KEY_NAMES.UNIQUE_USERS)) {
+      uniqueNicksSet = JSON.parse(localStorage.getItem(STORAGE_KEY_NAMES.UNIQUE_USERS));
     } else {
       uniqueNicksSet = [];
     }
@@ -197,9 +267,9 @@ const mainFunctionality = () => {
         }
         if (isTroll(nick) 
           && isNotAwarded(element) 
-          && element.querySelector('buttonWH') 
-          && !element.querySelector('buttonWH--clicked')) {
-          element.querySelector('.buttonWH').remove();
+          && element.querySelector(`.${DOM.MARK_BUTTON}`) 
+          && !element.querySelector(`.${DOM.MARK_BUTTON_CLICKED}`)) {
+          element.querySelector(`.${DOM.MARK_BUTTON}`).remove();
         }
       });
     }
@@ -212,11 +282,11 @@ const mainFunctionality = () => {
   // First, get nick of the author. Then, get link of the offending comment. 
   const addNewTroll = event => {
     prepareLocalStorage();
-    const nick = getNick(event.target.closest(".author"));
-    const link = event.target.closest(".author").querySelector("a + a").href;
+    const nick = getNick(event.target.closest(`.${DOM.NICK_ELEMENT}`));
+    const link = event.target.closest(`.${DOM.NICK_ELEMENT}`).querySelector("a + a").href;
 
-    event.target.classList.add("buttonWH--clicked");
-    event.target.innerText = "✔";
+    event.target.classList.add(DOM.MARK_BUTTON_CLICKED);
+    event.target.innerText = "\u2714";
     setTimeout(() => {
       event.target.remove();
     }, 700);
@@ -231,11 +301,11 @@ const mainFunctionality = () => {
       if (item.nick === nick) {
         delete trolls[index];
         trolls = trolls.filter(el => el != null);
-        localStorage.setItem("trolls", stringifyObject(trolls));
+        localStorage.setItem(STORAGE_KEY_NAMES.MARKED_USERS, JSON.stringify(trolls));
       }
     }
     uniqueNicksSet = uniqueNicksSet.filter(el => el !== nick);
-    localStorage.setItem("uniqueNicks", stringifyObject(uniqueNicksSet));
+    localStorage.setItem(STORAGE_KEY_NAMES.UNIQUE_USERS, JSON.stringify(uniqueNicksSet));
     
     if (isTextareaEmpty) {
       reloadPage();
@@ -262,13 +332,6 @@ const mainFunctionality = () => {
   // gets user data from objects inside trolls array. For now the only useful data returned is link to the offending post
   const getNickData = nick => {
     prepareLocalStorage();
-    // for (let item of trolls) {
-    //   if (item.nick === nick) {
-    //     return { link: item.link, nick: item.nick };
-    //   } else if (item == undefined || item == null || !item) {
-    //     continue;
-    //   }
-    // }
     for (let i = 0; i < trolls.length; i++) {
       if (trolls[i].nick === nick) {
         return { link: trolls[i].link, nick: trolls[i].nick };
@@ -287,10 +350,10 @@ const mainFunctionality = () => {
   };
 
   const initializeModal = () => {
-    if (document.querySelector('.badge')) {
-      document.querySelectorAll('.badge').forEach(el => {
+    if (document.querySelector(`.${DOM.BADGE}`)) {
+      document.querySelectorAll(`.${DOM.BADGE}`).forEach(el => {
         const nick = el.dataset.whusername;
-        setTimeout(showUserModal(`[data-whusername='${nick}']`), 1150);
+        setTimeout(showUserModal(DOM.DATASET.USERNAME(nick)), 1150);
       });
     }
   };
@@ -299,7 +362,7 @@ const mainFunctionality = () => {
    * Above is setup. Actual job gets done below
    */
 
-  injectStyles(styles);
+  injectStyles(stylesBadge);
   prepareLocalStorage();
   markUsers();
   initializeModal();
@@ -309,7 +372,7 @@ const mainFunctionality = () => {
     .getElementById('itemsStream')
     .addEventListener('click', event => {
       const target = event.target;
-      if (target.classList.contains('buttonWH')) {
+      if (target.classList.contains(DOM.MARK_BUTTON)) {
         addNewTroll(event);
       }
       if (target.classList.contains('affect') && target.closest('.more')) {
@@ -318,55 +381,239 @@ const mainFunctionality = () => {
           markUsers();
         }, 500);  
       }
-      // if (target.classList.contains('badge')) {
-      //   const nick = target.dataset.whusername;
-      //   showUserModal(`[data-whusername='${nick}']`);
-      // }
-      if (target.classList.contains('modalWH-button--remove')) {
+      if (target.classList.contains(DOM.MODAL_BUTTON_REMOVE)) {
         //eslint-disable-next-line
         console.log(target);
         const nick = target.dataset.whuserremove;
         removeTroll(nick);
       }
     });
-  // window.addEventListener('load', () => {
-  //   if (document.querySelector('.badge')) {
-  //     document.querySelectorAll('.badge').forEach(el => {
-  //       const nick = el.dataset.whusername;
-  //       showUserModal(`[data-whusername='${nick}']`);
-  //     });
-  //   }
-  // })
-  document
-    .getElementById('itemsStream')
-    .addEventListener('mouseover', event => {
-      // handle modals on hover - shouldn't it happen on its own?
+};
+
+const settingsMarkup = `
+<fieldset>
+  <h4>WykopHelper - Ustawienia</h4>
+<!-- GENERAL -->
+  <div class="space settings--general">
+    <div class="row">
+      <input
+        class="checkbox"
+        type="checkbox"
+        category="GENERAL"
+        name="WARN_ON_RELOAD"
+        id="warnOnReload"
+        checked
+      />
+      <label class="inline" for="warnOnReload">Ostrzegaj przy próbie zamknięcia/przeładowania strony gdy wykryto pisanie komentarza</label>
+    </div>
+    <div class="row">
+      <input
+        class="checkbox"
+        type="checkbox"
+        category="GENERAL"
+        name="WARN_ON_SUSPECTED_RUSSIAN_PROPAGANDA"
+        id="warnOnRussian"
+        checked
+      />
+      <label class="inline" for="warnOnRussian">Oznaczaj znaleziska ze źródeł podejrzewanych o szerzenie Rosyjskiej propagandy [<a href="#">Więcej -></a>]</label>
+    </div>
+  </div>
+<!--  BADGE -->
+  <div class="space settings--badge">
+    <div class="row">
+      <input
+        class="checkbox"
+        type="checkbox"
+        category="BADGE"
+        name="HIDE_MARKED_USERS"
+        id="hideMarkedUser"
+      />
+      <label class="inline" for="hideMarkedUser">Ukrywaj treści oznakowanych użytkowników (tak jak na czarnej liście)</label>
+    </div>
+  </div>
+<!-- SPECIAL -->
+  <div class="space settings--special">
+    <div class="row">
+      <small>Jeśli chcesz wyczyścić listę oznaczonych wcześniej użytkowników, możesz to zrobić poniżej. W związku z tym, że jest to akcja nieodwracalna, musisz najpierw potwierdzić, że na pewno taki jest Twój cel - odblokowany zostanie wówczas przycisk, którym usuniesz ze swojej listy wszystkich użytkowników. Uwaga - po kliknięciu przycisku akcja wykonywana jest natychmiast, bez dodatkowych potwierdzeń!</small>
+      <input
+        class="checkbox"
+        type="checkbox"
+        category="SPECIAL"
+        name="ALLOW_WIPE_MARKED_LIST"
+        id="allowWipeAllMarked"
+      />
+      <label class="inline" for="allowWipeAllMarked">Zaznacz by odblokować możliwość wyczyszczenia listy</label>
+    </div>
+    <div class="row space">
+      <button style="opacity:0.4" id="whsettings__remove-all-marked" disabled>Wyczyść</button>
+    </div>
+    <div class="row space">
+      <button class="button" id="showAllMarked">Pokaż wszystkich oznaczonych użytkowników</button>
+    </div>
+  </div>
+</fieldset>
+`;
+
+const settingsUserTable = `
+<div class="tableWH__container tableWH__container--hidden">
+  <h4 class="tableWH__heading">WykopHelper - Lista oznaczonych użytkowników</h4>
+  <table class="tableWH">
+    <thead class="tableWH__head">
+      <tr>
+        <td>no.</td>
+        <td>Nick</td>
+        <td>Typ</td>
+        <td>Link</td>
+      </tr>
+    </thead>
+    <tbody class="tableWH__body">
+    </tbody>
+  </table> 
+</div>
+`;
+
+const settingsNav = `<li class="whSettingsLink"><a href="https://www.wykop.pl/ustawienia/wykophelper/"><span><strong>WykopHelper</strong> &#10024;</span></a></li>`;
+
+const { SETTINGS: DOM$1 } = DOM_SELECTORS;
+
+const handleSettings = () => {
+  document.querySelector(DOM$1.LAST_NAV_ELEMENT).insertAdjacentHTML('beforeend', settingsNav);
+};
+
+const handleWhSettings = () => {
+  let settings, trolls, uniqueNicksSet;
+  const initialSettings = {
+    BADGE: {
+      HIDE_MARKED_USERS: false,
+      DEFAULT_NAME: 'Debil',
+      DEFAULT_COLOR: 'red'
+    },
+    GENERAL: {
+      WARN_ON_RELOAD: true,
+      WARN_ON_SUSPECTED_RUSSIAN_PROPAGANDA: true,
+    }
+  };
+  const settingsFormElement = document.querySelector(DOM$1.SETTINGS_FORM_ELEMENT);
+
+  const prepareLocalStorage = (...types) => {
+    if ([...types].length < 1 || [...types].includes('settings')) {
+      if (localStorage.getItem(STORAGE_KEY_NAMES.WH_SETTINGS)) {
+        settings = JSON.parse(localStorage.getItem(STORAGE_KEY_NAMES.WH_SETTINGS));
+      } else {
+        settings = initialSettings;
+        localStorage.setItem(STORAGE_KEY_NAMES.WH_SETTINGS, JSON.stringify(settings));
+      }
+    } else if ([...types].includes('markedUsers')) {
+      if (localStorage.getItem(STORAGE_KEY_NAMES.MARKED_USERS)) {
+        trolls = JSON.parse(localStorage.getItem(STORAGE_KEY_NAMES.MARKED_USERS));
+      } else {
+        trolls = [];
+      }
+  
+      if (localStorage.getItem(STORAGE_KEY_NAMES.UNIQUE_USERS)) {
+        uniqueNicksSet = JSON.parse(localStorage.getItem(STORAGE_KEY_NAMES.UNIQUE_USERS));
+      } else {
+        uniqueNicksSet = [];
+      }
+    }
+  };
+
+  const wipeAllMarkedUsers = () => {
+    uniqueNicksSet = [];
+    trolls = [];
+    localStorage.setItem(STORAGE_KEY_NAMES.UNIQUE_USERS, JSON.stringify(uniqueNicksSet));
+    localStorage.setItem(STORAGE_KEY_NAMES.MARKED_USERS, JSON.stringify(trolls));
+  };
+
+  const generateUserTables = () => {
+    prepareLocalStorage('markedUsers');
+
+    const rowItemMarkup = (index, nick, type, link) => `
+    <tr>
+      <td>${index}</td>
+      <td><a href="https://www.wykop.pl/ludzie/${nick}" target="_blank">${nick}</a></td>
+      <td>${type}</td>
+      <td><a href="${link}" target="_blank">&#128279</a></td>
+    </tr>
+    `;
+
+    const tableBody = document.querySelector(`.${DOM$1.WH_USER_TABLE_BODY}`);
+
+    for (let i = 0; i < trolls.length; i++) {
+      const el = trolls[i];
+      tableBody.insertAdjacentHTML('beforeend', rowItemMarkup(i+1, el.nick, el.type || 'Debil', el.link ));
+    }
+  };
+
+  const toggleUserTableVisibility = () => {
+    document.querySelector(`.${DOM$1.WH_USER_TABLE_CONTAINER}`)
+      .classList.toggle(`${DOM$1.WH_USER_TABLE_CONTAINER}--hidden`);
+
+    if (document.querySelector(`.${DOM$1.WH_USER_TABLE_CONTAINER}--hidden`)) {
+      document.getElementById('showAllMarked').textContent = 'Poka\u017C wszystkich oznaczonych u\u017Cytkownik\xF3w';
+    } else {
+      document.getElementById('showAllMarked').textContent = 'Schowaj tabel\u0119';
+    }
+  };
+
+  const renderSettings = () => {
+    document.querySelector(DOM$1.ACTIVE_NAV_ELEMENT).classList.remove('active');
+    document.querySelector(`.${DOM$1.WH_NAV_SETTINGS_LINK}`).classList.add('active');
+  
+    settingsFormElement.innerHTML = '';
+    settingsFormElement.innerHTML = settingsMarkup;
+    settingsFormElement.removeAttribute('method');
+    settingsFormElement.removeAttribute('action');
+
+    settingsFormElement.insertAdjacentHTML('afterend', settingsUserTable);
+    generateUserTables();
+  };
+
+  const handleSettingsForm = () => {
+    settingsFormElement.addEventListener('change', event => {
+      const category = event.target.getAttribute('category');
+      const name = event.target.name;
+
+      if (event.target.id !== 'showMarkedUserTable' && event.target.getAttribute('category') !== 'SPECIAL') {
+        settings[category][name] = !settings[category][name];
+        localStorage.setItem(STORAGE_KEY_NAMES.WH_SETTINGS, JSON.stringify(settings));
+      }
     });
+
+    settingsFormElement.addEventListener('click', event => {
+      if (event.target.id === 'showAllMarked') {
+        event.preventDefault();
+        toggleUserTableVisibility();
+      }
+      if (event.target.id === 'allowWipeAllMarked') {
+        document.getElementById('whsettings__remove-all-marked').disabled = false;
+        document.getElementById('whsettings__remove-all-marked').style.opacity = 1;
+      }
+      if (event.target.id === 'whsettings__remove-all-marked') {
+        event.preventDefault();
+        wipeAllMarkedUsers();
+      }
+    });
+  };
+
+  const init = () => {
+    injectStyles(stylesSettings);
+    renderSettings();
+    prepareLocalStorage();
+    handleSettingsForm();
+  };
+
+  init();
 };
 
-const path = location.href;
-
-const isPathForMain = () => {
-  if (
-    path.indexOf('wykop.pl/link/') > -1
-    || path.indexOf('wykop.pl/mikroblog/') > -1
-    || path.indexOf('wykop.pl/wpis/') > -1
-    || path.indexOf('wykop.pl/moj/') > -1
-    || path.indexOf('wykop.pl/tag/wpisy') > -1
-  ) { 
-    return true;
-  }
-  return false;
-};
-
-/* eslint-disable no-undef */
+/* eslint-disable no-undef, max-len */
 const updateAlert = () => {
-  const version = 0.21;
+  const version = 0.22;
 
   if (localStorage.getItem('WHupdate') && localStorage.getItem('WHupdate') < version) {
     Swal.fire({
       title: 'WykopHelper zaktualizowany!',
-      html: 'Dodatek WykopHelper zosta&#x0142; w&#x0142;a&#x015b;nie zaktualizowany. Wprowadzone zmiany to: <br><ul style="margin-top:1rem; list-style-type:square"><li style="text-align:left;margin-left:2rem">po najechaniu na odznakę usera pojawi się modal z linkiem do posta, przy którym został oznaczony</li><li style="text-align:left;margin-left:2rem">W modalu - button do usuwania oznaczenia</li><li style="text-align:left;margin-left:2rem">Nowy spos&oacute;b komunikowania o aktualizacjach</li><li style="text-align:left;margin-left:2rem">mniejsze i wi&#x0119;ksze poprawki poprawiaj&#x0105;ce stabilno&#x015b;&#x0107; i niezawodno&#x015b;&#x0107;</li></ul>',
+      html: 'Dodatek WykopHelper zosta\u0142 w\u0142a\u015Bnie zaktualizowany. Wprowadzone zmiany to: <br><ul style="margin-top:1rem; list-style-type:square"><li style="text-align:left;margin-left:2rem">w ustawieniach (wykopu) pojawi&#x142;a si&#x119; zak&#x142;adka &#x22;WykopHelper&#x22; - tam docelowo znajd&#x105; si&#x119; wszystkie opcje konfiguracyjne dodatku. Aktualnie funkcjonuje jedynie podgl&#x105;d listy wszystkich oznaczonych u&#x17C;ytkownik&#xF3;w.</li></ul>',
       icon: 'info',
       confirmButtonText: 'Okej!'
     });
@@ -393,6 +640,12 @@ String.prototype.capitalize = function() {
 //shows alert if app has been updated
 updateAlert();
 
-if (isPathForMain()) {
-  mainFunctionality();
+if (isPath.main()) {
+  handleBadges();
+}
+if (isPath.settings()) {
+  handleSettings();
+}
+if (isPath.whSettings()) {
+  handleWhSettings();
 }

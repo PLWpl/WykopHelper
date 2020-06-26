@@ -1,13 +1,15 @@
 import {terser} from 'rollup-plugin-terser';
 import { eslint } from "rollup-plugin-eslint";
-import banner from 'rollup-plugin-banner'
+import banner from 'rollup-plugin-banner';
+import ascii from 'rollup-plugin-ascii';
 
 export default {
   input: 'src/index.js',
   plugins: [
     eslint({
       fix: true,
-    })
+    }),
+    ascii()
   ],
   output: [
     {
@@ -37,7 +39,7 @@ export default {
         banner('@downloadURL  http://plw.usermd.net/whhelper.js'),
         banner('@updateURL    http://plw.usermd.net/whhelper.js'),
         banner('@version      <%= pkg.version %>'),
-        banner('@name         Wykopowe trole'),
+        banner('@name         WykopHelper'),
         banner('==UserScript=='),
       ]
     },
@@ -57,7 +59,7 @@ export default {
         banner('@downloadURL  http://plw.usermd.net/whhelper.js'),
         banner('@updateURL    http://plw.usermd.net/whhelper.js'),
         banner('@version      <%= pkg.version %>'),
-        banner('@name         Wykopowe trole - DEV'),
+        banner('@name         WykopHelper - DEV'),
         banner('==UserScript=='),
       ]
     }

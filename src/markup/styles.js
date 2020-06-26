@@ -1,4 +1,4 @@
-export const styles = `
+export const stylesBadge = `
 .buttonWH {
   display: inline-block;
   padding: .2rem .2rem;
@@ -50,4 +50,22 @@ export const styles = `
 .tippy-content {
   display: flex;
   flex-direction: column;
+}
+`;
+
+export const stylesSettings = `
+.tableWH__container {
+  padding: 1rem;
+}
+.tableWH__container--hidden {
+  display: none;
+}
+.tableWH__head {
+  font-weight: bold;
+  border-bottom: 2px solid currentColor;
+}
+.settings__crossed {
+  opacity: .4;
+  text-decoration: line-through;
+  cursor: not-allowed;
 }`;
