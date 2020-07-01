@@ -86,9 +86,14 @@ export const handleBadges = () => {
     }
   }
 
+  const getBadgeLabelFromSettings = () => {
+    const settings = JSON.parse(localStorage.getItem(STORAGE_KEY_NAMES.WH_SETTINGS));
+    return settings.BADGE.DEFAULT_NAME;
+  }
+
   // goes through all user elements on a page and checks, if user nicks are present in uniqueNicksSet array. If they are, AND they haven't yet been awarded a badge, it injects the badge.
   // takes optional parameter of type, possibly for future expansions of this script.
-  const markUsers = (type = 'Debil') => {
+  const markUsers = (type = getBadgeLabelFromSettings()) => {
     try {
       const elements = getAllNickElements();
       elements.forEach(element =>{

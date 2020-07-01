@@ -234,9 +234,14 @@ const handleBadges = () => {
     }
   };
 
+  const getBadgeLabelFromSettings = () => {
+    const settings = JSON.parse(localStorage.getItem(STORAGE_KEY_NAMES.WH_SETTINGS));
+    return settings.BADGE.DEFAULT_NAME;
+  };
+
   // goes through all user elements on a page and checks, if user nicks are present in uniqueNicksSet array. If they are, AND they haven't yet been awarded a badge, it injects the badge.
   // takes optional parameter of type, possibly for future expansions of this script.
-  const markUsers = (type = 'Debil') => {
+  const markUsers = (type = getBadgeLabelFromSettings()) => {
     try {
       const elements = getAllNickElements();
       elements.forEach(element =>{
@@ -403,8 +408,9 @@ const settingsMarkup = `
         name="WARN_ON_RELOAD"
         id="warnOnReload"
         checked
+        disabled
       />
-      <label class="inline" for="warnOnReload">Ostrzegaj przy próbie zamknięcia/przeładowania strony gdy wykryto pisanie komentarza</label>
+      <label title="Ficzer jeszcze nieaktywny" class="settings__crossed inline" for="warnOnReload">Ostrzegaj przy próbie zamknięcia/przeładowania strony gdy wykryto pisanie komentarza</label>
     </div>
     <div class="row">
       <input
@@ -414,8 +420,9 @@ const settingsMarkup = `
         name="WARN_ON_SUSPECTED_RUSSIAN_PROPAGANDA"
         id="warnOnRussian"
         checked
+        disabled
       />
-      <label class="inline" for="warnOnRussian">Oznaczaj znaleziska ze źródeł podejrzewanych o szerzenie Rosyjskiej propagandy [<a href="#">Więcej -></a>]</label>
+      <label title="Ficzer jeszcze nieaktywny" class="settings__crossed inline" for="warnOnRussian">Oznaczaj znaleziska ze źródeł podejrzewanych o szerzenie Rosyjskiej propagandy [<a href="#">Więcej -></a>]</label>
     </div>
   </div>
 <!--  BADGE -->
@@ -427,14 +434,21 @@ const settingsMarkup = `
         category="BADGE"
         name="HIDE_MARKED_USERS"
         id="hideMarkedUser"
+        disabled
       />
-      <label class="inline" for="hideMarkedUser">Ukrywaj treści oznakowanych użytkowników (tak jak na czarnej liście)</label>
+      <label title="Ficzer jeszcze nieaktywny" class="inline settings__crossed" for="hideMarkedUser">Ukrywaj treści oznakowanych użytkowników (tak jak na czarnej liście)</label>
+    </div>
+    <div class="row space">
+      <input placeholder="Domyślny tekst odznaki" id="badgeDefaultValue" category="BADGE" value="" name="DEFAULT_NAME" type="text">
+      <small>Domyślny tekst odznaki</small>
     </div>
   </div>
 <!-- SPECIAL -->
   <div class="space settings--special">
     <div class="row">
-      <small>Jeśli chcesz wyczyścić listę oznaczonych wcześniej użytkowników, możesz to zrobić poniżej. W związku z tym, że jest to akcja nieodwracalna, musisz najpierw potwierdzić, że na pewno taki jest Twój cel - odblokowany zostanie wówczas przycisk, którym usuniesz ze swojej listy wszystkich użytkowników. Uwaga - po kliknięciu przycisku akcja wykonywana jest natychmiast, bez dodatkowych potwierdzeń!</small>
+      <small>Jeśli chcesz wyczyścić listę oznaczonych wcześniej użytkowników, możesz to zrobić poniżej. W związku z tym, że jest to akcja nieodwracalna, musisz najpierw potwierdzić, że na pewno taki jest Twój cel. Uwaga - po kliknięciu przycisku akcja wykonywana jest natychmiast, bez dodatkowych potwierdzeń!</small>
+    </div>
+    <div class="row">
       <input
         class="checkbox"
         type="checkbox"
@@ -486,7 +500,7 @@ const handleWhSettings = () => {
     BADGE: {
       HIDE_MARKED_USERS: false,
       DEFAULT_NAME: 'Debil',
-      DEFAULT_COLOR: 'red'
+      DEFAULT_COLOR: 'red',
     },
     GENERAL: {
       WARN_ON_RELOAD: true,
@@ -557,6 +571,8 @@ const handleWhSettings = () => {
   };
 
   const renderSettings = () => {
+    prepareLocalStorage();
+
     document.querySelector(DOM$1.ACTIVE_NAV_ELEMENT).classList.remove('active');
     document.querySelector(`.${DOM$1.WH_NAV_SETTINGS_LINK}`).classList.add('active');
   
@@ -567,6 +583,8 @@ const handleWhSettings = () => {
 
     settingsFormElement.insertAdjacentHTML('afterend', settingsUserTable);
     generateUserTables();
+
+    document.getElementById('badgeDefaultValue').value = settings.BADGE.DEFAULT_NAME;
   };
 
   const handleSettingsForm = () => {
@@ -574,7 +592,7 @@ const handleWhSettings = () => {
       const category = event.target.getAttribute('category');
       const name = event.target.name;
 
-      if (event.target.id !== 'showMarkedUserTable' && event.target.getAttribute('category') !== 'SPECIAL') {
+      if (event.target.type === 'checkbox' && event.target.id !== 'allowWipeAllMarked') {
         settings[category][name] = !settings[category][name];
         localStorage.setItem(STORAGE_KEY_NAMES.WH_SETTINGS, JSON.stringify(settings));
       }
@@ -586,12 +604,23 @@ const handleWhSettings = () => {
         toggleUserTableVisibility();
       }
       if (event.target.id === 'allowWipeAllMarked') {
+        event.target.disabled = true;
         document.getElementById('whsettings__remove-all-marked').disabled = false;
         document.getElementById('whsettings__remove-all-marked').style.opacity = 1;
       }
       if (event.target.id === 'whsettings__remove-all-marked') {
         event.preventDefault();
         wipeAllMarkedUsers();
+      }
+    });
+
+    settingsFormElement.addEventListener('keyup', event => {
+      const category = event.target.getAttribute('category');
+      const name = event.target.name;
+
+      if (event.target.type === 'text') {
+        settings[category][name] = event.target.value.toLowerCase();
+        localStorage.setItem(STORAGE_KEY_NAMES.WH_SETTINGS, JSON.stringify(settings));
       }
     });
   };
