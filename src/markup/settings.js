@@ -11,8 +11,9 @@ export const settingsMarkup = `
         name="WARN_ON_RELOAD"
         id="warnOnReload"
         checked
+        disabled
       />
-      <label class="inline" for="warnOnReload">Ostrzegaj przy próbie zamknięcia/przeładowania strony gdy wykryto pisanie komentarza</label>
+      <label title="Ficzer jeszcze nieaktywny" class="settings__crossed inline" for="warnOnReload">Ostrzegaj przy próbie zamknięcia/przeładowania strony gdy wykryto pisanie komentarza</label>
     </div>
     <div class="row">
       <input
@@ -22,8 +23,9 @@ export const settingsMarkup = `
         name="WARN_ON_SUSPECTED_RUSSIAN_PROPAGANDA"
         id="warnOnRussian"
         checked
+        disabled
       />
-      <label class="inline" for="warnOnRussian">Oznaczaj znaleziska ze źródeł podejrzewanych o szerzenie Rosyjskiej propagandy [<a href="#">Więcej -></a>]</label>
+      <label title="Ficzer jeszcze nieaktywny" class="settings__crossed inline" for="warnOnRussian">Oznaczaj znaleziska ze źródeł podejrzewanych o szerzenie Rosyjskiej propagandy [<a href="#">Więcej -></a>]</label>
     </div>
   </div>
 <!--  BADGE -->
@@ -35,14 +37,21 @@ export const settingsMarkup = `
         category="BADGE"
         name="HIDE_MARKED_USERS"
         id="hideMarkedUser"
+        disabled
       />
-      <label class="inline" for="hideMarkedUser">Ukrywaj treści oznakowanych użytkowników (tak jak na czarnej liście)</label>
+      <label title="Ficzer jeszcze nieaktywny" class="inline settings__crossed" for="hideMarkedUser">Ukrywaj treści oznakowanych użytkowników (tak jak na czarnej liście)</label>
+    </div>
+    <div class="row space">
+      <input placeholder="Domyślny tekst odznaki" id="badgeDefaultValue" category="BADGE" value="" name="DEFAULT_NAME" type="text">
+      <small>Domyślny tekst odznaki</small>
     </div>
   </div>
 <!-- SPECIAL -->
   <div class="space settings--special">
     <div class="row">
-      <small>Jeśli chcesz wyczyścić listę oznaczonych wcześniej użytkowników, możesz to zrobić poniżej. W związku z tym, że jest to akcja nieodwracalna, musisz najpierw potwierdzić, że na pewno taki jest Twój cel - odblokowany zostanie wówczas przycisk, którym usuniesz ze swojej listy wszystkich użytkowników. Uwaga - po kliknięciu przycisku akcja wykonywana jest natychmiast, bez dodatkowych potwierdzeń!</small>
+      <small>Jeśli chcesz wyczyścić listę oznaczonych wcześniej użytkowników, możesz to zrobić poniżej. W związku z tym, że jest to akcja nieodwracalna, musisz najpierw potwierdzić, że na pewno taki jest Twój cel. Uwaga - po kliknięciu przycisku akcja wykonywana jest natychmiast, bez dodatkowych potwierdzeń!</small>
+    </div>
+    <div class="row">
       <input
         class="checkbox"
         type="checkbox"

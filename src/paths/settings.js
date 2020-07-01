@@ -16,7 +16,7 @@ export const handleWhSettings = () => {
     BADGE: {
       HIDE_MARKED_USERS: false,
       DEFAULT_NAME: 'Debil',
-      DEFAULT_COLOR: 'red'
+      DEFAULT_COLOR: 'red',
     },
     GENERAL: {
       WARN_ON_RELOAD: true,
@@ -87,6 +87,8 @@ export const handleWhSettings = () => {
   }
 
   const renderSettings = () => {
+    prepareLocalStorage();
+
     document.querySelector(DOM.ACTIVE_NAV_ELEMENT).classList.remove('active');
     document.querySelector(`.${DOM.WH_NAV_SETTINGS_LINK}`).classList.add('active');
   
@@ -97,6 +99,8 @@ export const handleWhSettings = () => {
 
     settingsFormElement.insertAdjacentHTML('afterend', settingsUserTable);
     generateUserTables();
+
+    document.getElementById('badgeDefaultValue').value = settings.BADGE.DEFAULT_NAME;
   };
 
   const handleSettingsForm = () => {
@@ -104,7 +108,7 @@ export const handleWhSettings = () => {
       const category = event.target.getAttribute('category');
       const name = event.target.name;
 
-      if (event.target.id !== 'showMarkedUserTable' && event.target.getAttribute('category') !== 'SPECIAL') {
+      if (event.target.type === 'checkbox' && event.target.id !== 'allowWipeAllMarked') {
         settings[category][name] = !settings[category][name];
         localStorage.setItem(STORAGE_KEY_NAMES.WH_SETTINGS, JSON.stringify(settings));
       }
@@ -116,12 +120,23 @@ export const handleWhSettings = () => {
         toggleUserTableVisibility();
       }
       if (event.target.id === 'allowWipeAllMarked') {
+        event.target.disabled = true;
         document.getElementById('whsettings__remove-all-marked').disabled = false;
         document.getElementById('whsettings__remove-all-marked').style.opacity = 1;
       }
       if (event.target.id === 'whsettings__remove-all-marked') {
         event.preventDefault();
         wipeAllMarkedUsers();
+      }
+    })
+
+    settingsFormElement.addEventListener('keyup', event => {
+      const category = event.target.getAttribute('category');
+      const name = event.target.name;
+
+      if (event.target.type === 'text') {
+        settings[category][name] = event.target.value.toLowerCase();
+        localStorage.setItem(STORAGE_KEY_NAMES.WH_SETTINGS, JSON.stringify(settings));
       }
     })
   }

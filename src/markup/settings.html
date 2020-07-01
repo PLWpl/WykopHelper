@@ -9,6 +9,7 @@
         category="GENERAL"
         name="WARN_ON_RELOAD"
         id="warnOnReload"
+        checked
       />
       <label class="inline" for="warnOnReload">Ostrzegaj przy próbie zamknięcia/przeładowania strony gdy wykryto pisanie komentarza</label>
     </div>
@@ -19,6 +20,7 @@
         category="GENERAL"
         name="WARN_ON_SUSPECTED_RUSSIAN_PROPAGANDA"
         id="warnOnRussian"
+        checked
       />
       <label class="inline" for="warnOnRussian">Oznaczaj znaleziska ze źródeł podejrzewanych o szerzenie Rosyjskiej propagandy [<a href="#">Więcej -></a>]</label>
     </div>
@@ -35,23 +37,28 @@
       />
       <label class="inline" for="hideMarkedUser">Ukrywaj treści oznakowanych użytkowników (tak jak na czarnej liście)</label>
     </div>
+    <div class="row">
+      <label class="inline" for="badgeDefaultValue">Domyślny tekst odznaki</label>
+      <input id="badgeDefaultValue" category="BADGE" value="" name="DEFAULT_NAME" type="text">
+    </div>
   </div>
 <!-- SPECIAL -->
   <div class="space settings--special">
     <div class="row">
-      <small class="space">Jeśli chcesz wyczyścić listę oznaczonych wcześniej użytkowników, możesz to zrobić poniżej. W związku z tym, że jest to akcja nieodwracalna, musisz najpierw potwierdzić, że na pewno taki jest Twój cel - odblokowany zostanie wówczas przycisk, którym usuniesz ze swojej listy wszystkich użytkowników. Uwaga - po kliknięciu przycisku akcja wykonywana jest natychmiast, bez dodatkowych potwierdzeń!</small>
+      <small>Jeśli chcesz wyczyścić listę oznaczonych wcześniej użytkowników, możesz to zrobić poniżej. W związku z tym, że jest to akcja nieodwracalna, musisz najpierw potwierdzić, że na pewno taki jest Twój cel - odblokowany zostanie wówczas przycisk, którym usuniesz ze swojej listy wszystkich użytkowników. Uwaga - po kliknięciu przycisku akcja wykonywana jest natychmiast, bez dodatkowych potwierdzeń!</small>
       <input
         class="checkbox"
         type="checkbox"
         category="SPECIAL"
         name="ALLOW_WIPE_MARKED_LIST"
         id="allowWipeAllMarked"
-        onChange="()=>{this.disabled=true; document.querySelector('.whsettings__remove-all-marked').disabled = false}"
       />
       <label class="inline" for="allowWipeAllMarked">Zaznacz by odblokować możliwość wyczyszczenia listy</label>
-      <button id="whsettings__remove-all-marked" disabled>Wyczyść</button>
     </div>
-    <div class="row">
+    <div class="row space">
+      <button style="opacity:0.4" id="whsettings__remove-all-marked" disabled>Wyczyść</button>
+    </div>
+    <div class="row space">
       <button class="button" id="showAllMarked">Pokaż wszystkich oznaczonych użytkowników</button>
     </div>
   </div>
