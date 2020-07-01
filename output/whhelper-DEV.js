@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         WykopHelper - DEV
-// @version      0.22
+// @version      0.4
 // @updateURL    http://plw.usermd.net/whhelper.js
 // @downloadURL  http://plw.usermd.net/whhelper.js
 // @description  Zestaw narzędzi pomocnych na wykopie.
@@ -651,12 +651,12 @@
 
   /* eslint-disable no-undef, max-len */
   const updateAlert = () => {
-    const version = 0.22;
+    const version = 0.4;
 
     if (localStorage.getItem('WHupdate') && localStorage.getItem('WHupdate') < version) {
       Swal.fire({
         title: 'WykopHelper zaktualizowany!',
-        html: 'Dodatek WykopHelper zosta\u0142 w\u0142a\u015Bnie zaktualizowany. Wprowadzone zmiany to: <br><ul style="margin-top:1rem; list-style-type:square"><li style="text-align:left;margin-left:2rem">w ustawieniach (wykopu) pojawi&#x142;a si&#x119; zak&#x142;adka &#x22;WykopHelper&#x22; - tam docelowo znajd&#x105; si&#x119; wszystkie opcje konfiguracyjne dodatku. Aktualnie funkcjonuje jedynie podgl&#x105;d listy wszystkich oznaczonych u&#x17C;ytkownik&#xF3;w.</li></ul>',
+        html: 'Dodatek WykopHelper zosta\u0142 w\u0142a\u015Bnie zaktualizowany. Wprowadzone zmiany to: <br><ul style="margin-top:1rem; list-style-type:square"><li style="text-align:left;margin-left:2rem">W zak\u0142adce ustawie\u0144 dodatku pojawi\u0142a si\u0119 mo\u017Cliwo\u015B\u0107 wpisania w\u0142asnego domy\u015Blnego tekstu pojawiaj\u0105cego si\u0119 na odznace przy oznaczonych u\u017Cytkownikach. Obecnie tekst ten dotyczy wszystkich oznaczonych - docelowo b\u0119dzie to tekst domy\u015Blny, jednak ka\u017Cdorazowo przy ka\u017Cdym userze b\u0119dzie mo\u017Cna sobie wpisa\u0107 indywidualny tekst.</li></ul>',
         icon: 'info',
         confirmButtonText: 'Okej!'
       });
