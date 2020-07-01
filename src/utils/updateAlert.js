@@ -1,11 +1,11 @@
 /* eslint-disable no-undef, max-len */
 export const updateAlert = () => {
-  const version = 0.22;
+  const version = 0.4;
 
   if (localStorage.getItem('WHupdate') && localStorage.getItem('WHupdate') < version) {
     Swal.fire({
       title: 'WykopHelper zaktualizowany!',
-      html: 'Dodatek WykopHelper został właśnie zaktualizowany. Wprowadzone zmiany to: <br><ul style="margin-top:1rem; list-style-type:square"><li style="text-align:left;margin-left:2rem">w ustawieniach (wykopu) pojawi&#x142;a si&#x119; zak&#x142;adka &#x22;WykopHelper&#x22; - tam docelowo znajd&#x105; si&#x119; wszystkie opcje konfiguracyjne dodatku. Aktualnie funkcjonuje jedynie podgl&#x105;d listy wszystkich oznaczonych u&#x17C;ytkownik&#xF3;w.</li></ul>',
+      html: 'Dodatek WykopHelper został właśnie zaktualizowany. Wprowadzone zmiany to: <br><ul style="margin-top:1rem; list-style-type:square"><li style="text-align:left;margin-left:2rem">W zakładce ustawień dodatku pojawiła się możliwość wpisania własnego domyślnego tekstu pojawiającego się na odznace przy oznaczonych użytkownikach. Obecnie tekst ten dotyczy wszystkich oznaczonych - docelowo będzie to tekst domyślny, jednak każdorazowo przy każdym userze będzie można sobie wpisać indywidualny tekst.</li></ul>',
       icon: 'info',
       confirmButtonText: 'Okej!'
     });
