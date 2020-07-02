@@ -12,6 +12,7 @@ const DOM_SELECTORS = {
       USERNAME: nick => `[data-whusername='${nick}`,
     },
     MODAL_BUTTON_REMOVE: 'modalWH-button--remove',
+    NICK_VERIFIED_BADGE: 'verified'
   },
   SETTINGS: {
     LAST_NAV_ELEMENT: '#site .nav > ul > li:last-child',
