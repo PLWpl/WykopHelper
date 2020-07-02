@@ -502,6 +502,25 @@
 
   const settingsNav = `<li class="whSettingsLink"><a href="https://www.wykop.pl/ustawienia/wykophelper/"><span><strong>WykopHelper</strong> &#10024;</span></a></li>`;
 
+  const initialSettings = {
+    BADGE: {
+      HIDE_MARKED_USERS: false,
+      DEFAULT_NAME: 'Debil',
+      DEFAULT_COLOR: 'red',
+    },
+    GENERAL: {
+      WARN_ON_RELOAD: true,
+      WARN_ON_SUSPECTED_RUSSIAN_PROPAGANDA: true,
+    }
+  };
+
+
+  const initSettings = () => {
+    if (!localStorage.getItem(STORAGE_KEY_NAMES.WH_SETTINGS)) {
+      localStorage.setItem(STORAGE_KEY_NAMES.WH_SETTINGS, JSON.stringify(initialSettings));
+    }
+  };
+
   const { SETTINGS: DOM$1 } = DOM_SELECTORS;
 
   const handleSettings = () => {
@@ -510,17 +529,6 @@
 
   const handleWhSettings = () => {
     let settings, trolls, uniqueNicksSet;
-    const initialSettings = {
-      BADGE: {
-        HIDE_MARKED_USERS: false,
-        DEFAULT_NAME: 'Debil',
-        DEFAULT_COLOR: 'red',
-      },
-      GENERAL: {
-        WARN_ON_RELOAD: true,
-        WARN_ON_SUSPECTED_RUSSIAN_PROPAGANDA: true,
-      }
-    };
     const settingsFormElement = document.querySelector(DOM$1.SETTINGS_FORM_ELEMENT);
 
     const prepareLocalStorage = (...types) => {
@@ -528,8 +536,7 @@
         if (localStorage.getItem(STORAGE_KEY_NAMES.WH_SETTINGS)) {
           settings = JSON.parse(localStorage.getItem(STORAGE_KEY_NAMES.WH_SETTINGS));
         } else {
-          settings = initialSettings;
-          localStorage.setItem(STORAGE_KEY_NAMES.WH_SETTINGS, JSON.stringify(settings));
+          initSettings();
         }
       } else if ([...types].includes('markedUsers')) {
         if (localStorage.getItem(STORAGE_KEY_NAMES.MARKED_USERS)) {
@@ -682,6 +689,9 @@
 
   //shows alert if app has been updated
   updateAlert();
+
+  //initializes settings if none found
+  initSettings();
 
   if (isPath.main()) {
     handleBadges();

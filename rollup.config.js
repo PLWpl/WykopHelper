@@ -44,7 +44,7 @@ export default {
       ]
     },
     {
-      file: 'output/whhelper-DEV.js',
+      file: 'output/whhelper-dev.js',
       format: 'iife',
       name: 'outputVersionDEV',
       plugins: [
@@ -56,8 +56,8 @@ export default {
         banner('@match        https://www.wykop.pl/*'),
         banner('@author       <%= pkg.author %>'),
         banner('@description  Zestaw narzędzi pomocnych na wykopie.'),
-        banner('@downloadURL  http://plw.usermd.net/whhelper.js'),
-        banner('@updateURL    http://plw.usermd.net/whhelper.js'),
+        banner('@downloadURL  http://plw.usermd.net/whhelper-dev.js'),
+        banner('@updateURL    http://plw.usermd.net/whhelper-dev.js'),
         banner('@version      <%= pkg.version %>'),
         banner('@name         WykopHelper - DEV'),
         banner('==UserScript=='),
