@@ -140,7 +140,9 @@ export const handleBadges = () => {
   const addNewTroll = event => {
     prepareLocalStorage();
     const nick = getNick(event.target.closest(`.${DOM.NICK_ELEMENT}`));
-    const link = event.target.closest(`.${DOM.NICK_ELEMENT}`).querySelector("a + a").href;
+    const link = event.target.closest(`.${DOM.NICK_ELEMENT}`).querySelector(`.verified`) ? 
+      event.target.closest(`.${DOM.NICK_ELEMENT}`).querySelector(`.${DOM.NICK_VERIFIED_BADGE} + a`).href
+      : event.target.closest(`.${DOM.NICK_ELEMENT}`).querySelector("a + a").href;
 
     event.target.classList.add(DOM.MARK_BUTTON_CLICKED);
     event.target.innerText = "✔";
