@@ -3,6 +3,7 @@ import STORAGE_KEY_NAMES from '../constants/localStorageKeyNames';
 import { settingsMarkup, settingsNav, settingsUserTable } from '../markup/settings';
 import { stylesSettings } from '../markup/styles.js';
 import { injectStyles } from '../utils/inject.js';
+import { initSettings } from '../init/storage.js';
 
 const { SETTINGS: DOM } = DOM_SELECTORS;
 
@@ -12,17 +13,6 @@ export const handleSettings = () => {
 
 export const handleWhSettings = () => {
   let settings, trolls, uniqueNicksSet;
-  const initialSettings = {
-    BADGE: {
-      HIDE_MARKED_USERS: false,
-      DEFAULT_NAME: 'Debil',
-      DEFAULT_COLOR: 'red',
-    },
-    GENERAL: {
-      WARN_ON_RELOAD: true,
-      WARN_ON_SUSPECTED_RUSSIAN_PROPAGANDA: true,
-    }
-  };
   const settingsFormElement = document.querySelector(DOM.SETTINGS_FORM_ELEMENT);
 
   const prepareLocalStorage = (...types) => {
@@ -30,8 +20,7 @@ export const handleWhSettings = () => {
       if (localStorage.getItem(STORAGE_KEY_NAMES.WH_SETTINGS)) {
         settings = JSON.parse(localStorage.getItem(STORAGE_KEY_NAMES.WH_SETTINGS));
       } else {
-        settings = initialSettings;
-        localStorage.setItem(STORAGE_KEY_NAMES.WH_SETTINGS, JSON.stringify(settings));
+        initSettings();
       }
     } else if ([...types].includes('markedUsers')) {
       if (localStorage.getItem(STORAGE_KEY_NAMES.MARKED_USERS)) {
