@@ -1,4 +1,4 @@
-export const addModal = (element, content) => {
+export const addModal = (element, content, delay) => {
   //eslint-disable-next-line no-undef
   tippy(element, {
     content: content,
@@ -6,5 +6,6 @@ export const addModal = (element, content) => {
     interactive: true,
     placement: 'bottom-start',
     followCursor: 'initial',
+    delay: delay ? [delay, null] : 0
   })
 }

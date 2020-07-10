@@ -1,3 +1,5 @@
+import { runOnceOnUpdate } from './runOnceOnUpdate.js';
+
 /* eslint-disable no-undef, max-len */
 export const updateAlert = () => {
   const version = 0.4;
@@ -10,6 +12,7 @@ export const updateAlert = () => {
       confirmButtonText: 'Okej!'
     });
     localStorage.setItem('WHupdate',version);
+    runOnceOnUpdate();
   }
   else if (!localStorage.getItem('WHupdate')) {
     Swal.fire({
