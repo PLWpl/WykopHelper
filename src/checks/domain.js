@@ -7,6 +7,7 @@ export let rawDomains = [
   'magnapolonia.org',
   'narodowcy.net',
   'nczas.com',
+  'mysl.pl',
   'ndie.pl',
   'neon24.pl',
   'newsweb.pl',
