@@ -28,13 +28,15 @@ export let rawDomains = [
   'prawica.net',
   'xportal.pl',
   'kresy.pl',
-  'bdp.xportal.pl/',
+  'bdp.xportal.pl',
   'geopolityka.org',
   'pravda.ru',
   'voiceofrussia.com',
   'ria.ru',
   'ligakobietpolskich.pl',
-  'ronik.org.pl'
+  'ronik.org.pl',
+  'obserwatorpolityczny.pl',
+  'mysl-polska.plw'
 ];
 
 rawDomains.forEach(domain => {
