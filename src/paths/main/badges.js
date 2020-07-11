@@ -1,5 +1,5 @@
 import STORAGE_KEY_NAMES from '../../constants/localStorageKeyNames';
-import DOM_SELECTORS from '../../constants//domSelectors';
+import DOM_SELECTORS from '../../constants/domSelectors';
 
 import { stylesBadge } from '../../markup/styles.js';
 import { buttonMarkup, badge } from '../../markup/minor.js';

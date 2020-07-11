@@ -8,7 +8,9 @@ export const runOnceOnUpdate = () => {
   }
 
   trolls.forEach(el => {
-    el.label = '';
+    if (!el.label) {
+      el.label = '';
+    }
   })
 
   localStorage.setItem('trolls', JSON.stringify(trolls));
