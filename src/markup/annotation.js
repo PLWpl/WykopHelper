@@ -8,4 +8,4 @@ export const annotation = (content, type = 'alert') => `
   <div class="annotation type-${type} space clearfix">
 		<p>${content}</p>
 	</div>
-  `;
+`;

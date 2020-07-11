@@ -1,3 +1,4 @@
+// add new domains. Always add them without protocol (http, https), www or path after domain.
 let domains = [
   'lifesitenews.com',
   'sputnik.com'
