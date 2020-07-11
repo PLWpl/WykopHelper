@@ -1,9 +1,9 @@
 import STORAGE_KEY_NAMES from '../../constants/localStorageKeyNames';
-import DOM_SELECTORS from '../../constants//domSelectors';
+import DOM_SELECTORS from '../../constants/domSelectors';
 
 import { stylesBadge } from '../../markup/styles.js';
 import { buttonMarkup, badge } from '../../markup/minor.js';
-import { modalMarkup } from '../../markup/modal.js';
+import { modalMarkup } from '../../markup/badgeInfoModal.js';
 import { addModal } from '../../utils/addModal.js';
 import { injectStyles } from '../../utils/inject.js';
 

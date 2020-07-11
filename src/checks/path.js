@@ -17,6 +17,8 @@ const isPath = {
   settings: () => !!(path.indexOf("wykop.pl/ustawienia/") > -1),
   
   whSettings: () => !!(path.indexOf("wykop.pl/ustawienia/wykophelper") > -1),
+
+  thread: () => !!(path.indexOf("wykop.pl/link/") > -1),
 };
 
 export default isPath;

@@ -1,5 +1,6 @@
-import isPath from './pathCheck/index.js';
+import isPath from './checks/path.js';
 import { handleBadges } from './paths/main/badges.js';
+import { handleDomainCheck } from './paths/main/domainChecker.js'
 import { handleSettings, handleWhSettings } from './paths/settings.js';
 import { updateAlert } from './utils/updateAlert.js';
 import { initSettings } from './init/storage.js';
@@ -25,4 +26,7 @@ if (isPath.settings()) {
 }
 if (isPath.whSettings()) {
   handleWhSettings();
+}
+if (isPath.thread()) {
+  handleDomainCheck();
 }

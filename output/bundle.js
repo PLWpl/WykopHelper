@@ -19,6 +19,8 @@ const isPath = {
   settings: () => !!(path.indexOf("wykop.pl/ustawienia/") > -1),
   
   whSettings: () => !!(path.indexOf("wykop.pl/ustawienia/wykophelper") > -1),
+
+  thread: () => !!(path.indexOf("wykop.pl/link/") > -1),
 };
 
 const STORAGE_KEY_NAMES = {
@@ -139,7 +141,7 @@ const modalMarkup = (link, nick) => `
   <span class="modalWH-button modalWH-button--remove" data-whuserremove="${nick}">Usuń oznaczenie</span>
 `;
 
-const addModal = (element, content) => {
+const addModal = (element, content, delay) => {
   //eslint-disable-next-line no-undef
   tippy(element, {
     content: content,
@@ -147,6 +149,7 @@ const addModal = (element, content) => {
     interactive: true,
     placement: 'bottom-start',
     followCursor: 'initial',
+    delay: delay ? [delay, null] : 0
   });
 };
 
@@ -398,6 +401,69 @@ const handleBadges = () => {
     });
 };
 
+let domains = [
+  'lifesitenews.com',
+  'sputnik.com'
+];
+
+domains.forEach(domain => {
+  domains.push('https://' + domain);
+  domains.push('https://www.' + domain);
+  domains.push('http://' + domain);
+  domains.push('http://www.' + domain);
+});
+
+const russianPropagandaDomains = domains;
+
+/**
+ * 
+ * @param {string} content - what shall be included in the <p> tag.
+ * @param {string} [type=alert] - type of annotation. Available types are: 'success', 'alert' (default), 'error', 'light-info'.
+ */
+
+const annotation = (content, type = 'alert') => `
+  <div class="annotation type-${type} space clearfix">
+		<p>${content}</p>
+	</div>
+  `;
+
+const handleDomainCheck = () => {
+  const isSettingActive = () => {
+    let settings;
+    if (localStorage.getItem(STORAGE_KEY_NAMES.WH_SETTINGS)) {
+      settings = JSON.parse(localStorage.getItem(STORAGE_KEY_NAMES.WH_SETTINGS));
+    }
+
+    console.log(settings);
+
+    console.log('XXXXXXXXXXXXXXXXX\n\n');
+
+    console.log(settings.GENERAL.WARN_ON_SUSPECTED_RUSSIAN_PROPAGANDA);
+
+    if (settings.GENERAL.WARN_ON_SUSPECTED_RUSSIAN_PROPAGANDA) {
+      return true;
+    }
+
+    return false;
+  };
+
+  const handleCheck = () => {
+    const threadLink = document.querySelector('.article h2 a').href;
+    const url = new URL(threadLink);
+    const threadLinkHostname = url.protocol + '//' + url.hostname;
+    //eslint-disable-next-line max-len
+    const annotationMarkup = annotation('Uwa\u017Caj! \u0179r\xF3d\u0142o tego znaleziska jest podejrzewane o szerzenie rosyjskiej propagandy.');
+
+    if (russianPropagandaDomains.includes(threadLinkHostname)) {
+      document.querySelector('.bspace').insertAdjacentHTML('beforebegin', annotationMarkup);
+    }
+  };
+
+  if (isSettingActive()) {
+    handleCheck();
+  }
+};
+
 const settingsMarkup = `
 <fieldset>
   <h4>WykopHelper - Ustawienia</h4>
@@ -423,9 +489,8 @@ const settingsMarkup = `
         name="WARN_ON_SUSPECTED_RUSSIAN_PROPAGANDA"
         id="warnOnRussian"
         checked
-        disabled
       />
-      <label title="Ficzer jeszcze nieaktywny" class="settings__crossed inline" for="warnOnRussian">Oznaczaj znaleziska ze źródeł podejrzewanych o szerzenie Rosyjskiej propagandy [<a href="#">Więcej -></a>]</label>
+      <label class="inline" for="warnOnRussian">Oznaczaj znaleziska ze źródeł podejrzewanych o szerzenie Rosyjskiej propagandy [<a href="https://oko.press/rosyjska-propagande-szerza-polskie-portale-znalezlismy-23-takie-witryny/" target="_blank">Więcej -></a>]</label>
     </div>
   </div>
 <!--  BADGE -->
@@ -645,23 +710,58 @@ const handleWhSettings = () => {
   init();
 };
 
+const runOnceOnUpdate = () => {
+  let trolls;
+
+  if (localStorage.getItem('trolls')) {
+    trolls = JSON.parse(localStorage.getItem('trolls'));
+  } else {
+    trolls = [];
+  }
+
+  trolls.forEach(el => {
+    if (!el.label) {
+      el.label = '';
+    }
+  });
+
+  localStorage.setItem('trolls', JSON.stringify(trolls));
+};
+
+/* eslint max-len: 0 */
+
+const version = 0.42;
+
+const welcomeText = 'Mi\u0142ego u\u017Cywania dodatku! Je\u015Bli masz jakiekolwiek problemy, pytania lub sugestie, zg\u0142o\u015B je <a href="https://github.com/PLWpl/wykopoweTrole/issues" target="_blank">tutaj.</a>';
+
+const updateText = `
+Dodatek WykopHelper został właśnie zaktualizowany. Wprowadzone zmiany to: <br>
+<ul style="margin-top:1rem; list-style-type:square">
+  <li style="text-align:left;margin-left:2rem;margin-bottom:.7rem">
+    Od teraz znaleziska z domen podejrzewanych o szerzenie rosyjskiej propagandy będą oznaczane komentarzem na górze (podobnym do info od moderacji np. o duplikacie). W jednej z kolejnych aktualizacji pojawi się możliwość edycji listy podejrzanych stron, a także ostrzeżenie przy próbie dodania znaleziska z takiej domeny.
+  </li>
+  <li style="text-align:left;margin-left:2rem;margin-bottom:.7rem">
+    Zmiany w kodzie, "za kulisami" - przygotowania do wprowadzenia możliwości przydzielania każdemu userowi osobnego tekstu odznaki.
+  </li>
+</ul>
+`;
+
 /* eslint-disable no-undef, max-len */
 const updateAlert = () => {
-  const version = 0.4;
-
   if (localStorage.getItem('WHupdate') && localStorage.getItem('WHupdate') < version) {
     Swal.fire({
       title: 'WykopHelper zaktualizowany!',
-      html: 'Dodatek WykopHelper zosta\u0142 w\u0142a\u015Bnie zaktualizowany. Wprowadzone zmiany to: <br><ul style="margin-top:1rem; list-style-type:square"><li style="text-align:left;margin-left:2rem">W zak\u0142adce ustawie\u0144 dodatku pojawi\u0142a si\u0119 mo\u017Cliwo\u015B\u0107 wpisania w\u0142asnego domy\u015Blnego tekstu pojawiaj\u0105cego si\u0119 na odznace przy oznaczonych u\u017Cytkownikach. Obecnie tekst ten dotyczy wszystkich oznaczonych - docelowo b\u0119dzie to tekst domy\u015Blny, jednak ka\u017Cdorazowo przy ka\u017Cdym userze b\u0119dzie mo\u017Cna sobie wpisa\u0107 indywidualny tekst.</li></ul>',
+      html: updateText,
       icon: 'info',
       confirmButtonText: 'Okej!'
     });
     localStorage.setItem('WHupdate',version);
+    runOnceOnUpdate();
   }
   else if (!localStorage.getItem('WHupdate')) {
     Swal.fire({
       title: 'WykopHelper zainstalowany!',
-      html: 'Mi&#x0142;ego u&#x017c;ytkowania dodatku! Je&#x015b;li masz jakiekolwiek problemy, pytania lub sugestie, zg&#x0142;o&#x015b; je <a href="https://github.com/PLWpl/wykopoweTrole/issues" target="_blank">tutaj.</a>',
+      html: welcomeText,
       icon: 'success',
       confirmButtonText: 'Super!'
     });
@@ -690,4 +790,7 @@ if (isPath.settings()) {
 }
 if (isPath.whSettings()) {
   handleWhSettings();
+}
+if (isPath.thread()) {
+  handleDomainCheck();
 }
