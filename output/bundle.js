@@ -401,19 +401,55 @@ const handleBadges = () => {
     });
 };
 
-let domains = [
-  'lifesitenews.com',
-  'sputnik.com'
+// add new domains. Always add them without protocol (http, https), www or path after domain.
+let rawDomains = [
+  'alternews.pl',
+  'alexjones.pl',
+  'dziennik-polityczny.com',
+  'koniec-swiata.org',
+  'magnapolonia.org',
+  'narodowcy.net',
+  'nczas.com',
+  'mysl.pl',
+  'ndie.pl',
+  'neon24.pl',
+  'newsweb.pl',
+  'parezja.pl',
+  'prostozmostu24.pl',
+  'prawdaobiektywna.pl',
+  'reporters.pl',
+  'sioe.pl',
+  'wmeritum.pl',
+  'wolnosc24.pl',
+  'wolna-polska.pl',
+  'wprawo.pl',
+  'wsensie.pl',
+  'zmianynaziemi.pl',
+  'sputniknews.com',
+  'rt.com',
+  'ruptly.tv',
+  'prawica.net',
+  'xportal.pl',
+  'kresy.pl',
+  'bdp.xportal.pl',
+  'geopolityka.org',
+  'pravda.ru',
+  'voiceofrussia.com',
+  'ria.ru',
+  'ligakobietpolskich.pl',
+  'ronik.org.pl',
+  'obserwatorpolityczny.pl',
+  'mysl-polska.plw'
 ];
 
-domains.forEach(domain => {
-  domains.push('https://' + domain);
-  domains.push('https://www.' + domain);
-  domains.push('http://' + domain);
-  domains.push('http://www.' + domain);
+rawDomains.forEach(domain => {
+  rawDomains.push('https://' + domain);
+  rawDomains.push('https://www.' + domain);
+  rawDomains.push('http://' + domain);
+  rawDomains.push('http://www.' + domain);
 });
 
-const russianPropagandaDomains = domains;
+const russianPropagandaDomains = rawDomains;
 
 /**
  * 
@@ -425,7 +461,7 @@ const annotation = (content, type = 'alert') => `
   <div class="annotation type-${type} space clearfix">
 		<p>${content}</p>
 	</div>
-  `;
+`;
 
 const handleDomainCheck = () => {
   const isSettingActive = () => {
@@ -433,12 +469,6 @@ const handleDomainCheck = () => {
     if (localStorage.getItem(STORAGE_KEY_NAMES.WH_SETTINGS)) {
       settings = JSON.parse(localStorage.getItem(STORAGE_KEY_NAMES.WH_SETTINGS));
     }
-
-    console.log(settings);
-
-    console.log('XXXXXXXXXXXXXXXXX\n\n');
-
-    console.log(settings.GENERAL.WARN_ON_SUSPECTED_RUSSIAN_PROPAGANDA);
 
     if (settings.GENERAL.WARN_ON_SUSPECTED_RUSSIAN_PROPAGANDA) {
       return true;
@@ -659,7 +689,9 @@ const handleWhSettings = () => {
     settingsFormElement.insertAdjacentHTML('afterend', settingsUserTable);
     generateUserTables();
 
+    // TODO: this needs refactoring, to make it work on its own without explicitly listing all settings
     document.getElementById('badgeDefaultValue').value = settings.BADGE.DEFAULT_NAME;
+    document.getElementById('warnOnRussian').checked = settings.GENERAL.WARN_ON_SUSPECTED_RUSSIAN_PROPAGANDA;
   };
 
   const handleSettingsForm = () => {
