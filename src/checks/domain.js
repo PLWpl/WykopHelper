@@ -1,6 +1,5 @@
 // add new domains. Always add them without protocol (http, https), www or path after domain.
 export let rawDomains = [
-  'lifesitenews.com',
   'alternews.pl',
   'alexjones.pl',
   'dziennik-polityczny.com',
