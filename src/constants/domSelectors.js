@@ -22,6 +22,11 @@ const DOM_SELECTORS = {
     WH_USER_TABLE: 'tableWH',
     WH_USER_TABLE_CONTAINER: 'tableWH__container',
     WH_USER_TABLE_BODY: 'tableWH__body'
+  },
+  HIGHLIGHT_OP: {
+    OP_THREAD: '[data-type="entry"]',
+    HIGHLIGHT_BUTTON: 'button--highlightOp',
+    AUTHOR_COMMENTS: 'authorComment',
   }
 };
 

@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         WykopHelper - DEV
-// @version      0.42
+// @version      0.43
 // @updateURL    http://plw.usermd.net/whhelper-dev.js
 // @downloadURL  http://plw.usermd.net/whhelper-dev.js
 // @description  Zestaw narzędzi pomocnych na wykopie.
@@ -35,6 +35,8 @@
     whSettings: () => !!(path.indexOf("wykop.pl/ustawienia/wykophelper") > -1),
 
     thread: () => !!(path.indexOf("wykop.pl/link/") > -1),
+
+    mirkoThread: () => !!(path.indexOf("wykop.pl/wpis/") > -1),
   };
 
   const STORAGE_KEY_NAMES = {
@@ -67,11 +69,16 @@
       WH_USER_TABLE: 'tableWH',
       WH_USER_TABLE_CONTAINER: 'tableWH__container',
       WH_USER_TABLE_BODY: 'tableWH__body'
+    },
+    HIGHLIGHT_OP: {
+      OP_THREAD: '[data-type="entry"]',
+      HIGHLIGHT_BUTTON: 'button--highlightOp',
+      AUTHOR_COMMENTS: 'authorComment',
     }
   };
 
   const stylesBadge = `
-.buttonWH {
+.button {
   display: inline-block;
   padding: .2rem .2rem;
   border: 1px solid #9999996e;
@@ -123,6 +130,19 @@
   display: flex;
   flex-direction: column;
 }
+
+.button--highlightOp {
+  position: absolute;
+  top: .1rem;
+  left: 0;
+}
+
+@media screen and (min-width: 722px) {
+  .button--highlightOp {
+    top: 6rem;
+    left: 1rem;
+  }
+}
 `;
 
   const stylesSettings = `
@@ -142,11 +162,13 @@
   cursor: not-allowed;
 }`;
 
-  const buttonMarkup = `<span class="buttonWH">Oznacz</span>`;
+  const buttonMarkup = `<span class="button buttonWH">Oznacz</span>`;
 
   //returns SPAN element with badge element. If no parameter is provided, it will return default "Troll" badge.
   // eslint-disable-next-line max-len 
   const badge = (nick, name = 'debil') => `<span class="badge badge--${name.toLowerCase()}" data-whusername="${nick}">${name.toLowerCase().capitalize()}</span>`;
+
+  const highlightOpbuttonMarkup = `<span class="button button--highlightOp">Pokaż OPa</span>`;
 
   const modalMarkup = (link, nick) => `
   <p class="modalWH-text">Powód  oznaczenia: 
@@ -784,10 +806,10 @@
 Dodatek WykopHelper został właśnie zaktualizowany. Wprowadzone zmiany to: <br>
 <ul style="margin-top:1rem; list-style-type:square">
   <li style="text-align:left;margin-left:2rem;margin-bottom:.7rem">
-    Od teraz znaleziska z domen podejrzewanych o szerzenie rosyjskiej propagandy będą oznaczane komentarzem na górze (podobnym do info od moderacji np. o duplikacie). W jednej z kolejnych aktualizacji pojawi się możliwość edycji listy podejrzanych stron, a także ostrzeżenie przy próbie dodania znaleziska z takiej domeny.
+    Czytając wpisy na mikroblogu, w pełnym widoku pojedynczego wątku, pod awatarem twócy wątku znajduje się teraz dodatkowy przycisk "Pokaż OPa". Po kliknięciu nań, komentarze twórcy wpisu zostaną pokolorowane na niebiesko (tryb nocny) lub pomarańczowo (dzienny). Pomoże to łatwo znaleźć wypowiedzi OPa w dłuuugich wątkach.
   </li>
   <li style="text-align:left;margin-left:2rem;margin-bottom:.7rem">
-    Zmiany w kodzie, "za kulisami" - przygotowania do wprowadzenia możliwości przydzielania każdemu userowi osobnego tekstu odznaki.
+    
   </li>
 </ul>
 `;
@@ -815,6 +837,21 @@ Dodatek WykopHelper został właśnie zaktualizowany. Wprowadzone zmiany to: <br
     }
   };
 
+  const highlightOp = () => {
+    document.querySelector(`${DOM_SELECTORS.HIGHLIGHT_OP.OP_THREAD} .${DOM_SELECTORS.BADGE.NICK_ELEMENT}`)
+      .insertAdjacentHTML('afterbegin', highlightOpbuttonMarkup);
+
+    document.querySelector(`.${DOM_SELECTORS.HIGHLIGHT_OP.HIGHLIGHT_BUTTON}`).addEventListener('click', () => {
+      const color = document.querySelector('.night') ? 'rgb(7, 68, 91)' : '#ffeac1'; 
+
+      document.querySelectorAll(`.${DOM_SELECTORS.HIGHLIGHT_OP.AUTHOR_COMMENTS}`).forEach(el => {
+        el.style.backgroundColor = color;
+      });
+
+      document.querySelector(`.${DOM_SELECTORS.HIGHLIGHT_OP.HIGHLIGHT_BUTTON}`).remove();
+    });
+  };
+
   /**
      * Helper methods and functions, not directly related to the script's purpose
      */
@@ -839,6 +876,9 @@ Dodatek WykopHelper został właśnie zaktualizowany. Wprowadzone zmiany to: <br
   }
   if (isPath.thread()) {
     handleDomainCheck();
+  }
+  if (isPath.mirkoThread()) {
+    highlightOp();
   }
 
 }());
