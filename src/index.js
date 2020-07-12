@@ -4,6 +4,7 @@ import { handleDomainCheck } from './paths/main/domainChecker.js'
 import { handleSettings, handleWhSettings } from './paths/settings.js';
 import { updateAlert } from './utils/updateAlert.js';
 import { initSettings } from './init/storage.js';
+import { highlightOp } from './paths/main/highlightOp.js';
 
 /**
    * Helper methods and functions, not directly related to the script's purpose
@@ -29,4 +30,7 @@ if (isPath.whSettings()) {
 }
 if (isPath.thread()) {
   handleDomainCheck();
+}
+if (isPath.mirkoThread()) {
+  highlightOp();
 }

@@ -1,5 +1,5 @@
 export const stylesBadge = `
-.buttonWH {
+.button {
   display: inline-block;
   padding: .2rem .2rem;
   border: 1px solid #9999996e;
@@ -50,6 +50,20 @@ export const stylesBadge = `
 .tippy-content {
   display: flex;
   flex-direction: column;
+}
+
+.button--highlightOp {
+  position: absolute;
+  top: .1rem;
+  left: 0;
+
+}
+
+@media screen and (min-width: 722px) {
+  .button--highlightOp {
+    top: 6rem;
+    left: 1rem;
+  }
 }
 `;
 
