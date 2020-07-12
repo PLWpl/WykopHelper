@@ -1,5 +1,5 @@
 export const stylesBadge = `
-.button {
+.wh-button {
   display: inline-block;
   padding: .2rem .2rem;
   border: 1px solid #9999996e;
