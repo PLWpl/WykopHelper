@@ -56,7 +56,6 @@ export const stylesBadge = `
   position: absolute;
   top: .1rem;
   left: 0;
-
 }
 
 @media screen and (min-width: 722px) {

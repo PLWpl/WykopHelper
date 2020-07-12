@@ -11,5 +11,7 @@ export const highlightOp = () => {
     document.querySelectorAll(`.${DOM_SELECTORS.HIGHLIGHT_OP.AUTHOR_COMMENTS}`).forEach(el => {
       el.style.backgroundColor = color;
     })
+
+    document.querySelector(`.${DOM_SELECTORS.HIGHLIGHT_OP.HIGHLIGHT_BUTTON}`).remove();
   })
 }
