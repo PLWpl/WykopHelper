@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         WykopHelper
-// @version      0.4
+// @version      0.42
 // @updateURL    http://plw.usermd.net/whhelper.js
 // @downloadURL  http://plw.usermd.net/whhelper.js
 // @description  Zestaw narzędzi pomocnych na wykopie.
