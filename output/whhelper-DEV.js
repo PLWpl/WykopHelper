@@ -23,6 +23,7 @@
         path.indexOf("wykop.pl/mikroblog/") > -1 ||
         path.indexOf("wykop.pl/wpis/") > -1 ||
         path.indexOf("wykop.pl/moj/") > -1 ||
+        path.indexOf("wykop.pl/ludzie/") > -1 ||
         path.indexOf("wykop.pl/tag/") > -1
       ) {
         return true;
