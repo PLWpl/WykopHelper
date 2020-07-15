@@ -8,6 +8,7 @@ export const updateAlert = () => {
       title: 'WykopHelper zaktualizowany!',
       html: updateText,
       icon: 'info',
+      width: '80%',
       confirmButtonText: 'Okej!'
     });
     localStorage.setItem('WHupdate',version);
@@ -18,6 +19,7 @@ export const updateAlert = () => {
       title: 'WykopHelper zainstalowany!',
       html: welcomeText,
       icon: 'success',
+      width: '80%',
       confirmButtonText: 'Super!'
     });
     localStorage.setItem('WHupdate',version);

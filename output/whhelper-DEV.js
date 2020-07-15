@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         WykopHelper - DEV
-// @version      0.43
+// @version      0.45
 // @updateURL    http://plw.usermd.net/whhelper-dev.js
 // @downloadURL  http://plw.usermd.net/whhelper-dev.js
 // @description  Zestaw narzędzi pomocnych na wykopie.
@@ -808,7 +808,7 @@
 
   /* eslint max-len: 0 */
 
-  const version = 0.42;
+  const version = 0.45;
 
   const welcomeText = 'Mi\u0142ego u\u017Cywania dodatku! Je\u015Bli masz jakiekolwiek problemy, pytania lub sugestie, zg\u0142o\u015B je <a href="https://github.com/PLWpl/wykopoweTrole/issues" target="_blank">tutaj.</a>';
 
@@ -819,7 +819,13 @@ Dodatek WykopHelper został właśnie zaktualizowany. Wprowadzone zmiany to: <br
     Czytając wpisy na mikroblogu, w pełnym widoku pojedynczego wątku, pod awatarem twócy wątku znajduje się teraz dodatkowy przycisk "Pokaż OPa". Po kliknięciu nań, komentarze twórcy wpisu zostaną pokolorowane na niebiesko (tryb nocny) lub pomarańczowo (dzienny). Pomoże to łatwo znaleźć wypowiedzi OPa w dłuuugich wątkach.
   </li>
   <li style="text-align:left;margin-left:2rem;margin-bottom:.7rem">
-    
+    Funkcja ostrzegania przed opuszczeniem strony, gdy wykryte zostanie pisanie komentarza (na mikroblogu i w znaleziskach) została aktywowana i domyślnie jest włączona, ale można ją oczywiście deaktywować w ustawieniach.
+  </li>
+  <li style="text-align:left;margin-left:2rem;margin-bottom:.7rem">
+    Dodatkowo, do tej pory po kliknięciu przycisku usunięcia odznaki użytkownika, następowało natychmiastowe odświeżenie strony (konieczne by usunąć przycisk - przynajmniej na razie, prace nad zmianą tego trwają). Obecnie, jeśli wykryte zostanie pisanie komentarza, wyświetlony zostanie zamiast tego popup z wyjaśnieniem i prośbą o podjęcie decyzji.
+  </li>
+  <li style="text-align:left;margin-left:2rem;margin-bottom:.7rem">
+    Kilka pomniejszych poprawek i usprawnień. Zapewne udało się dodatkowo wprowadzić kilka nowych bugów :)
   </li>
 </ul>
 `;
@@ -831,6 +837,7 @@ Dodatek WykopHelper został właśnie zaktualizowany. Wprowadzone zmiany to: <br
         title: 'WykopHelper zaktualizowany!',
         html: updateText,
         icon: 'info',
+        width: '80%',
         confirmButtonText: 'Okej!'
       });
       localStorage.setItem('WHupdate',version);
@@ -841,6 +848,7 @@ Dodatek WykopHelper został właśnie zaktualizowany. Wprowadzone zmiany to: <br
         title: 'WykopHelper zainstalowany!',
         html: welcomeText,
         icon: 'success',
+        width: '80%',
         confirmButtonText: 'Super!'
       });
       localStorage.setItem('WHupdate',version);

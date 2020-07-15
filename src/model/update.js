@@ -1,6 +1,6 @@
 /* eslint max-len: 0 */
 
-export const version = 0.42;
+export const version = 0.45;
 
 export const welcomeText = 'Miłego używania dodatku! Jeśli masz jakiekolwiek problemy, pytania lub sugestie, zgłoś je <a href="https://github.com/PLWpl/wykopoweTrole/issues" target="_blank">tutaj.</a>';
 
@@ -15,6 +15,9 @@ Dodatek WykopHelper został właśnie zaktualizowany. Wprowadzone zmiany to: <br
   </li>
   <li style="text-align:left;margin-left:2rem;margin-bottom:.7rem">
     Dodatkowo, do tej pory po kliknięciu przycisku usunięcia odznaki użytkownika, następowało natychmiastowe odświeżenie strony (konieczne by usunąć przycisk - przynajmniej na razie, prace nad zmianą tego trwają). Obecnie, jeśli wykryte zostanie pisanie komentarza, wyświetlony zostanie zamiast tego popup z wyjaśnieniem i prośbą o podjęcie decyzji.
+  </li>
+  <li style="text-align:left;margin-left:2rem;margin-bottom:.7rem">
+    Kilka pomniejszych poprawek i usprawnień. Zapewne udało się dodatkowo wprowadzić kilka nowych bugów :)
   </li>
 </ul>
 `;
