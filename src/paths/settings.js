@@ -92,6 +92,7 @@ export const handleWhSettings = () => {
     // TODO: this needs refactoring, to make it work on its own without explicitly listing all settings
     document.getElementById('badgeDefaultValue').value = settings.BADGE.DEFAULT_NAME;
     document.getElementById('warnOnRussian').checked = settings.GENERAL.WARN_ON_SUSPECTED_RUSSIAN_PROPAGANDA;
+    document.getElementById('warnOnReload').checked = settings.GENERAL.WARN_ON_RELOAD;
   };
 
   const handleSettingsForm = () => {
