@@ -11,7 +11,10 @@ Dodatek WykopHelper został właśnie zaktualizowany. Wprowadzone zmiany to: <br
     Czytając wpisy na mikroblogu, w pełnym widoku pojedynczego wątku, pod awatarem twócy wątku znajduje się teraz dodatkowy przycisk "Pokaż OPa". Po kliknięciu nań, komentarze twórcy wpisu zostaną pokolorowane na niebiesko (tryb nocny) lub pomarańczowo (dzienny). Pomoże to łatwo znaleźć wypowiedzi OPa w dłuuugich wątkach.
   </li>
   <li style="text-align:left;margin-left:2rem;margin-bottom:.7rem">
-    
+    Funkcja ostrzegania przed opuszczeniem strony, gdy wykryte zostanie pisanie komentarza (na mikroblogu i w znaleziskach) została aktywowana i domyślnie jest włączona, ale można ją oczywiście deaktywować w ustawieniach.
+  </li>
+  <li style="text-align:left;margin-left:2rem;margin-bottom:.7rem">
+    Dodatkowo, do tej pory po kliknięciu przycisku usunięcia odznaki użytkownika, następowało natychmiastowe odświeżenie strony (konieczne by usunąć przycisk - przynajmniej na razie, prace nad zmianą tego trwają). Obecnie, jeśli wykryte zostanie pisanie komentarza, wyświetlony zostanie zamiast tego popup z wyjaśnieniem i prośbą o podjęcie decyzji.
   </li>
 </ul>
 `;

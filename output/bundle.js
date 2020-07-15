@@ -359,7 +359,7 @@ const handleBadges = () => {
       Swal.fire({
         title: 'Hej!',
         // eslint-disable-next-line
-        text: 'Wygl\u0105da na to, \u017Ce jeste\u015B w trakcie pisania komentarza. Kliknij "Anuluj" aby doko\u0144czy\u0107 pisanie i od\u015Bwie\u017C stron\u0119 r\u0119cznie (to aktualnie konieczne, by znikn\u0119\u0142o oznaczenie u\u017Cytkownika). Je\u015Bli jednak nie planujesz nic publikowa\u0107, naci\u015Bnij zielony przycisk.',
+        text: 'Wygl\u0105da na to, \u017Ce jeste\u015B w trakcie pisania komentarza. Kliknij "Anuluj" aby doko\u0144czy\u0107 pisanie i od\u015Bwie\u017C stron\u0119 r\u0119cznie (to aktualnie konieczne, by znikn\u0119\u0142o oznaczenie u\u017Cytkownika). Je\u015Bli jednak nie planujesz nic publikowa\u0107, naci\u015Bnij przycisk "Od\u015Bwie\u017C".',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
@@ -540,10 +540,8 @@ const settingsMarkup = `
         category="GENERAL"
         name="WARN_ON_RELOAD"
         id="warnOnReload"
-        checked
-        disabled
       />
-      <label title="Ficzer jeszcze nieaktywny" class="settings__crossed inline" for="warnOnReload">Ostrzegaj przy próbie zamknięcia/przeładowania strony gdy wykryto pisanie komentarza</label>
+      <label class="inline" for="warnOnReload">Ostrzegaj przy próbie zamknięcia/przeładowania strony gdy wykryto pisanie komentarza</label>
     </div>
     <div class="row">
       <input
@@ -552,7 +550,6 @@ const settingsMarkup = `
         category="GENERAL"
         name="WARN_ON_SUSPECTED_RUSSIAN_PROPAGANDA"
         id="warnOnRussian"
-        checked
       />
       <label class="inline" for="warnOnRussian">Oznaczaj znaleziska ze źródeł podejrzewanych o szerzenie Rosyjskiej propagandy [<a href="https://oko.press/rosyjska-propagande-szerza-polskie-portale-znalezlismy-23-takie-witryny/" target="_blank">Więcej -></a>]</label>
     </div>
@@ -726,6 +723,7 @@ const handleWhSettings = () => {
     // TODO: this needs refactoring, to make it work on its own without explicitly listing all settings
     document.getElementById('badgeDefaultValue').value = settings.BADGE.DEFAULT_NAME;
     document.getElementById('warnOnRussian').checked = settings.GENERAL.WARN_ON_SUSPECTED_RUSSIAN_PROPAGANDA;
+    document.getElementById('warnOnReload').checked = settings.GENERAL.WARN_ON_RELOAD;
   };
 
   const handleSettingsForm = () => {
