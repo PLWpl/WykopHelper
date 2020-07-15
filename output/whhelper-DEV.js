@@ -198,6 +198,30 @@
 
   const { BADGE: DOM } = DOM_SELECTORS;
 
+  const isTextareaEmpty = () => {
+    const replyForm = document.querySelector(DOM.REPLY_FORM);
+    const commentForm = document.querySelector(DOM.COMMENT_FORM);
+
+    if ((replyForm && replyForm.value !== "") || (commentForm && commentForm.value !== "")) {
+      return false;
+    } else {
+      return true;
+    }
+  };
+
+  const warnOnReload = () => {
+    const settings = JSON.parse(localStorage.getItem(STORAGE_KEY_NAMES.WH_SETTINGS));
+    if (settings.GENERAL.WARN_ON_RELOAD) {
+      window.addEventListener('beforeunload', e => {
+        if (!isTextareaEmpty()) {
+          e.preventDefault();
+        }
+      });
+    }
+  };
+
+  const { BADGE: DOM$1 } = DOM_SELECTORS;
+
   const handleBadges = () => {
     /**
      * uniqueNicksSet - an array keeping nicks of all users added to the troll list. It exists so that before adding any user on a list we can easily check if they haven't already been added, using simple includes() method.
@@ -233,32 +257,19 @@
     };
 
     // function returns a nodeList with all <div> elements containing line with nick, time since comment made, [+][-]
-    const getAllNickElements = () => document.querySelectorAll(DOM.NICK_ELEMENTS);
+    const getAllNickElements = () => document.querySelectorAll(DOM$1.NICK_ELEMENTS);
 
     
     //used on element - preferably one returned from getAllNickElements() - returns string with nick name.
-    const getNick = el => el.querySelector(DOM.NICK).innerText;
+    const getNick = el => el.querySelector(DOM$1.NICK).innerText;
 
     const reloadPage = () => location.reload();
 
     // used on author element, returned from getAllNickElements(), checks if person has already been marked with a badge
-    const isNotAwarded = element => !(element.querySelector(`.${DOM.BADGE}`));
+    const isNotAwarded = element => !(element.querySelector(`.${DOM$1.BADGE}`));
 
     // used on author element, returned from getAllNickElements(), checks if person has already been given a button
-    const hasButtonAppended = element => !!(element.querySelector(`.${DOM.MARK_BUTTON}`));
-
-    // checks if any textarea on a page is empty, to prevent reloading of a page while user might be attempting to write some comment or similar
-
-    const isTextareaEmpty = () => {
-      const replyForm = document.querySelector(DOM.REPLY_FORM);
-      const commentForm = document.querySelector(DOM.COMMENT_FORM);
-
-      if ((replyForm && replyForm.value !== "") || (commentForm && commentForm.value !== "")) {
-        return false;
-      } else {
-        return true;
-      }
-    };
+    const hasButtonAppended = element => !!(element.querySelector(`.${DOM$1.MARK_BUTTON}`));
 
     // prepares localStorage. Checks if trolls and uniqueNicksSet are already present and saved to localStorage. If so, it parses it to arrays. If not, it initializes empty ones.
     const prepareLocalStorage = () => {
@@ -313,9 +324,9 @@
           }
           if (isTroll(nick) 
             && isNotAwarded(element) 
-            && element.querySelector(`.${DOM.MARK_BUTTON}`) 
-            && !element.querySelector(`.${DOM.MARK_BUTTON_CLICKED}`)) {
-            element.querySelector(`.${DOM.MARK_BUTTON}`).remove();
+            && element.querySelector(`.${DOM$1.MARK_BUTTON}`) 
+            && !element.querySelector(`.${DOM$1.MARK_BUTTON_CLICKED}`)) {
+            element.querySelector(`.${DOM$1.MARK_BUTTON}`).remove();
           }
         });
       }
@@ -328,12 +339,12 @@
     // First, get nick of the author. Then, get link of the offending comment. 
     const addNewTroll = event => {
       prepareLocalStorage();
-      const nick = getNick(event.target.closest(`.${DOM.NICK_ELEMENT}`));
-      const link = event.target.closest(`.${DOM.NICK_ELEMENT}`).querySelector(`.verified`) ? 
-        event.target.closest(`.${DOM.NICK_ELEMENT}`).querySelector(`.${DOM.NICK_VERIFIED_BADGE} + a`).href
-        : event.target.closest(`.${DOM.NICK_ELEMENT}`).querySelector("a + a").href;
+      const nick = getNick(event.target.closest(`.${DOM$1.NICK_ELEMENT}`));
+      const link = event.target.closest(`.${DOM$1.NICK_ELEMENT}`).querySelector(`.verified`) ? 
+        event.target.closest(`.${DOM$1.NICK_ELEMENT}`).querySelector(`.${DOM$1.NICK_VERIFIED_BADGE} + a`).href
+        : event.target.closest(`.${DOM$1.NICK_ELEMENT}`).querySelector("a + a").href;
 
-      event.target.classList.add(DOM.MARK_BUTTON_CLICKED);
+      event.target.classList.add(DOM$1.MARK_BUTTON_CLICKED);
       event.target.innerText = "\u2714";
       setTimeout(() => {
         event.target.remove();
@@ -355,14 +366,14 @@
       uniqueNicksSet = uniqueNicksSet.filter(el => el !== nick);
       localStorage.setItem(STORAGE_KEY_NAMES.UNIQUE_USERS, JSON.stringify(uniqueNicksSet));
       
-      if (isTextareaEmpty) {
+      if (isTextareaEmpty()) {
         reloadPage();
       } else {
         // eslint-disable-next-line
         Swal.fire({
           title: 'Hej!',
           // eslint-disable-next-line
-          text: 'Wygl&#x0105;da na to, &#x017c;e jeste&#x015b; w trakcie pisania komentarza. Kliknij &quot;Anuluj&quot;, &#x017c;eby doko&#x0144;czy&#x0107; pisanie i r&#x0119;cznie od&#x015b;wie&#x017c;y&#x0107; stron&#x0119; p&oacute;&#x017a;niej (to konieczne by znikn&#x0119;&#x0142;a odznaka przy nicku u&#x017c;ytkownika). Je&#x015b;li to pomy&#x0142;ka, i nie masz nic przeciw od&#x015b;wie&#x017c;eniu strony, naci&#x015b;nij &quot;OK&quot;.',
+          text: 'Wygl\u0105da na to, \u017Ce jeste\u015B w trakcie pisania komentarza. Kliknij "Anuluj" aby doko\u0144czy\u0107 pisanie i od\u015Bwie\u017C stron\u0119 r\u0119cznie (to aktualnie konieczne, by znikn\u0119\u0142o oznaczenie u\u017Cytkownika). Je\u015Bli jednak nie planujesz nic publikowa\u0107, naci\u015Bnij zielony przycisk.',
           icon: 'warning',
           showCancelButton: true,
           confirmButtonColor: '#3085d6',
@@ -398,10 +409,10 @@
     };
 
     const initializeModal = () => {
-      if (document.querySelector(`.${DOM.BADGE}`)) {
-        document.querySelectorAll(`.${DOM.BADGE}`).forEach(el => {
+      if (document.querySelector(`.${DOM$1.BADGE}`)) {
+        document.querySelectorAll(`.${DOM$1.BADGE}`).forEach(el => {
           const nick = el.dataset.whusername;
-          setTimeout(showUserModal(DOM.DATASET.USERNAME(nick)), 1150);
+          setTimeout(showUserModal(DOM$1.DATASET.USERNAME(nick)), 1150);
         });
       }
     };
@@ -420,7 +431,7 @@
       .getElementById('itemsStream')
       .addEventListener('click', event => {
         const target = event.target;
-        if (target.classList.contains(DOM.MARK_BUTTON)) {
+        if (target.classList.contains(DOM$1.MARK_BUTTON)) {
           addNewTroll(event);
         }
         if (target.classList.contains('affect') && target.closest('.more')) {
@@ -429,7 +440,7 @@
             markUsers();
           }, 500);  
         }
-        if (target.classList.contains(DOM.MODAL_BUTTON_REMOVE)) {
+        if (target.classList.contains(DOM$1.MODAL_BUTTON_REMOVE)) {
           //eslint-disable-next-line
           console.log(target);
           const nick = target.dataset.whuserremove;
@@ -642,15 +653,15 @@
     }
   };
 
-  const { SETTINGS: DOM$1 } = DOM_SELECTORS;
+  const { SETTINGS: DOM$2 } = DOM_SELECTORS;
 
   const handleSettings = () => {
-    document.querySelector(DOM$1.LAST_NAV_ELEMENT).insertAdjacentHTML('beforeend', settingsNav);
+    document.querySelector(DOM$2.LAST_NAV_ELEMENT).insertAdjacentHTML('beforeend', settingsNav);
   };
 
   const handleWhSettings = () => {
     let settings, trolls, uniqueNicksSet;
-    const settingsFormElement = document.querySelector(DOM$1.SETTINGS_FORM_ELEMENT);
+    const settingsFormElement = document.querySelector(DOM$2.SETTINGS_FORM_ELEMENT);
 
     const prepareLocalStorage = (...types) => {
       if ([...types].length < 1 || [...types].includes('settings')) {
@@ -693,7 +704,7 @@
     </tr>
     `;
 
-      const tableBody = document.querySelector(`.${DOM$1.WH_USER_TABLE_BODY}`);
+      const tableBody = document.querySelector(`.${DOM$2.WH_USER_TABLE_BODY}`);
 
       for (let i = 0; i < trolls.length; i++) {
         const el = trolls[i];
@@ -702,10 +713,10 @@
     };
 
     const toggleUserTableVisibility = () => {
-      document.querySelector(`.${DOM$1.WH_USER_TABLE_CONTAINER}`)
-        .classList.toggle(`${DOM$1.WH_USER_TABLE_CONTAINER}--hidden`);
+      document.querySelector(`.${DOM$2.WH_USER_TABLE_CONTAINER}`)
+        .classList.toggle(`${DOM$2.WH_USER_TABLE_CONTAINER}--hidden`);
 
-      if (document.querySelector(`.${DOM$1.WH_USER_TABLE_CONTAINER}--hidden`)) {
+      if (document.querySelector(`.${DOM$2.WH_USER_TABLE_CONTAINER}--hidden`)) {
         document.getElementById('showAllMarked').textContent = 'Poka\u017C wszystkich oznaczonych u\u017Cytkownik\xF3w';
       } else {
         document.getElementById('showAllMarked').textContent = 'Schowaj tabel\u0119';
@@ -715,8 +726,8 @@
     const renderSettings = () => {
       prepareLocalStorage();
 
-      document.querySelector(DOM$1.ACTIVE_NAV_ELEMENT).classList.remove('active');
-      document.querySelector(`.${DOM$1.WH_NAV_SETTINGS_LINK}`).classList.add('active');
+      document.querySelector(DOM$2.ACTIVE_NAV_ELEMENT).classList.remove('active');
+      document.querySelector(`.${DOM$2.WH_NAV_SETTINGS_LINK}`).classList.add('active');
     
       settingsFormElement.innerHTML = '';
       settingsFormElement.innerHTML = settingsMarkup;
@@ -868,6 +879,7 @@ Dodatek WykopHelper został właśnie zaktualizowany. Wprowadzone zmiany to: <br
 
   if (isPath.main()) {
     handleBadges();
+    warnOnReload();
   }
   if (isPath.settings()) {
     handleSettings();

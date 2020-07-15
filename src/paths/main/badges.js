@@ -6,6 +6,7 @@ import { buttonMarkup, badge } from '../../markup/minor.js';
 import { modalMarkup } from '../../markup/badgeInfoModal.js';
 import { addModal } from '../../utils/addModal.js';
 import { injectStyles } from '../../utils/inject.js';
+import { isTextareaEmpty } from './warnOnReload.js';
 
 const { BADGE: DOM } = DOM_SELECTORS;
 
@@ -57,19 +58,6 @@ export const handleBadges = () => {
 
   // used on author element, returned from getAllNickElements(), checks if person has already been given a button
   const hasButtonAppended = element => !!(element.querySelector(`.${DOM.MARK_BUTTON}`));
-
-  // checks if any textarea on a page is empty, to prevent reloading of a page while user might be attempting to write some comment or similar
-
-  const isTextareaEmpty = () => {
-    const replyForm = document.querySelector(DOM.REPLY_FORM);
-    const commentForm = document.querySelector(DOM.COMMENT_FORM);
-
-    if ((replyForm && replyForm.value !== "") || (commentForm && commentForm.value !== "")) {
-      return false;
-    } else {
-      return true;
-    }
-  }
 
   // prepares localStorage. Checks if trolls and uniqueNicksSet are already present and saved to localStorage. If so, it parses it to arrays. If not, it initializes empty ones.
   const prepareLocalStorage = () => {
@@ -166,14 +154,14 @@ export const handleBadges = () => {
     uniqueNicksSet = uniqueNicksSet.filter(el => el !== nick);
     localStorage.setItem(STORAGE_KEY_NAMES.UNIQUE_USERS, JSON.stringify(uniqueNicksSet));
     
-    if (isTextareaEmpty) {
+    if (isTextareaEmpty()) {
       reloadPage();
     } else {
       // eslint-disable-next-line
       Swal.fire({
         title: 'Hej!',
         // eslint-disable-next-line
-        text: 'Wygl&#x0105;da na to, &#x017c;e jeste&#x015b; w trakcie pisania komentarza. Kliknij &quot;Anuluj&quot;, &#x017c;eby doko&#x0144;czy&#x0107; pisanie i r&#x0119;cznie od&#x015b;wie&#x017c;y&#x0107; stron&#x0119; p&oacute;&#x017a;niej (to konieczne by znikn&#x0119;&#x0142;a odznaka przy nicku u&#x017c;ytkownika). Je&#x015b;li to pomy&#x0142;ka, i nie masz nic przeciw od&#x015b;wie&#x017c;eniu strony, naci&#x015b;nij &quot;OK&quot;.',
+        text: 'Wygląda na to, że jesteś w trakcie pisania komentarza. Kliknij "Anuluj" aby dokończyć pisanie i odśwież stronę ręcznie (to aktualnie konieczne, by zniknęło oznaczenie użytkownika). Jeśli jednak nie planujesz nic publikować, naciśnij przycisk "Odśwież".',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
