@@ -62,6 +62,9 @@ const DOM_SELECTORS = {
     OP_THREAD: '[data-type="entry"]',
     HIGHLIGHT_BUTTON: 'button--highlightOp',
     AUTHOR_COMMENTS: 'authorComment',
+  },
+  EMBED: {
+    EMBED_FILE: 'embedFile',
   }
 };
 
@@ -688,6 +691,7 @@ const handleWhSettings = () => {
     trolls = [];
     localStorage.setItem(STORAGE_KEY_NAMES.UNIQUE_USERS, JSON.stringify(uniqueNicksSet));
     localStorage.setItem(STORAGE_KEY_NAMES.MARKED_USERS, JSON.stringify(trolls));
+    location.reload();
   };
 
   const generateUserTables = () => {
@@ -897,6 +901,19 @@ const highlightOp = () => {
   });
 };
 
+const embedOnPaste = () => {
+  document.addEventListener('paste', event => {
+    if (document.querySelector(`.${DOM_SELECTORS.EMBED.EMBED_FILE}`) && event.clipboardData.files[0]) {
+      const input = document.querySelector(`.${DOM_SELECTORS.EMBED.EMBED_FILE} input`);
+      input.files = event.clipboardData.files;
+
+      let UIevent = new Event('UIEvent');
+      UIevent.initEvent('change', false, true);
+      input.dispatchEvent(UIevent);
+    }
+  });
+};
+
 /**
    * Helper methods and functions, not directly related to the script's purpose
    */
@@ -913,6 +930,7 @@ initSettings();
 if (isPath.main()) {
   handleBadges();
   warnOnReload();
+  embedOnPaste();
 }
 if (isPath.settings()) {
   handleSettings();

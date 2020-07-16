@@ -28,6 +28,9 @@ const DOM_SELECTORS = {
     OP_THREAD: '[data-type="entry"]',
     HIGHLIGHT_BUTTON: 'button--highlightOp',
     AUTHOR_COMMENTS: 'authorComment',
+  },
+  EMBED: {
+    EMBED_FILE: 'embedFile',
   }
 };
 

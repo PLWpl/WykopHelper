@@ -6,6 +6,7 @@ import { updateAlert } from './utils/updateAlert.js';
 import { initSettings } from './init/storage.js';
 import { highlightOp } from './paths/main/highlightOp.js';
 import { warnOnReload } from './paths/main/warnOnReload.js';
+import { embedOnPaste } from './paths/main/embedOnPaste.js';
 
 /**
    * Helper methods and functions, not directly related to the script's purpose
@@ -23,6 +24,7 @@ initSettings();
 if (isPath.main()) {
   handleBadges();
   warnOnReload();
+  embedOnPaste();
 }
 if (isPath.settings()) {
   handleSettings();
