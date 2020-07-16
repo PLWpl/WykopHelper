@@ -77,6 +77,7 @@ export const settingsUserTable = `
         <td>Nick</td>
         <td>Typ</td>
         <td>Link</td>
+        <td>Usuń</td>
       </tr>
     </thead>
     <tbody class="tableWH__body">

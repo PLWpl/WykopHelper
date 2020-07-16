@@ -230,7 +230,6 @@ export const handleBadges = () => {
       }
       if (target.classList.contains(DOM.MODAL_BUTTON_REMOVE)) {
         //eslint-disable-next-line
-        console.log(target);
         const nick = target.dataset.whuserremove;
         removeTroll(nick);
       }

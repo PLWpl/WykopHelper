@@ -55,7 +55,8 @@ const DOM_SELECTORS = {
     WH_NAV_SETTINGS_LINK: 'whSettingsLink',
     WH_USER_TABLE: 'tableWH',
     WH_USER_TABLE_CONTAINER: 'tableWH__container',
-    WH_USER_TABLE_BODY: 'tableWH__body'
+    WH_USER_TABLE_BODY: 'tableWH__body',
+    WH_USER_TABLE_REMOVE_BUTTON: 'tableWH__nick-remove',
   },
   HIGHLIGHT_OP: {
     OP_THREAD: '[data-type="entry"]',
@@ -90,6 +91,7 @@ const stylesBadge = `
   margin-right: .3rem;
   border: 1px solid currentColor;
   padding: .1rem .2rem;
+  cursor: pointer;
 }
 .modalWH-button {
   display: block;
@@ -139,6 +141,15 @@ const stylesSettings = `
 .tableWH__container--hidden {
   display: none;
 }
+.tableWH {
+  counter-reset: row-num;
+}
+.tableWH .tableWH__row {
+  counter-increment: row-num;
+}
+.tableWH .tableWH__row td:first-child::before {
+  content: counter(row-num) ". ";
+}
 .tableWH__head {
   font-weight: bold;
   border-bottom: 2px solid currentColor;
@@ -147,6 +158,10 @@ const stylesSettings = `
   opacity: .4;
   text-decoration: line-through;
   cursor: not-allowed;
+}
+.tableWH__nick-remove {
+  cursor: pointer;
+  color: #c0392b;
 }`;
 
 const buttonMarkup = `<span class="wh-button buttonWH">Oznacz</span>`;
@@ -428,7 +443,6 @@ const handleBadges = () => {
       }
       if (target.classList.contains(DOM$1.MODAL_BUTTON_REMOVE)) {
         //eslint-disable-next-line
-        console.log(target);
         const nick = target.dataset.whuserremove;
         removeTroll(nick);
       }
@@ -607,6 +621,7 @@ const settingsUserTable = `
         <td>Nick</td>
         <td>Typ</td>
         <td>Link</td>
+        <td>Usuń</td>
       </tr>
     </thead>
     <tbody class="tableWH__body">
@@ -678,12 +693,13 @@ const handleWhSettings = () => {
   const generateUserTables = () => {
     prepareLocalStorage('markedUsers');
 
-    const rowItemMarkup = (index, nick, type, link) => `
-    <tr>
-      <td>${index}</td>
+    const rowItemMarkup = (nick, type, link) => `
+    <tr class="tableWH__row">
+      <td></td>
       <td><a href="https://www.wykop.pl/ludzie/${nick}" target="_blank">${nick}</a></td>
       <td>${type}</td>
       <td><a href="${link}" target="_blank">&#128279</a></td>
+      <td><span class="tableWH__nick-remove" data-whuserremove="${nick}">&#x02717;</a></td>
     </tr>
     `;
 
@@ -691,7 +707,7 @@ const handleWhSettings = () => {
 
     for (let i = 0; i < trolls.length; i++) {
       const el = trolls[i];
-      tableBody.insertAdjacentHTML('beforeend', rowItemMarkup(i+1, el.nick, el.type || 'Debil', el.link ));
+      tableBody.insertAdjacentHTML('beforeend', rowItemMarkup(el.nick, el.type || 'Debil', el.link ));
     }
   };
 
@@ -764,11 +780,36 @@ const handleWhSettings = () => {
     });
   };
 
+  /**
+   * Handling removing mark from users
+   */
+  const removeTroll = nick => {
+    prepareLocalStorage('markedUsers');
+    for (let [index, item] of trolls.entries()) {
+      if (item.nick === nick) {
+        delete trolls[index];
+        trolls = trolls.filter(el => el != null);
+        localStorage.setItem(STORAGE_KEY_NAMES.MARKED_USERS, JSON.stringify(trolls));
+      }
+    }
+    uniqueNicksSet = uniqueNicksSet.filter(el => el !== nick);
+    localStorage.setItem(STORAGE_KEY_NAMES.UNIQUE_USERS, JSON.stringify(uniqueNicksSet));
+  };
+
   const init = () => {
     injectStyles(stylesSettings);
     renderSettings();
     prepareLocalStorage();
     handleSettingsForm();
+
+    document.querySelector(`.${DOM_SELECTORS.SETTINGS.WH_USER_TABLE}`).addEventListener('click', event => {
+      const target = event.target;
+      if (target.classList.contains(`${DOM_SELECTORS.SETTINGS.WH_USER_TABLE_REMOVE_BUTTON}`)) {
+        const nick = target.dataset.whuserremove;
+        removeTroll(nick);
+        target.closest('tr').remove();
+      }
+    });
   };
 
   init();
