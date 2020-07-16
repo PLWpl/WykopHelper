@@ -24,6 +24,7 @@ export const stylesBadge = `
   margin-right: .3rem;
   border: 1px solid currentColor;
   padding: .1rem .2rem;
+  cursor: pointer;
 }
 .modalWH-button {
   display: block;
@@ -73,6 +74,15 @@ export const stylesSettings = `
 .tableWH__container--hidden {
   display: none;
 }
+.tableWH {
+  counter-reset: row-num;
+}
+.tableWH .tableWH__row {
+  counter-increment: row-num;
+}
+.tableWH .tableWH__row td:first-child::before {
+  content: counter(row-num) ". ";
+}
 .tableWH__head {
   font-weight: bold;
   border-bottom: 2px solid currentColor;
@@ -81,4 +91,8 @@ export const stylesSettings = `
   opacity: .4;
   text-decoration: line-through;
   cursor: not-allowed;
+}
+.tableWH__nick-remove {
+  cursor: pointer;
+  color: #c0392b;
 }`;
