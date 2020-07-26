@@ -1,6 +1,6 @@
 {
-  "name": "baza-pisowskich-trolli",
-  "version": "0.43",
+  "name": "wykop-helper",
+  "version": "0.46",
   "description": "",
   "main": "index.js",
   "scripts": {

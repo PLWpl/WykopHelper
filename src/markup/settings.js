@@ -10,10 +10,8 @@ export const settingsMarkup = `
         category="GENERAL"
         name="WARN_ON_RELOAD"
         id="warnOnReload"
-        checked
-        disabled
       />
-      <label title="Ficzer jeszcze nieaktywny" class="settings__crossed inline" for="warnOnReload">Ostrzegaj przy próbie zamknięcia/przeładowania strony gdy wykryto pisanie komentarza</label>
+      <label class="inline" for="warnOnReload">Ostrzegaj przy próbie zamknięcia/przeładowania strony gdy wykryto pisanie komentarza</label>
     </div>
     <div class="row">
       <input
@@ -22,9 +20,8 @@ export const settingsMarkup = `
         category="GENERAL"
         name="WARN_ON_SUSPECTED_RUSSIAN_PROPAGANDA"
         id="warnOnRussian"
-        checked
       />
-      <label class="inline" for="warnOnRussian">Oznaczaj znaleziska ze źródeł podejrzewanych o szerzenie Rosyjskiej propagandy [<a href="https://oko.press/rosyjska-propagande-szerza-polskie-portale-znalezlismy-23-takie-witryny/" target="_blank">Więcej -></a>]</label>
+      <label class="inline" for="warnOnRussian">Oznaczaj znaleziska ze źródeł podejrzewanych o szerzenie Rosyjskiej propagandy </label><span id="russianPropagandaInfo" style="cursor:pointer">[Więcej ->]</span>
     </div>
   </div>
 <!--  BADGE -->
@@ -80,6 +77,7 @@ export const settingsUserTable = `
         <td>Nick</td>
         <td>Typ</td>
         <td>Link</td>
+        <td>Usuń</td>
       </tr>
     </thead>
     <tbody class="tableWH__body">

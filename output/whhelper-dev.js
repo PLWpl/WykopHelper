@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         WykopHelper - DEV
-// @version      0.43
+// @version      0.46
 // @updateURL    http://plw.usermd.net/whhelper-dev.js
 // @downloadURL  http://plw.usermd.net/whhelper-dev.js
 // @description  Zestaw narzędzi pomocnych na wykopie.
@@ -69,12 +69,16 @@
       WH_NAV_SETTINGS_LINK: 'whSettingsLink',
       WH_USER_TABLE: 'tableWH',
       WH_USER_TABLE_CONTAINER: 'tableWH__container',
-      WH_USER_TABLE_BODY: 'tableWH__body'
+      WH_USER_TABLE_BODY: 'tableWH__body',
+      WH_USER_TABLE_REMOVE_BUTTON: 'tableWH__nick-remove',
     },
     HIGHLIGHT_OP: {
       OP_THREAD: '[data-type="entry"]',
       HIGHLIGHT_BUTTON: 'button--highlightOp',
       AUTHOR_COMMENTS: 'authorComment',
+    },
+    EMBED: {
+      EMBED_FILE: 'embedFile',
     }
   };
 
@@ -104,6 +108,7 @@
   margin-right: .3rem;
   border: 1px solid currentColor;
   padding: .1rem .2rem;
+  cursor: pointer;
 }
 .modalWH-button {
   display: block;
@@ -153,6 +158,15 @@
 .tableWH__container--hidden {
   display: none;
 }
+.tableWH {
+  counter-reset: row-num;
+}
+.tableWH .tableWH__row {
+  counter-increment: row-num;
+}
+.tableWH .tableWH__row td:first-child::before {
+  content: counter(row-num) ". ";
+}
 .tableWH__head {
   font-weight: bold;
   border-bottom: 2px solid currentColor;
@@ -161,6 +175,16 @@
   opacity: .4;
   text-decoration: line-through;
   cursor: not-allowed;
+}
+.tableWH__nick-remove {
+  cursor: pointer;
+  color: #c0392b;
+}
+.whModalLink {
+  color: #862828;
+}
+.whModalLink:hover {
+  color: #4a1313 !important;
 }`;
 
   const buttonMarkup = `<span class="wh-button buttonWH">Oznacz</span>`;
@@ -198,6 +222,33 @@
 
   const { BADGE: DOM } = DOM_SELECTORS;
 
+  const isTextareaEmpty = () => {
+    const replyForm = document.querySelector(DOM.REPLY_FORM);
+    const commentForm = document.querySelector(DOM.COMMENT_FORM);
+
+    const isReplyNotEmpty = replyForm && replyForm.value.split(" ").length > 5;
+    const isCommentNotEmpty = commentForm && commentForm.value.split(" ").length > 5;
+
+    if (isReplyNotEmpty || isCommentNotEmpty) {
+      return false;
+    } else {
+      return true;
+    }
+  };
+
+  const warnOnReload = () => {
+    const settings = JSON.parse(localStorage.getItem(STORAGE_KEY_NAMES.WH_SETTINGS));
+    if (settings.GENERAL.WARN_ON_RELOAD) {
+      window.addEventListener('beforeunload', e => {
+        if (!isTextareaEmpty()) {
+          e.preventDefault();
+        }
+      });
+    }
+  };
+
+  const { BADGE: DOM$1 } = DOM_SELECTORS;
+
   const handleBadges = () => {
     /**
      * uniqueNicksSet - an array keeping nicks of all users added to the troll list. It exists so that before adding any user on a list we can easily check if they haven't already been added, using simple includes() method.
@@ -233,32 +284,19 @@
     };
 
     // function returns a nodeList with all <div> elements containing line with nick, time since comment made, [+][-]
-    const getAllNickElements = () => document.querySelectorAll(DOM.NICK_ELEMENTS);
+    const getAllNickElements = () => document.querySelectorAll(DOM$1.NICK_ELEMENTS);
 
     
     //used on element - preferably one returned from getAllNickElements() - returns string with nick name.
-    const getNick = el => el.querySelector(DOM.NICK).innerText;
+    const getNick = el => el.querySelector(DOM$1.NICK).innerText;
 
     const reloadPage = () => location.reload();
 
     // used on author element, returned from getAllNickElements(), checks if person has already been marked with a badge
-    const isNotAwarded = element => !(element.querySelector(`.${DOM.BADGE}`));
+    const isNotAwarded = element => !(element.querySelector(`.${DOM$1.BADGE}`));
 
     // used on author element, returned from getAllNickElements(), checks if person has already been given a button
-    const hasButtonAppended = element => !!(element.querySelector(`.${DOM.MARK_BUTTON}`));
-
-    // checks if any textarea on a page is empty, to prevent reloading of a page while user might be attempting to write some comment or similar
-
-    const isTextareaEmpty = () => {
-      const replyForm = document.querySelector(DOM.REPLY_FORM);
-      const commentForm = document.querySelector(DOM.COMMENT_FORM);
-
-      if ((replyForm && replyForm.value !== "") || (commentForm && commentForm.value !== "")) {
-        return false;
-      } else {
-        return true;
-      }
-    };
+    const hasButtonAppended = element => !!(element.querySelector(`.${DOM$1.MARK_BUTTON}`));
 
     // prepares localStorage. Checks if trolls and uniqueNicksSet are already present and saved to localStorage. If so, it parses it to arrays. If not, it initializes empty ones.
     const prepareLocalStorage = () => {
@@ -313,9 +351,9 @@
           }
           if (isTroll(nick) 
             && isNotAwarded(element) 
-            && element.querySelector(`.${DOM.MARK_BUTTON}`) 
-            && !element.querySelector(`.${DOM.MARK_BUTTON_CLICKED}`)) {
-            element.querySelector(`.${DOM.MARK_BUTTON}`).remove();
+            && element.querySelector(`.${DOM$1.MARK_BUTTON}`) 
+            && !element.querySelector(`.${DOM$1.MARK_BUTTON_CLICKED}`)) {
+            element.querySelector(`.${DOM$1.MARK_BUTTON}`).remove();
           }
         });
       }
@@ -328,12 +366,12 @@
     // First, get nick of the author. Then, get link of the offending comment. 
     const addNewTroll = event => {
       prepareLocalStorage();
-      const nick = getNick(event.target.closest(`.${DOM.NICK_ELEMENT}`));
-      const link = event.target.closest(`.${DOM.NICK_ELEMENT}`).querySelector(`.verified`) ? 
-        event.target.closest(`.${DOM.NICK_ELEMENT}`).querySelector(`.${DOM.NICK_VERIFIED_BADGE} + a`).href
-        : event.target.closest(`.${DOM.NICK_ELEMENT}`).querySelector("a + a").href;
+      const nick = getNick(event.target.closest(`.${DOM$1.NICK_ELEMENT}`));
+      const link = event.target.closest(`.${DOM$1.NICK_ELEMENT}`).querySelector(`.verified`) ? 
+        event.target.closest(`.${DOM$1.NICK_ELEMENT}`).querySelector(`.${DOM$1.NICK_VERIFIED_BADGE} + a`).href
+        : event.target.closest(`.${DOM$1.NICK_ELEMENT}`).querySelector("a + a").href;
 
-      event.target.classList.add(DOM.MARK_BUTTON_CLICKED);
+      event.target.classList.add(DOM$1.MARK_BUTTON_CLICKED);
       event.target.innerText = "\u2714";
       setTimeout(() => {
         event.target.remove();
@@ -355,14 +393,14 @@
       uniqueNicksSet = uniqueNicksSet.filter(el => el !== nick);
       localStorage.setItem(STORAGE_KEY_NAMES.UNIQUE_USERS, JSON.stringify(uniqueNicksSet));
       
-      if (isTextareaEmpty) {
+      if (isTextareaEmpty()) {
         reloadPage();
       } else {
         // eslint-disable-next-line
         Swal.fire({
           title: 'Hej!',
           // eslint-disable-next-line
-          text: 'Wygl&#x0105;da na to, &#x017c;e jeste&#x015b; w trakcie pisania komentarza. Kliknij &quot;Anuluj&quot;, &#x017c;eby doko&#x0144;czy&#x0107; pisanie i r&#x0119;cznie od&#x015b;wie&#x017c;y&#x0107; stron&#x0119; p&oacute;&#x017a;niej (to konieczne by znikn&#x0119;&#x0142;a odznaka przy nicku u&#x017c;ytkownika). Je&#x015b;li to pomy&#x0142;ka, i nie masz nic przeciw od&#x015b;wie&#x017c;eniu strony, naci&#x015b;nij &quot;OK&quot;.',
+          text: 'Wygl\u0105da na to, \u017Ce jeste\u015B w trakcie pisania komentarza. Kliknij "Anuluj" aby doko\u0144czy\u0107 pisanie i od\u015Bwie\u017C stron\u0119 r\u0119cznie (to aktualnie konieczne, by znikn\u0119\u0142o oznaczenie u\u017Cytkownika). Je\u015Bli jednak nie planujesz nic publikowa\u0107, naci\u015Bnij przycisk "Od\u015Bwie\u017C".',
           icon: 'warning',
           showCancelButton: true,
           confirmButtonColor: '#3085d6',
@@ -398,10 +436,10 @@
     };
 
     const initializeModal = () => {
-      if (document.querySelector(`.${DOM.BADGE}`)) {
-        document.querySelectorAll(`.${DOM.BADGE}`).forEach(el => {
+      if (document.querySelector(`.${DOM$1.BADGE}`)) {
+        document.querySelectorAll(`.${DOM$1.BADGE}`).forEach(el => {
           const nick = el.dataset.whusername;
-          setTimeout(showUserModal(DOM.DATASET.USERNAME(nick)), 1150);
+          setTimeout(showUserModal(DOM$1.DATASET.USERNAME(nick)), 1150);
         });
       }
     };
@@ -420,7 +458,7 @@
       .getElementById('itemsStream')
       .addEventListener('click', event => {
         const target = event.target;
-        if (target.classList.contains(DOM.MARK_BUTTON)) {
+        if (target.classList.contains(DOM$1.MARK_BUTTON)) {
           addNewTroll(event);
         }
         if (target.classList.contains('affect') && target.closest('.more')) {
@@ -429,9 +467,8 @@
             markUsers();
           }, 500);  
         }
-        if (target.classList.contains(DOM.MODAL_BUTTON_REMOVE)) {
+        if (target.classList.contains(DOM$1.MODAL_BUTTON_REMOVE)) {
           //eslint-disable-next-line
-          console.log(target);
           const nick = target.dataset.whuserremove;
           removeTroll(nick);
         }
@@ -543,10 +580,8 @@
         category="GENERAL"
         name="WARN_ON_RELOAD"
         id="warnOnReload"
-        checked
-        disabled
       />
-      <label title="Ficzer jeszcze nieaktywny" class="settings__crossed inline" for="warnOnReload">Ostrzegaj przy próbie zamknięcia/przeładowania strony gdy wykryto pisanie komentarza</label>
+      <label class="inline" for="warnOnReload">Ostrzegaj przy próbie zamknięcia/przeładowania strony gdy wykryto pisanie komentarza</label>
     </div>
     <div class="row">
       <input
@@ -555,9 +590,8 @@
         category="GENERAL"
         name="WARN_ON_SUSPECTED_RUSSIAN_PROPAGANDA"
         id="warnOnRussian"
-        checked
       />
-      <label class="inline" for="warnOnRussian">Oznaczaj znaleziska ze źródeł podejrzewanych o szerzenie Rosyjskiej propagandy [<a href="https://oko.press/rosyjska-propagande-szerza-polskie-portale-znalezlismy-23-takie-witryny/" target="_blank">Więcej -></a>]</label>
+      <label class="inline" for="warnOnRussian">Oznaczaj znaleziska ze źródeł podejrzewanych o szerzenie Rosyjskiej propagandy </label><span id="russianPropagandaInfo" style="cursor:pointer">[Więcej ->]</span>
     </div>
   </div>
 <!--  BADGE -->
@@ -613,6 +647,7 @@
         <td>Nick</td>
         <td>Typ</td>
         <td>Link</td>
+        <td>Usuń</td>
       </tr>
     </thead>
     <tbody class="tableWH__body">
@@ -642,15 +677,27 @@
     }
   };
 
-  const { SETTINGS: DOM$1 } = DOM_SELECTORS;
+  /* eslint max-len: 0 */
+  const russianPropagandaModal = `
+  <p>Strony oznaczone jako potencjalnie szerzące rosyjską propagandę na wykopie zostały wyznaczone na podstawie następujących źródeł:
+  <ul style="margin-top:1rem;list-style-type: circle;font-size:1rem;">
+    <li style="text-align:left;margin-left:2rem;margin-bottom:.7rem"><a class="whModalLink" href="https://www.politicalcapital.hu/wp-content/uploads/PC_reactionary_values_CEE_20160727.pdf" target="_blank">Raport "The Weaponization of Culture: Kremlin's traditional agenda and the export of values to Central Europe" [PDF]</a></li>
+    <li style="text-align:left;margin-left:2rem;margin-bottom:.7rem"><a class="whModalLink" href="https://jagiellonia.org/mysl-polska-kresy-pl-geopolityka-org-etc-sa-kanalami-szerzenia-rosyjskich-wplywow-w-polsce-opublikowano-korespondencje-kremlowskich-urzednikow-rappoport-leaks/" target="_blank">Artykuł z Jagiellonia.org</a></li>
+    <li style="text-align:left;margin-left:2rem;margin-bottom:.7rem"><a class="whModalLink" href="https://euvsdisinfo.eu/reading-list/" target="_blank">EUvsDiSiNFO</a></li>
+    <li style="text-align:left;margin-left:2rem;margin-bottom:.7rem"><a class="whModalLink" href="https://oko.press/rosyjska-propagande-szerza-polskie-portale-znalezlismy-23-takie-witryny/" target="_blank">Artykuł z OKO.Press</a></li>
+  </ul>
+  <p>Lista z czasem będzie uzupełniana, a jedna z aktualizacji już wkrótce przyniesie możliwość przejrzenia (najpierw) i edycji (późniejsza aktualizacja) listy witryn.
+`;
+
+  const { SETTINGS: DOM$2 } = DOM_SELECTORS;
 
   const handleSettings = () => {
-    document.querySelector(DOM$1.LAST_NAV_ELEMENT).insertAdjacentHTML('beforeend', settingsNav);
+    document.querySelector(DOM$2.LAST_NAV_ELEMENT).insertAdjacentHTML('beforeend', settingsNav);
   };
 
   const handleWhSettings = () => {
     let settings, trolls, uniqueNicksSet;
-    const settingsFormElement = document.querySelector(DOM$1.SETTINGS_FORM_ELEMENT);
+    const settingsFormElement = document.querySelector(DOM$2.SETTINGS_FORM_ELEMENT);
 
     const prepareLocalStorage = (...types) => {
       if ([...types].length < 1 || [...types].includes('settings')) {
@@ -679,44 +726,59 @@
       trolls = [];
       localStorage.setItem(STORAGE_KEY_NAMES.UNIQUE_USERS, JSON.stringify(uniqueNicksSet));
       localStorage.setItem(STORAGE_KEY_NAMES.MARKED_USERS, JSON.stringify(trolls));
+      location.reload();
     };
 
     const generateUserTables = () => {
       prepareLocalStorage('markedUsers');
 
-      const rowItemMarkup = (index, nick, type, link) => `
-    <tr>
-      <td>${index}</td>
+      const rowItemMarkup = (nick, type, link) => `
+    <tr class="tableWH__row">
+      <td></td>
       <td><a href="https://www.wykop.pl/ludzie/${nick}" target="_blank">${nick}</a></td>
       <td>${type}</td>
       <td><a href="${link}" target="_blank">&#128279</a></td>
+      <td><span class="tableWH__nick-remove" data-whuserremove="${nick}">&#x02717;</a></td>
     </tr>
     `;
 
-      const tableBody = document.querySelector(`.${DOM$1.WH_USER_TABLE_BODY}`);
+      const tableBody = document.querySelector(`.${DOM$2.WH_USER_TABLE_BODY}`);
 
       for (let i = 0; i < trolls.length; i++) {
         const el = trolls[i];
-        tableBody.insertAdjacentHTML('beforeend', rowItemMarkup(i+1, el.nick, el.type || 'Debil', el.link ));
+        tableBody.insertAdjacentHTML('beforeend', rowItemMarkup(el.nick, el.type || 'Debil', el.link ));
       }
     };
 
     const toggleUserTableVisibility = () => {
-      document.querySelector(`.${DOM$1.WH_USER_TABLE_CONTAINER}`)
-        .classList.toggle(`${DOM$1.WH_USER_TABLE_CONTAINER}--hidden`);
+      document.querySelector(`.${DOM$2.WH_USER_TABLE_CONTAINER}`)
+        .classList.toggle(`${DOM$2.WH_USER_TABLE_CONTAINER}--hidden`);
 
-      if (document.querySelector(`.${DOM$1.WH_USER_TABLE_CONTAINER}--hidden`)) {
+      if (document.querySelector(`.${DOM$2.WH_USER_TABLE_CONTAINER}--hidden`)) {
         document.getElementById('showAllMarked').textContent = 'Poka\u017C wszystkich oznaczonych u\u017Cytkownik\xF3w';
       } else {
         document.getElementById('showAllMarked').textContent = 'Schowaj tabel\u0119';
       }
     };
 
+    const showModalWithPropagandaExplanation = () => {
+      // eslint-disable-next-line
+      Swal.fire({
+        title: 'Sk\u0105d lista stron z propagand\u0105?',
+        html: russianPropagandaModal,
+        icon: 'info',
+        showCancelButton: false,
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'OK',
+        width: "80%"
+      });
+    };
+
     const renderSettings = () => {
       prepareLocalStorage();
 
-      document.querySelector(DOM$1.ACTIVE_NAV_ELEMENT).classList.remove('active');
-      document.querySelector(`.${DOM$1.WH_NAV_SETTINGS_LINK}`).classList.add('active');
+      document.querySelector(DOM$2.ACTIVE_NAV_ELEMENT).classList.remove('active');
+      document.querySelector(`.${DOM$2.WH_NAV_SETTINGS_LINK}`).classList.add('active');
     
       settingsFormElement.innerHTML = '';
       settingsFormElement.innerHTML = settingsMarkup;
@@ -729,6 +791,7 @@
       // TODO: this needs refactoring, to make it work on its own without explicitly listing all settings
       document.getElementById('badgeDefaultValue').value = settings.BADGE.DEFAULT_NAME;
       document.getElementById('warnOnRussian').checked = settings.GENERAL.WARN_ON_SUSPECTED_RUSSIAN_PROPAGANDA;
+      document.getElementById('warnOnReload').checked = settings.GENERAL.WARN_ON_RELOAD;
     };
 
     const handleSettingsForm = () => {
@@ -756,6 +819,9 @@
           event.preventDefault();
           wipeAllMarkedUsers();
         }
+        if (event.target.id === 'russianPropagandaInfo') {
+          showModalWithPropagandaExplanation();
+        }
       });
 
       settingsFormElement.addEventListener('keyup', event => {
@@ -769,11 +835,36 @@
       });
     };
 
+    /**
+     * Handling removing mark from users
+     */
+    const removeTroll = nick => {
+      prepareLocalStorage('markedUsers');
+      for (let [index, item] of trolls.entries()) {
+        if (item.nick === nick) {
+          delete trolls[index];
+          trolls = trolls.filter(el => el != null);
+          localStorage.setItem(STORAGE_KEY_NAMES.MARKED_USERS, JSON.stringify(trolls));
+        }
+      }
+      uniqueNicksSet = uniqueNicksSet.filter(el => el !== nick);
+      localStorage.setItem(STORAGE_KEY_NAMES.UNIQUE_USERS, JSON.stringify(uniqueNicksSet));
+    };
+
     const init = () => {
       injectStyles(stylesSettings);
       renderSettings();
       prepareLocalStorage();
       handleSettingsForm();
+
+      document.querySelector(`.${DOM_SELECTORS.SETTINGS.WH_USER_TABLE}`).addEventListener('click', event => {
+        const target = event.target;
+        if (target.classList.contains(`${DOM_SELECTORS.SETTINGS.WH_USER_TABLE_REMOVE_BUTTON}`)) {
+          const nick = target.dataset.whuserremove;
+          removeTroll(nick);
+          target.closest('tr').remove();
+        }
+      });
     };
 
     init();
@@ -799,7 +890,7 @@
 
   /* eslint max-len: 0 */
 
-  const version = 0.42;
+  const version = 0.46;
 
   const welcomeText = 'Mi\u0142ego u\u017Cywania dodatku! Je\u015Bli masz jakiekolwiek problemy, pytania lub sugestie, zg\u0142o\u015B je <a href="https://github.com/PLWpl/wykopoweTrole/issues" target="_blank">tutaj.</a>';
 
@@ -807,10 +898,13 @@
 Dodatek WykopHelper został właśnie zaktualizowany. Wprowadzone zmiany to: <br>
 <ul style="margin-top:1rem; list-style-type:square">
   <li style="text-align:left;margin-left:2rem;margin-bottom:.7rem">
-    Czytając wpisy na mikroblogu, w pełnym widoku pojedynczego wątku, pod awatarem twócy wątku znajduje się teraz dodatkowy przycisk "Pokaż OPa". Po kliknięciu nań, komentarze twórcy wpisu zostaną pokolorowane na niebiesko (tryb nocny) lub pomarańczowo (dzienny). Pomoże to łatwo znaleźć wypowiedzi OPa w dłuuugich wątkach.
+    Funkcja ostrzegania przed opuszczeniem strony, gdy wykryte zostanie pisanie komentarza (na mikroblogu i w znaleziskach) została nieco zmodyfikowana: od teraz ostrzeżenie będzie wyświetlane tylko wtedy, jeśli w polu tekstowym komentarza/odpowiedzi wpisane będzie więcej niż 5 słów. Dzięki temu alert nie będzie się włączał za każdym razem przy wychodzeniu z widoku użytkownika lub tagu.
   </li>
   <li style="text-align:left;margin-left:2rem;margin-bottom:.7rem">
-    
+    Od teraz możliwe jest wgrywanie obrazków na wykop prosto ze schowka, z pominięciem dysku. Po kliknięciu przycisku dodawania zdjęcia/filmu, wystarczy w otworzonym okienku przycisnąć kombinację Ctrl + V, a skopiowany obrazek zostanie automatycznie wgrany, bez potrzeby zapisywania go najpierw na dysk.
+  </li>
+  <li style="text-align:left;margin-left:2rem;margin-bottom:.7rem">
+    W ustawieniach, pod linkiem "Więcej", pojawił się popup z linkami do stron, na podstawie których została wyznaczona lista źródeł podejrzewanych o szerzenie rosyjskiej propagandy.
   </li>
 </ul>
 `;
@@ -822,6 +916,7 @@ Dodatek WykopHelper został właśnie zaktualizowany. Wprowadzone zmiany to: <br
         title: 'WykopHelper zaktualizowany!',
         html: updateText,
         icon: 'info',
+        width: '80%',
         confirmButtonText: 'Okej!'
       });
       localStorage.setItem('WHupdate',version);
@@ -832,6 +927,7 @@ Dodatek WykopHelper został właśnie zaktualizowany. Wprowadzone zmiany to: <br
         title: 'WykopHelper zainstalowany!',
         html: welcomeText,
         icon: 'success',
+        width: '80%',
         confirmButtonText: 'Super!'
       });
       localStorage.setItem('WHupdate',version);
@@ -853,6 +949,19 @@ Dodatek WykopHelper został właśnie zaktualizowany. Wprowadzone zmiany to: <br
     });
   };
 
+  const embedOnPaste = () => {
+    document.addEventListener('paste', event => {
+      if (document.querySelector(`.${DOM_SELECTORS.EMBED.EMBED_FILE}`) && event.clipboardData.files[0]) {
+        const input = document.querySelector(`.${DOM_SELECTORS.EMBED.EMBED_FILE} input`);
+        input.files = event.clipboardData.files;
+
+        let UIevent = new Event('UIEvent');
+        UIevent.initEvent('change', false, true);
+        input.dispatchEvent(UIevent);
+      }
+    });
+  };
+
   /**
      * Helper methods and functions, not directly related to the script's purpose
      */
@@ -868,6 +977,8 @@ Dodatek WykopHelper został właśnie zaktualizowany. Wprowadzone zmiany to: <br
 
   if (isPath.main()) {
     handleBadges();
+    warnOnReload();
+    embedOnPaste();
   }
   if (isPath.settings()) {
     handleSettings();

@@ -4,6 +4,7 @@ import { settingsMarkup, settingsNav, settingsUserTable } from '../markup/settin
 import { stylesSettings } from '../markup/styles.js';
 import { injectStyles } from '../utils/inject.js';
 import { initSettings } from '../init/storage.js';
+import { russianPropagandaModal } from '../model/modals.js';
 
 const { SETTINGS: DOM } = DOM_SELECTORS;
 
@@ -42,17 +43,19 @@ export const handleWhSettings = () => {
     trolls = [];
     localStorage.setItem(STORAGE_KEY_NAMES.UNIQUE_USERS, JSON.stringify(uniqueNicksSet));
     localStorage.setItem(STORAGE_KEY_NAMES.MARKED_USERS, JSON.stringify(trolls));
+    location.reload();
   }
 
   const generateUserTables = () => {
     prepareLocalStorage('markedUsers');
 
-    const rowItemMarkup = (index, nick, type, link) => `
-    <tr>
-      <td>${index}</td>
+    const rowItemMarkup = (nick, type, link) => `
+    <tr class="tableWH__row">
+      <td></td>
       <td><a href="https://www.wykop.pl/ludzie/${nick}" target="_blank">${nick}</a></td>
       <td>${type}</td>
       <td><a href="${link}" target="_blank">&#128279</a></td>
+      <td><span class="tableWH__nick-remove" data-whuserremove="${nick}">&#x02717;</a></td>
     </tr>
     `;
 
@@ -60,7 +63,7 @@ export const handleWhSettings = () => {
 
     for (let i = 0; i < trolls.length; i++) {
       const el = trolls[i];
-      tableBody.insertAdjacentHTML('beforeend', rowItemMarkup(i+1, el.nick, el.type || 'Debil', el.link ));
+      tableBody.insertAdjacentHTML('beforeend', rowItemMarkup(el.nick, el.type || 'Debil', el.link ));
     }
   }
 
@@ -74,6 +77,19 @@ export const handleWhSettings = () => {
       document.getElementById('showAllMarked').textContent = 'Schowaj tabelę';
     }
   }
+
+  const showModalWithPropagandaExplanation = () => {
+    // eslint-disable-next-line
+    Swal.fire({
+      title: 'Sk\u0105d lista stron z propagand\u0105?',
+      html: russianPropagandaModal,
+      icon: 'info',
+      showCancelButton: false,
+      confirmButtonColor: '#3085d6',
+      confirmButtonText: 'OK',
+      width: "80%"
+    });
+  };
 
   const renderSettings = () => {
     prepareLocalStorage();
@@ -92,6 +108,7 @@ export const handleWhSettings = () => {
     // TODO: this needs refactoring, to make it work on its own without explicitly listing all settings
     document.getElementById('badgeDefaultValue').value = settings.BADGE.DEFAULT_NAME;
     document.getElementById('warnOnRussian').checked = settings.GENERAL.WARN_ON_SUSPECTED_RUSSIAN_PROPAGANDA;
+    document.getElementById('warnOnReload').checked = settings.GENERAL.WARN_ON_RELOAD;
   };
 
   const handleSettingsForm = () => {
@@ -119,6 +136,9 @@ export const handleWhSettings = () => {
         event.preventDefault();
         wipeAllMarkedUsers();
       }
+      if (event.target.id === 'russianPropagandaInfo') {
+        showModalWithPropagandaExplanation();
+      }
     })
 
     settingsFormElement.addEventListener('keyup', event => {
@@ -132,11 +152,36 @@ export const handleWhSettings = () => {
     })
   }
 
+  /**
+   * Handling removing mark from users
+   */
+  const removeTroll = nick => {
+    prepareLocalStorage('markedUsers');
+    for (let [index, item] of trolls.entries()) {
+      if (item.nick === nick) {
+        delete trolls[index];
+        trolls = trolls.filter(el => el != null);
+        localStorage.setItem(STORAGE_KEY_NAMES.MARKED_USERS, JSON.stringify(trolls));
+      }
+    }
+    uniqueNicksSet = uniqueNicksSet.filter(el => el !== nick);
+    localStorage.setItem(STORAGE_KEY_NAMES.UNIQUE_USERS, JSON.stringify(uniqueNicksSet));
+  }
+
   const init = () => {
     injectStyles(stylesSettings);
     renderSettings();
     prepareLocalStorage();
     handleSettingsForm();
+
+    document.querySelector(`.${DOM_SELECTORS.SETTINGS.WH_USER_TABLE}`).addEventListener('click', event => {
+      const target = event.target;
+      if (target.classList.contains(`${DOM_SELECTORS.SETTINGS.WH_USER_TABLE_REMOVE_BUTTON}`)) {
+        const nick = target.dataset.whuserremove;
+        removeTroll(nick);
+        target.closest('tr').remove();
+      }
+    })
   }
 
   init();
