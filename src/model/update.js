@@ -1,6 +1,6 @@
 /* eslint max-len: 0 */
 
-export const version = 0.45;
+export const version = 0.46;
 
 export const welcomeText = 'Miłego używania dodatku! Jeśli masz jakiekolwiek problemy, pytania lub sugestie, zgłoś je <a href="https://github.com/PLWpl/wykopoweTrole/issues" target="_blank">tutaj.</a>';
 
@@ -12,6 +12,9 @@ Dodatek WykopHelper został właśnie zaktualizowany. Wprowadzone zmiany to: <br
   </li>
   <li style="text-align:left;margin-left:2rem;margin-bottom:.7rem">
     Od teraz możliwe jest wgrywanie obrazków na wykop prosto ze schowka, z pominięciem dysku. Po kliknięciu przycisku dodawania zdjęcia/filmu, wystarczy w otworzonym okienku przycisnąć kombinację Ctrl + V, a skopiowany obrazek zostanie automatycznie wgrany, bez potrzeby zapisywania go najpierw na dysk.
+  </li>
+  <li style="text-align:left;margin-left:2rem;margin-bottom:.7rem">
+    W ustawieniach, pod linkiem "Więcej", pojawił się popup z linkami do stron, na podstawie których została wyznaczona lista źródeł podejrzewanych o szerzenie rosyjskiej propagandy.
   </li>
 </ul>
 `;
