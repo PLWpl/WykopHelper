@@ -76,6 +76,9 @@
       OP_THREAD: '[data-type="entry"]',
       HIGHLIGHT_BUTTON: 'button--highlightOp',
       AUTHOR_COMMENTS: 'authorComment',
+    },
+    EMBED: {
+      EMBED_FILE: 'embedFile',
     }
   };
 
@@ -895,18 +898,8 @@
 Dodatek WykopHelper został właśnie zaktualizowany. Wprowadzone zmiany to: <br>
 <ul style="margin-top:1rem; list-style-type:square">
   <li style="text-align:left;margin-left:2rem;margin-bottom:.7rem">
-    Czytając wpisy na mikroblogu, w pełnym widoku pojedynczego wątku, pod awatarem twócy wątku znajduje się teraz dodatkowy przycisk "Pokaż OPa". Po kliknięciu nań, komentarze twórcy wpisu zostaną pokolorowane na niebiesko (tryb nocny) lub pomarańczowo (dzienny). Pomoże to łatwo znaleźć wypowiedzi OPa w dłuuugich wątkach.
+    Funkcja ostrzegania przed opuszczeniem strony, gdy wykryte zostanie pisanie komentarza (na mikroblogu i w znaleziskach) została nieco zmodyfikowana: od teraz ostrzeżenie będzie wyświetlane tylko wtedy, jeśli w polu tekstowym komentarza/odpowiedzi wpisane będzie więcej niż 5 słów. Dzięki temu alert nie będzie się włączał za każdym razem przy wychodzeniu z widoku użytkownika lub tagu.
   </li>
-  <li style="text-align:left;margin-left:2rem;margin-bottom:.7rem">
-    Funkcja ostrzegania przed opuszczeniem strony, gdy wykryte zostanie pisanie komentarza (na mikroblogu i w znaleziskach) została aktywowana i domyślnie jest włączona, ale można ją oczywiście deaktywować w ustawieniach.
-  </li>
-  <li style="text-align:left;margin-left:2rem;margin-bottom:.7rem">
-    Dodatkowo, do tej pory po kliknięciu przycisku usunięcia odznaki użytkownika, następowało natychmiastowe odświeżenie strony (konieczne by usunąć przycisk - przynajmniej na razie, prace nad zmianą tego trwają). Obecnie, jeśli wykryte zostanie pisanie komentarza, wyświetlony zostanie zamiast tego popup z wyjaśnieniem i prośbą o podjęcie decyzji.
-  </li>
-  <li style="text-align:left;margin-left:2rem;margin-bottom:.7rem">
-    Kilka pomniejszych poprawek i usprawnień. Zapewne udało się dodatkowo wprowadzić kilka nowych bugów :)
-  </li>
-</ul>
 `;
 
   /* eslint-disable no-undef, max-len */
@@ -949,6 +942,19 @@ Dodatek WykopHelper został właśnie zaktualizowany. Wprowadzone zmiany to: <br
     });
   };
 
+  const embedOnPaste = () => {
+    document.addEventListener('paste', event => {
+      if (document.querySelector(`.${DOM_SELECTORS.EMBED.EMBED_FILE}`) && event.clipboardData.files[0]) {
+        const input = document.querySelector(`.${DOM_SELECTORS.EMBED.EMBED_FILE} input`);
+        input.files = event.clipboardData.files;
+
+        let UIevent = new Event('UIEvent');
+        UIevent.initEvent('change', false, true);
+        input.dispatchEvent(UIevent);
+      }
+    });
+  };
+
   /**
      * Helper methods and functions, not directly related to the script's purpose
      */
@@ -965,6 +971,7 @@ Dodatek WykopHelper został właśnie zaktualizowany. Wprowadzone zmiany to: <br
   if (isPath.main()) {
     handleBadges();
     warnOnReload();
+    embedOnPaste();
   }
   if (isPath.settings()) {
     handleSettings();
