@@ -95,4 +95,10 @@ export const stylesSettings = `
 .tableWH__nick-remove {
   cursor: pointer;
   color: #c0392b;
+}
+.whModalLink {
+  color: #862828;
+}
+.whModalLink:hover {
+  color: #4a1313 !important;
 }`;
