@@ -6,7 +6,10 @@ export const isTextareaEmpty = () => {
   const replyForm = document.querySelector(DOM.REPLY_FORM);
   const commentForm = document.querySelector(DOM.COMMENT_FORM);
 
-  if ((replyForm && replyForm.value !== "") || (commentForm && commentForm.value !== "")) {
+  const isReplyNotEmpty = replyForm && replyForm.value.split(" ").length > 5;
+  const isCommentNotEmpty = commentForm && commentForm.value.split(" ").length > 5;
+
+  if (isReplyNotEmpty || isCommentNotEmpty) {
     return false;
   } else {
     return true;
