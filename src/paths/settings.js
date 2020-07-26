@@ -4,6 +4,7 @@ import { settingsMarkup, settingsNav, settingsUserTable } from '../markup/settin
 import { stylesSettings } from '../markup/styles.js';
 import { injectStyles } from '../utils/inject.js';
 import { initSettings } from '../init/storage.js';
+import { russianPropagandaModal } from '../model/modals.js';
 
 const { SETTINGS: DOM } = DOM_SELECTORS;
 
@@ -77,6 +78,19 @@ export const handleWhSettings = () => {
     }
   }
 
+  const showModalWithPropagandaExplanation = () => {
+    // eslint-disable-next-line
+    Swal.fire({
+      title: 'Sk\u0105d lista stron z propagand\u0105?',
+      html: russianPropagandaModal,
+      icon: 'info',
+      showCancelButton: false,
+      confirmButtonColor: '#3085d6',
+      confirmButtonText: 'OK',
+      width: "80%"
+    });
+  };
+
   const renderSettings = () => {
     prepareLocalStorage();
 
@@ -121,6 +135,9 @@ export const handleWhSettings = () => {
       if (event.target.id === 'whsettings__remove-all-marked') {
         event.preventDefault();
         wipeAllMarkedUsers();
+      }
+      if (event.target.id === 'russianPropagandaInfo') {
+        showModalWithPropagandaExplanation();
       }
     })
 

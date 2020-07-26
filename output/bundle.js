@@ -162,6 +162,12 @@ const stylesSettings = `
 .tableWH__nick-remove {
   cursor: pointer;
   color: #c0392b;
+}
+.whModalLink {
+  color: #862828;
+}
+.whModalLink:hover {
+  color: #4a1313 !important;
 }`;
 
 const buttonMarkup = `<span class="wh-button buttonWH">Oznacz</span>`;
@@ -565,7 +571,7 @@ const settingsMarkup = `
         name="WARN_ON_SUSPECTED_RUSSIAN_PROPAGANDA"
         id="warnOnRussian"
       />
-      <label class="inline" for="warnOnRussian">Oznaczaj znaleziska ze źródeł podejrzewanych o szerzenie Rosyjskiej propagandy [<a href="https://oko.press/rosyjska-propagande-szerza-polskie-portale-znalezlismy-23-takie-witryny/" target="_blank">Więcej -></a>]</label>
+      <label class="inline" for="warnOnRussian">Oznaczaj znaleziska ze źródeł podejrzewanych o szerzenie Rosyjskiej propagandy </label><span id="russianPropagandaInfo" style="cursor:pointer">[Więcej ->]</span>
     </div>
   </div>
 <!--  BADGE -->
@@ -651,6 +657,18 @@ const initSettings = () => {
   }
 };
 
+/* eslint max-len: 0 */
+const russianPropagandaModal = `
+  <p>Strony oznaczone jako potencjalnie szerzące rosyjską propagandę na wykopie zostały wyznaczone na podstawie następujących źródeł:
+  <ul style="margin-top:1rem;list-style-type: circle;font-size:1rem;">
+    <li style="text-align:left;margin-left:2rem;margin-bottom:.7rem"><a class="whModalLink" href="https://www.politicalcapital.hu/wp-content/uploads/PC_reactionary_values_CEE_20160727.pdf" target="_blank">Raport "The Weaponization of Culture: Kremlin's traditional agenda and the export of values to Central Europe" [PDF]</a></li>
+    <li style="text-align:left;margin-left:2rem;margin-bottom:.7rem"><a class="whModalLink" href="https://jagiellonia.org/mysl-polska-kresy-pl-geopolityka-org-etc-sa-kanalami-szerzenia-rosyjskich-wplywow-w-polsce-opublikowano-korespondencje-kremlowskich-urzednikow-rappoport-leaks/" target="_blank">Artykuł z Jagiellonia.org</a></li>
+    <li style="text-align:left;margin-left:2rem;margin-bottom:.7rem"><a class="whModalLink" href="https://euvsdisinfo.eu/reading-list/" target="_blank">EUvsDiSiNFO</a></li>
+    <li style="text-align:left;margin-left:2rem;margin-bottom:.7rem"><a class="whModalLink" href="https://oko.press/rosyjska-propagande-szerza-polskie-portale-znalezlismy-23-takie-witryny/" target="_blank">Artykuł z OKO.Press</a></li>
+  </ul>
+  <p>Lista z czasem będzie uzupełniana, a jedna z aktualizacji już wkrótce przyniesie możliwość przejrzenia (najpierw) i edycji (późniejsza aktualizacja) listy witryn.
+`;
+
 const { SETTINGS: DOM$2 } = DOM_SELECTORS;
 
 const handleSettings = () => {
@@ -688,6 +706,7 @@ const handleWhSettings = () => {
     trolls = [];
     localStorage.setItem(STORAGE_KEY_NAMES.UNIQUE_USERS, JSON.stringify(uniqueNicksSet));
     localStorage.setItem(STORAGE_KEY_NAMES.MARKED_USERS, JSON.stringify(trolls));
+    location.reload();
   };
 
   const generateUserTables = () => {
@@ -720,6 +739,19 @@ const handleWhSettings = () => {
     } else {
       document.getElementById('showAllMarked').textContent = 'Schowaj tabel\u0119';
     }
+  };
+
+  const showModalWithPropagandaExplanation = () => {
+    // eslint-disable-next-line
+    Swal.fire({
+      title: 'Sk\u0105d lista stron z propagand\u0105?',
+      html: russianPropagandaModal,
+      icon: 'info',
+      showCancelButton: false,
+      confirmButtonColor: '#3085d6',
+      confirmButtonText: 'OK',
+      width: "80%"
+    });
   };
 
   const renderSettings = () => {
@@ -766,6 +798,9 @@ const handleWhSettings = () => {
       if (event.target.id === 'whsettings__remove-all-marked') {
         event.preventDefault();
         wipeAllMarkedUsers();
+      }
+      if (event.target.id === 'russianPropagandaInfo') {
+        showModalWithPropagandaExplanation();
       }
     });
 
