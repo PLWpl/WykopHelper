@@ -9,8 +9,8 @@ import { warnOnReload } from './paths/main/warnOnReload.js';
 import { embedOnPaste } from './paths/main/embedOnPaste.js';
 
 /**
-   * Helper methods and functions, not directly related to the script's purpose
-   */
+ * Capitalize first letter
+ */
 String.prototype.capitalize = function() {
   return this.charAt(0).toUpperCase() + this.slice(1);
 }

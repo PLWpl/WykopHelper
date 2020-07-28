@@ -8,9 +8,13 @@ import { russianPropagandaModal } from '../model/modals.js';
 
 const { SETTINGS: DOM } = DOM_SELECTORS;
 
+/**
+ * Inserts navigation item on a /ustawienia/ page with link to WykopHelper settings
+ */
 export const handleSettings = () => {
   document.querySelector(DOM.LAST_NAV_ELEMENT).insertAdjacentHTML('beforeend', settingsNav);
 };
+
 
 export const handleWhSettings = () => {
   let settings, trolls, uniqueNicksSet;
@@ -38,6 +42,9 @@ export const handleWhSettings = () => {
     }
   };
 
+  /**
+   * clears localstorage. Doesn't remove items, but sets them to empty array
+   */
   const wipeAllMarkedUsers = () => {
     uniqueNicksSet = [];
     trolls = [];
@@ -49,11 +56,11 @@ export const handleWhSettings = () => {
   const generateUserTables = () => {
     prepareLocalStorage('markedUsers');
 
-    const rowItemMarkup = (nick, type, link) => `
+    const rowItemMarkup = (nick, badgeLabel, link) => `
     <tr class="tableWH__row">
       <td></td>
       <td><a href="https://www.wykop.pl/ludzie/${nick}" target="_blank">${nick}</a></td>
-      <td>${type}</td>
+      <td>${badgeLabel}</td>
       <td><a href="${link}" target="_blank">&#128279</a></td>
       <td><span class="tableWH__nick-remove" data-whuserremove="${nick}">&#x02717;</a></td>
     </tr>

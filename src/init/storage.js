@@ -12,7 +12,9 @@ const initialSettings = {
   }
 }
 
-
+/**
+ * Initializes settings item in local storage if it's not yet initialized.
+ */
 export const initSettings = () => {
   if (!localStorage.getItem(STORAGE_KEY_NAMES.WH_SETTINGS)) {
     localStorage.setItem(STORAGE_KEY_NAMES.WH_SETTINGS, JSON.stringify(initialSettings));

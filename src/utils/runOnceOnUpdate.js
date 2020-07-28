@@ -1,3 +1,6 @@
+/**
+ * Util function that is supposed to run only once, immediately after script update.
+ */
 export const runOnceOnUpdate = () => {
   let trolls;
 

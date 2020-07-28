@@ -1,7 +1,9 @@
 import { runOnceOnUpdate } from './runOnceOnUpdate.js';
 import { welcomeText, updateText, version } from './../model/update.js';
 
-/* eslint-disable no-undef, max-len */
+/**
+ * Fires modal on update, if a different (lower) version is indicated in local storage. Alternatively, if no version is specified, a modal with "thanks for installation" is fired
+ */
 export const updateAlert = () => {
   if (localStorage.getItem('WHupdate') && localStorage.getItem('WHupdate') < version) {
     Swal.fire({

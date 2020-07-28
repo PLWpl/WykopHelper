@@ -1,5 +1,10 @@
+/**
+ * 
+ * @param {DOMElement} element - html element, like document.querySelector...
+ * @param {string} content - a string of HTML content.
+ * @param {number} [delay=0] - how big of a delay to wait before displaying modal on firing it?
+ */
 export const addModal = (element, content, delay) => {
-  //eslint-disable-next-line no-undef
   tippy(element, {
     content: content,
     allowHTML: true,

@@ -1,5 +1,4 @@
 /**
- * 
  * @param {string} content - what shall be included in the <p> tag.
  * @param {string} [type=alert] - type of annotation. Available types are: 'success', 'alert' (default), 'error', 'light-info'.
  */
