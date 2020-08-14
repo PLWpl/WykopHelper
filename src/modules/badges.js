@@ -1,11 +1,11 @@
-import STORAGE_KEY_NAMES from '../../constants/localStorageKeyNames';
-import DOM_SELECTORS from '../../constants/domSelectors';
+import STORAGE_KEY_NAMES from '../constants/localStorageKeyNames';
+import DOM_SELECTORS from '../constants/domSelectors';
 
-import { stylesBadge } from '../../markup/styles.js';
-import { buttonMarkup, badge } from '../../markup/minor.js';
-import { modalMarkup } from '../../markup/badgeInfoModal.js';
-import { addModal } from '../../utils/addModal.js';
-import { injectStyles } from '../../utils/inject.js';
+import { stylesBadge } from '../model/styles.js';
+import { buttonMarkup, badge } from '../../model/badge.model.js';
+import { modalMarkup } from '../model/utils/badgeInfoModal.js';
+import { addModal } from '../utils/addModal.js';
+import { injectStyles } from '../utils/inject.js';
 import { isTextareaEmpty } from './warnOnReload.js';
 
 const { BADGE: DOM } = DOM_SELECTORS;

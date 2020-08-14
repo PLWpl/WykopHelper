@@ -2,9 +2,15 @@
 
 export const version = 0.46;
 
-export const welcomeText = 'Miłego używania dodatku! Jeśli masz jakiekolwiek problemy, pytania lub sugestie, zgłoś je <a href="https://github.com/PLWpl/wykopoweTrole/issues" target="_blank">tutaj.</a>';
+export const welcomeText = {
+  title: '',
+  content: 'Miłego używania dodatku! Jeśli masz jakiekolwiek problemy, pytania lub sugestie, zgłoś je <a href="https://github.com/PLWpl/wykopoweTrole/issues" target="_blank">tutaj.</a>',
+  button: 'Super!'
+} 
 
-export const updateText = `
+export const updateText = {
+  title: 'WykopHelper zaktualizowany!',
+  content: `
 Dodatek WykopHelper został właśnie zaktualizowany. Wprowadzone zmiany to: <br>
 <ul style="margin-top:1rem; list-style-type:square">
   <li style="text-align:left;margin-left:2rem;margin-bottom:.7rem">
@@ -17,4 +23,6 @@ Dodatek WykopHelper został właśnie zaktualizowany. Wprowadzone zmiany to: <br
     W ustawieniach, pod linkiem "Więcej", pojawił się popup z linkami do stron, na podstawie których została wyznaczona lista źródeł podejrzewanych o szerzenie rosyjskiej propagandy.
   </li>
 </ul>
-`;
+`,
+  button: 'Okej!'
+};

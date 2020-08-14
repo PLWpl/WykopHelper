@@ -4,12 +4,14 @@
 export const runOnceOnUpdate = () => {
   let trolls;
 
+  // preparation
   if (localStorage.getItem('trolls')) {
     trolls = JSON.parse(localStorage.getItem('trolls'));
   } else {
     trolls = [];
   }
 
+  // actual desired action
   trolls.forEach(el => {
     if (!el.label) {
       el.label = '';

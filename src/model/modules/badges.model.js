@@ -7,5 +7,11 @@ export const buttonMarkup = `<span class="wh-button buttonWH">Oznacz</span>`;
  */
 export const badge = (nick, name = 'debil') => `<span class="badge badge--${name.toLowerCase()}" data-whusername="${nick}">${name.toLowerCase().capitalize()}</span>`;
 
-/** Just a button markup for highlighting thread op */
-export const highlightOpbuttonMarkup = `<span class="wh-button button--highlightOp">Pokaż OPa</span>`;
+
+/* ********************************/
+const badgeModel = {
+  buttonMarkup,
+  badge
+}
+
+export default badgeModel;

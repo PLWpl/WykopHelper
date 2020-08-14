@@ -1,7 +1,9 @@
-import STORAGE_KEY_NAMES from '../../constants/localStorageKeyNames';
+import STORAGE_KEY_NAMES from '../constants/localStorageKeyNames';
+import DOM from '../constants/domSelectors';
 
-import { russianPropagandaDomains } from '../../checks/domain.js';
-import { annotation } from '../../markup/annotation.js';
+import { russianPropagandaDomains } from '../utils/checkDomainsForRussianPropaganda';
+import { annotation } from '../model/utils/annotation';
+import { warningAnnotation } from '../model/modules/domainChecker.model';
 
 export const handleDomainCheck = () => {
   const isSettingActive = () => {
@@ -18,14 +20,14 @@ export const handleDomainCheck = () => {
   }
 
   const handleCheck = () => {
-    const threadLink = document.querySelector('.article h2 a').href;
+    const threadLink = document.querySelector(DOM.DOMAIN_CHECKER.SELECTOR.THREAD_LINK).href;
     const url = new URL(threadLink);
     const threadLinkHostname = url.protocol + '//' + url.hostname;
     //eslint-disable-next-line max-len
-    const annotationMarkup = annotation('Uważaj! Źródło tego znaleziska jest podejrzewane o szerzenie rosyjskiej propagandy.');
+    const annotationMarkup = annotation(warningAnnotation);
 
     if (russianPropagandaDomains.includes(threadLinkHostname)) {
-      document.querySelector('.bspace').insertAdjacentHTML('beforebegin', annotationMarkup)
+      document.querySelector(`.${DOM.DOMAIN_CHECKER.CLASSNAME.WYKOP_ITEM_INTRO}`).insertAdjacentHTML('beforebegin', annotationMarkup)
     }
   };
 

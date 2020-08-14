@@ -7,22 +7,22 @@ import { welcomeText, updateText, version } from './../model/update.js';
 export const updateAlert = () => {
   if (localStorage.getItem('WHupdate') && localStorage.getItem('WHupdate') < version) {
     Swal.fire({
-      title: 'WykopHelper zaktualizowany!',
-      html: updateText,
+      title: updateText.title,
+      html: updateText.content,
       icon: 'info',
       width: '80%',
-      confirmButtonText: 'Okej!'
+      confirmButtonText: updateText.button
     });
     localStorage.setItem('WHupdate',version);
     runOnceOnUpdate();
   }
   else if (!localStorage.getItem('WHupdate')) {
     Swal.fire({
-      title: 'WykopHelper zainstalowany!',
-      html: welcomeText,
+      title: welcomeText.title,
+      html: welcomeText.content,
       icon: 'success',
       width: '80%',
-      confirmButtonText: 'Super!'
+      confirmButtonText: welcomeText.button
     });
     localStorage.setItem('WHupdate',version);
   }

@@ -87,3 +87,12 @@ export const settingsUserTable = `
 `;
 
 export const settingsNav = `<li class="whSettingsLink"><a href="https://www.wykop.pl/ustawienia/wykophelper/"><span><strong>WykopHelper</strong> &#10024;</span></a></li>`;
+
+/* ********************************/
+const settingsModel = {
+  settingsMarkup,
+  settingsUserTable,
+  settingsNav
+}
+
+export default settingsModel;

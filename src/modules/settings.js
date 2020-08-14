@@ -1,10 +1,10 @@
 import DOM_SELECTORS from '../constants/domSelectors';
 import STORAGE_KEY_NAMES from '../constants/localStorageKeyNames';
 import { settingsMarkup, settingsNav, settingsUserTable } from '../markup/settings';
-import { stylesSettings } from '../markup/styles.js';
-import { injectStyles } from '../utils/inject.js';
-import { initSettings } from '../init/storage.js';
-import { russianPropagandaModal } from '../model/modals.js';
+import { stylesSettings } from '../markup/styles';
+import { injectStyles } from '../utils/inject';
+import { initSettings } from '../init/storage';
+import { russianPropagandaModal } from '../model/utils/modals';
 
 const { SETTINGS: DOM } = DOM_SELECTORS;
 
