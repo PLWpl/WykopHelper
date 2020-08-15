@@ -18,7 +18,7 @@ export const handleSettings = () => {
 
 export const handleWhSettings = () => {
   let settings, trolls, uniqueNicksSet;
-  const settingsFormElement = document.querySelector(DOM.SETTINGS_FORM_ELEMENT);
+  const settingsFormElement = document.querySelector(DOM.SELECTOR.SETTINGS_FORM_ELEMENT);
 
   const prepareLocalStorage = (...types) => {
     if ([...types].length < 1 || [...types].includes('settings')) {
