@@ -1,9 +1,8 @@
 import DOM_SELECTORS from '../constants/domSelectors';
 import STORAGE_KEY_NAMES from '../constants/localStorageKeyNames';
-import { settingsMarkup, settingsNav, settingsUserTable } from '../markup/settings';
-import { stylesSettings } from '../markup/styles';
+import settingsModel from '../model/modules/settings.model';
+import styles from '../model/styles';
 import { injectStyles } from '../utils/inject';
-import { initSettings } from '../init/storage';
 import { russianPropagandaModal } from '../model/utils/modals';
 
 const { SETTINGS: DOM } = DOM_SELECTORS;
@@ -11,36 +10,13 @@ const { SETTINGS: DOM } = DOM_SELECTORS;
 /**
  * Inserts navigation item on a /ustawienia/ page with link to WykopHelper settings
  */
-export const handleSettings = () => {
-  document.querySelector(DOM.LAST_NAV_ELEMENT).insertAdjacentHTML('beforeend', settingsNav);
+export const createSettingsPage = () => {
+  document.querySelector(DOM.LAST_NAV_ELEMENT).insertAdjacentHTML('beforeend', settingsModel.settingsNav);
 };
 
-
-export const handleWhSettings = () => {
+export const handleSettings = () => {
   let settings, trolls, uniqueNicksSet;
   const settingsFormElement = document.querySelector(DOM.SELECTOR.SETTINGS_FORM_ELEMENT);
-
-  const prepareLocalStorage = (...types) => {
-    if ([...types].length < 1 || [...types].includes('settings')) {
-      if (localStorage.getItem(STORAGE_KEY_NAMES.WH_SETTINGS)) {
-        settings = JSON.parse(localStorage.getItem(STORAGE_KEY_NAMES.WH_SETTINGS));
-      } else {
-        initSettings();
-      }
-    } else if ([...types].includes('markedUsers')) {
-      if (localStorage.getItem(STORAGE_KEY_NAMES.MARKED_USERS)) {
-        trolls = JSON.parse(localStorage.getItem(STORAGE_KEY_NAMES.MARKED_USERS));
-      } else {
-        trolls = [];
-      }
-  
-      if (localStorage.getItem(STORAGE_KEY_NAMES.UNIQUE_USERS)) {
-        uniqueNicksSet = JSON.parse(localStorage.getItem(STORAGE_KEY_NAMES.UNIQUE_USERS));
-      } else {
-        uniqueNicksSet = [];
-      }
-    }
-  };
 
   /**
    * clears localstorage. Doesn't remove items, but sets them to empty array
@@ -54,8 +30,6 @@ export const handleWhSettings = () => {
   }
 
   const generateUserTables = () => {
-    prepareLocalStorage('markedUsers');
-
     const rowItemMarkup = (nick, badgeLabel, link) => `
     <tr class="tableWH__row">
       <td></td>
@@ -99,17 +73,15 @@ export const handleWhSettings = () => {
   };
 
   const renderSettings = () => {
-    prepareLocalStorage();
-
     document.querySelector(DOM.ACTIVE_NAV_ELEMENT).classList.remove('active');
     document.querySelector(`.${DOM.WH_NAV_SETTINGS_LINK}`).classList.add('active');
   
     settingsFormElement.innerHTML = '';
-    settingsFormElement.innerHTML = settingsMarkup;
+    settingsFormElement.innerHTML = settingsModel.settingsMarkup;
     settingsFormElement.removeAttribute('method');
     settingsFormElement.removeAttribute('action');
 
-    settingsFormElement.insertAdjacentHTML('afterend', settingsUserTable);
+    settingsFormElement.insertAdjacentHTML('afterend', settingsModel.settingsUserTable);
     generateUserTables();
 
     // TODO: this needs refactoring, to make it work on its own without explicitly listing all settings
@@ -163,7 +135,6 @@ export const handleWhSettings = () => {
    * Handling removing mark from users
    */
   const removeTroll = nick => {
-    prepareLocalStorage('markedUsers');
     for (let [index, item] of trolls.entries()) {
       if (item.nick === nick) {
         delete trolls[index];
@@ -176,9 +147,8 @@ export const handleWhSettings = () => {
   }
 
   const init = () => {
-    injectStyles(stylesSettings);
+    injectStyles(styles.settings);
     renderSettings();
-    prepareLocalStorage();
     handleSettingsForm();
 
     document.querySelector(`.${DOM_SELECTORS.SETTINGS.WH_USER_TABLE}`).addEventListener('click', event => {

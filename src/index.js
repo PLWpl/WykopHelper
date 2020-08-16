@@ -1,9 +1,9 @@
 import isPath from './checks/path.js';
 import { handleBadges } from './paths/main/badges.js';
 import { handleDomainCheck } from './paths/main/domainChecker.js'
-import { handleSettings, handleWhSettings } from './paths/settings.js';
+import { createSettingsPage, handleSettings } from './paths/settings.js';
 import { updateAlert } from './utils/updateAlert.js';
-import { initSettings } from './init/storage.js';
+import { initSettings } from './utils/handleLocalStorage';
 import { highlightOp } from './paths/main/highlightOp.js';
 import { warnOnReload } from './paths/main/warnOnReload.js';
 import { embedOnPaste } from './paths/main/embedOnPaste.js';
@@ -27,10 +27,10 @@ if (isPath.main()) {
   embedOnPaste();
 }
 if (isPath.settings()) {
-  handleSettings();
+  createSettingsPage();
 }
 if (isPath.whSettings()) {
-  handleWhSettings();
+  handleSettings();
 }
 if (isPath.thread()) {
   handleDomainCheck();

@@ -1,4 +1,4 @@
-export const stylesBadge = `
+export const badge = `
 .wh-button {
   display: inline-block;
   padding: .2rem .2rem;
@@ -67,7 +67,7 @@ export const stylesBadge = `
 }
 `;
 
-export const stylesSettings = `
+export const settings = `
 .tableWH__container {
   padding: 1rem;
 }
@@ -102,3 +102,10 @@ export const stylesSettings = `
 .whModalLink:hover {
   color: #4a1313 !important;
 }`;
+
+const styles = {
+  badge,
+  settings
+};
+
+export default styles;
