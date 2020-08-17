@@ -1,5 +1,5 @@
-import DOM from '../constants/domSelectors.js';
-import { highlightOpbuttonMarkup } from '../model/modules/highlightOp.model.js';
+import DOM from '../constants/domSelectors';
+import { highlightOpbuttonMarkup } from '../model/modules/highlightOp.model';
 
 export const highlightOp = () => {
   document.querySelector(`${DOM.HIGHLIGHT_OP.SELECTOR.OP_THREAD} .${DOM.BADGE.CLASSNAME.NICK_ELEMENT}`)

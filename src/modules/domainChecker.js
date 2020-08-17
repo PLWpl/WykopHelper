@@ -1,4 +1,4 @@
-import STORAGE_KEY_NAMES from '../constants/localStorageKeyNames';
+import { getLocalStorage } from '../utils/handleLocalStorage';
 import DOM from '../constants/domSelectors';
 
 import { russianPropagandaDomains } from '../utils/checkDomainsForRussianPropaganda';
@@ -6,11 +6,13 @@ import { annotation } from '../model/utils/annotation';
 import { warningAnnotation } from '../model/modules/domainChecker.model';
 
 export const handleDomainCheck = () => {
+
+  /**
+   * Check if user settings allow for marking domains.
+   * @return {boolean} True if yes, false otherwise
+   */
   const isSettingActive = () => {
-    let settings;
-    if (localStorage.getItem(STORAGE_KEY_NAMES.WH_SETTINGS)) {
-      settings = JSON.parse(localStorage.getItem(STORAGE_KEY_NAMES.WH_SETTINGS));
-    }
+    const settings = getLocalStorage('settings');
 
     if (settings.GENERAL.WARN_ON_SUSPECTED_RUSSIAN_PROPAGANDA) {
       return true;
@@ -19,11 +21,13 @@ export const handleDomainCheck = () => {
     return false;
   }
 
+  /**
+   * if current's thread url is present on the list of russian propaganda domains, then insert annotation with warning
+   */
   const handleCheck = () => {
     const threadLink = document.querySelector(DOM.DOMAIN_CHECKER.SELECTOR.THREAD_LINK).href;
     const url = new URL(threadLink);
     const threadLinkHostname = url.protocol + '//' + url.hostname;
-    //eslint-disable-next-line max-len
     const annotationMarkup = annotation(warningAnnotation);
 
     if (russianPropagandaDomains.includes(threadLinkHostname)) {
