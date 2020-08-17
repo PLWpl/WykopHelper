@@ -1,5 +1,6 @@
 import DOM_SELECTORS from '../constants/domSelectors';
 import STORAGE_KEY_NAMES from '../constants/localStorageKeyNames';
+import { getLocalStorage } from '../utils/handleLocalStorage';
 import settingsModel from '../model/modules/settings.model';
 import styles from '../model/styles';
 import { injectStyles } from '../utils/inject';
@@ -15,54 +16,44 @@ export const createSettingsPage = () => {
 };
 
 export const handleSettings = () => {
-  let settings, trolls, uniqueNicksSet;
+  const settings = getLocalStorage('settings');
+  const markedUsers = getLocalStorage();
+  const uniqueNicksSet = getLocalStorage('unique');
+
   const settingsFormElement = document.querySelector(DOM.SELECTOR.SETTINGS_FORM_ELEMENT);
 
   /**
    * clears localstorage. Doesn't remove items, but sets them to empty array
    */
   const wipeAllMarkedUsers = () => {
-    uniqueNicksSet = [];
-    trolls = [];
-    localStorage.setItem(STORAGE_KEY_NAMES.UNIQUE_USERS, JSON.stringify(uniqueNicksSet));
-    localStorage.setItem(STORAGE_KEY_NAMES.MARKED_USERS, JSON.stringify(trolls));
+    localStorage.setItem(STORAGE_KEY_NAMES.UNIQUE_USERS, '[]');
+    localStorage.setItem(STORAGE_KEY_NAMES.MARKED_USERS, '[]');
     location.reload();
   }
 
   const generateUserTables = () => {
-    const rowItemMarkup = (nick, badgeLabel, link) => `
-    <tr class="tableWH__row">
-      <td></td>
-      <td><a href="https://www.wykop.pl/ludzie/${nick}" target="_blank">${nick}</a></td>
-      <td>${badgeLabel}</td>
-      <td><a href="${link}" target="_blank">&#128279</a></td>
-      <td><span class="tableWH__nick-remove" data-whuserremove="${nick}">&#x02717;</a></td>
-    </tr>
-    `;
+    const tableBody = document.querySelector(`.${DOM.CLASSNAME.WH_USER_TABLE_BODY}`);
 
-    const tableBody = document.querySelector(`.${DOM.WH_USER_TABLE_BODY}`);
-
-    for (let i = 0; i < trolls.length; i++) {
-      const el = trolls[i];
-      tableBody.insertAdjacentHTML('beforeend', rowItemMarkup(el.nick, el.type || 'Debil', el.link ));
-    }
+    markedUsers.forEach(el => {
+      tableBody.insertAdjacentHTML('beforeend', settingsModel.settingsUserTableRow(el.nick, el.label || settings.BADGE.DEFAULT_NAME, el.link ));
+    });
   }
 
   const toggleUserTableVisibility = () => {
-    document.querySelector(`.${DOM.WH_USER_TABLE_CONTAINER}`)
-      .classList.toggle(`${DOM.WH_USER_TABLE_CONTAINER}--hidden`);
+    document.querySelector(`.${DOM.CLASSNAME.WH_USER_TABLE_CONTAINER}`)
+      .classList.toggle(`${DOM.CLASSNAME.WH_USER_TABLE_CONTAINER}--hidden`);
 
-    if (document.querySelector(`.${DOM.WH_USER_TABLE_CONTAINER}--hidden`)) {
-      document.getElementById('showAllMarked').textContent = 'Pokaż wszystkich oznaczonych użytkowników';
+    if (document.querySelector(`.${DOM.CLASSNAME.WH_USER_TABLE_CONTAINER}--hidden`)) {
+      document.getElementById(DOM.ID.SHOW_MARKED_TABLE).textContent = settingsModel.textContent.SHOW_ALL_MARKED;
     } else {
-      document.getElementById('showAllMarked').textContent = 'Schowaj tabelę';
+      document.getElementById(DOM.ID.SHOW_MARKED_TABLE).textContent = settingsModel.textContent.HIDE_TABLE;
     }
   }
 
   const showModalWithPropagandaExplanation = () => {
     // eslint-disable-next-line
     Swal.fire({
-      title: 'Sk\u0105d lista stron z propagand\u0105?',
+      title: settingsModel.textContent.RUSSIAN_PROPAGANDA_MODAL_TITLE,
       html: russianPropagandaModal,
       icon: 'info',
       showCancelButton: false,
@@ -73,8 +64,8 @@ export const handleSettings = () => {
   };
 
   const renderSettings = () => {
-    document.querySelector(DOM.ACTIVE_NAV_ELEMENT).classList.remove('active');
-    document.querySelector(`.${DOM.WH_NAV_SETTINGS_LINK}`).classList.add('active');
+    document.querySelector(DOM.SELECTOR.ACTIVE_NAV_ELEMENT).classList.remove('active');
+    document.querySelector(`.${DOM.CLASSNAME.WH_NAV_SETTINGS_LINK}`).classList.add('active');
   
     settingsFormElement.innerHTML = '';
     settingsFormElement.innerHTML = settingsModel.settingsMarkup;
@@ -135,11 +126,11 @@ export const handleSettings = () => {
    * Handling removing mark from users
    */
   const removeTroll = nick => {
-    for (let [index, item] of trolls.entries()) {
+    for (let [index, item] of markedUsers.entries()) {
       if (item.nick === nick) {
-        delete trolls[index];
-        trolls = trolls.filter(el => el != null);
-        localStorage.setItem(STORAGE_KEY_NAMES.MARKED_USERS, JSON.stringify(trolls));
+        delete markedUsers[index];
+        markedUsers = markedUsers.filter(el => el != null);
+        localStorage.setItem(STORAGE_KEY_NAMES.MARKED_USERS, JSON.stringify(markedUsers));
       }
     }
     uniqueNicksSet = uniqueNicksSet.filter(el => el !== nick);

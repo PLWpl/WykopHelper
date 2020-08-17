@@ -29,7 +29,9 @@ const DOM = {
       WH_USER_TABLE_BODY: 'tableWH__body',
       WH_USER_TABLE_REMOVE_BUTTON: 'tableWH__nick-remove',
     },
-    ID: {},
+    ID: {
+      SHOW_MARKED_TABLE: 'showAllMarked',
+    },
     SELECTOR: {
       LAST_NAV_ELEMENT: '#site .nav > ul > li:last-child',
       ACTIVE_NAV_ELEMENT: '#site .nav > ul .active',

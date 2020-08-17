@@ -86,13 +86,31 @@ export const settingsUserTable = `
 </div>
 `;
 
+export const settingsUserTableRow = (nick, badgeLabel, link) => `
+<tr class="tableWH__row">
+  <td></td>
+  <td><a href="https://www.wykop.pl/ludzie/${nick}" target="_blank">${nick}</a></td>
+  <td>${badgeLabel}</td>
+  <td><a href="${link}" target="_blank">&#128279</a></td>
+  <td><span class="tableWH__nick-remove" data-whuserremove="${nick}">&#x02717;</a></td>
+</tr>
+`;
+
 export const settingsNav = `<li class="whSettingsLink"><a href="https://www.wykop.pl/ustawienia/wykophelper/"><span><strong>WykopHelper</strong> &#10024;</span></a></li>`;
+
+export const textContent = {
+  SHOW_ALL_MARKED: 'Pokaż wszystkich oznaczonych użytkowników',
+  HIDE_TABLE: 'Schowaj tabelę',
+  RUSSIAN_PROPAGANDA_MODAL_TITLE: 'Skąd lista stron z propagandą?',
+}
 
 /* ********************************/
 const settingsModel = {
   settingsMarkup,
   settingsUserTable,
-  settingsNav
+  settingsNav,
+  settingsUserTableRow,
+  textContent
 }
 
 export default settingsModel;
