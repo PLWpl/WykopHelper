@@ -31,6 +31,9 @@ const DOM = {
     },
     ID: {
       SHOW_MARKED_TABLE: 'showAllMarked',
+      ALLOW_WIPE_MARKED_LIST: 'allowWipeAllMarked',
+      REMOVE_ALL_MARKED: 'whsettings__remove-all-marked',
+      RUSSIAN_PROPAGANDA_INFO_LINK: 'russianPropagandaInfo'
     },
     SELECTOR: {
       LAST_NAV_ELEMENT: '#site .nav > ul > li:last-child',

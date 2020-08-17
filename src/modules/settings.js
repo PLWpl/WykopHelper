@@ -31,6 +31,9 @@ export const handleSettings = () => {
     location.reload();
   }
 
+  /**
+   * Creates table with marked users.
+   */
   const generateUserTables = () => {
     const tableBody = document.querySelector(`.${DOM.CLASSNAME.WH_USER_TABLE_BODY}`);
 
@@ -63,6 +66,21 @@ export const handleSettings = () => {
     });
   };
 
+  /**
+   * Assigns proper state to inputs in settings, based on saved settings object
+   */
+  const renderVisibleSettingsValues = () => {
+    const inputs = document.querySelectorAll('input');
+
+    inputs.forEach(el => {
+      if (el.id !== DOM.ID.ALLOW_WIPE_MARKED_LIST && el.type === 'checkbox') {
+        el.checked = settings[el.category][el.name];
+      } else if (el.type === 'text') {
+        el.value = settings[el.category][el.name];
+      }
+    })    
+  }
+
   const renderSettings = () => {
     document.querySelector(DOM.SELECTOR.ACTIVE_NAV_ELEMENT).classList.remove('active');
     document.querySelector(`.${DOM.CLASSNAME.WH_NAV_SETTINGS_LINK}`).classList.add('active');
@@ -73,43 +91,43 @@ export const handleSettings = () => {
     settingsFormElement.removeAttribute('action');
 
     settingsFormElement.insertAdjacentHTML('afterend', settingsModel.settingsUserTable);
-    generateUserTables();
 
-    // TODO: this needs refactoring, to make it work on its own without explicitly listing all settings
-    document.getElementById('badgeDefaultValue').value = settings.BADGE.DEFAULT_NAME;
-    document.getElementById('warnOnRussian').checked = settings.GENERAL.WARN_ON_SUSPECTED_RUSSIAN_PROPAGANDA;
-    document.getElementById('warnOnReload').checked = settings.GENERAL.WARN_ON_RELOAD;
+    generateUserTables();
+    renderVisibleSettingsValues();
   };
 
+  /**
+   * Basically, sets up several event listeners and handles saving input to storage. onChange for checkboxes, onClick for buttons and onKeyUp for text inputs.
+   */
   const handleSettingsForm = () => {
     settingsFormElement.addEventListener('change', event => {
       const category = event.target.getAttribute('category');
       const name = event.target.name;
 
-      if (event.target.type === 'checkbox' && event.target.id !== 'allowWipeAllMarked') {
+      if (event.target.type === 'checkbox' && event.target.id !==  DOM.ID.ALLOW_WIPE_MARKED_LIST) {
         settings[category][name] = !settings[category][name];
         localStorage.setItem(STORAGE_KEY_NAMES.WH_SETTINGS, JSON.stringify(settings));
       }
-    });
+    }, {passive: true});
 
     settingsFormElement.addEventListener('click', event => {
-      if (event.target.id === 'showAllMarked') {
+      if (event.target.id === DOM.ID.SHOW_MARKED_TABLE) {
         event.preventDefault();
         toggleUserTableVisibility();
       }
-      if (event.target.id === 'allowWipeAllMarked') {
+      if (event.target.id ===  DOM.ID.ALLOW_WIPE_MARKED_LIST) {
         event.target.disabled = true;
-        document.getElementById('whsettings__remove-all-marked').disabled = false;
-        document.getElementById('whsettings__remove-all-marked').style.opacity = 1;
+        document.getElementById(DOM.ID.REMOVE_ALL_MARKED).disabled = false;
+        document.getElementById(DOM.ID.REMOVE_ALL_MARKED).style.opacity = 1;
       }
-      if (event.target.id === 'whsettings__remove-all-marked') {
+      if (event.target.id === DOM.ID.REMOVE_ALL_MARKED) {
         event.preventDefault();
         wipeAllMarkedUsers();
       }
-      if (event.target.id === 'russianPropagandaInfo') {
+      if (event.target.id === DOM.ID.RUSSIAN_PROPAGANDA_INFO_LINK) {
         showModalWithPropagandaExplanation();
       }
-    })
+    }, {passive: false})
 
     settingsFormElement.addEventListener('keyup', event => {
       const category = event.target.getAttribute('category');
@@ -119,7 +137,7 @@ export const handleSettings = () => {
         settings[category][name] = event.target.value.toLowerCase();
         localStorage.setItem(STORAGE_KEY_NAMES.WH_SETTINGS, JSON.stringify(settings));
       }
-    })
+    }, {passive: true})
   }
 
   /**
@@ -129,12 +147,12 @@ export const handleSettings = () => {
     for (let [index, item] of markedUsers.entries()) {
       if (item.nick === nick) {
         delete markedUsers[index];
-        markedUsers = markedUsers.filter(el => el != null);
-        localStorage.setItem(STORAGE_KEY_NAMES.MARKED_USERS, JSON.stringify(markedUsers));
+        const filteredUsers = markedUsers.filter(el => el != null);
+        localStorage.setItem(STORAGE_KEY_NAMES.MARKED_USERS, JSON.stringify(filteredUsers));
       }
     }
-    uniqueNicksSet = uniqueNicksSet.filter(el => el !== nick);
-    localStorage.setItem(STORAGE_KEY_NAMES.UNIQUE_USERS, JSON.stringify(uniqueNicksSet));
+    const filteredUniqueUsers = uniqueNicksSet.filter(el => el !== nick);
+    localStorage.setItem(STORAGE_KEY_NAMES.UNIQUE_USERS, JSON.stringify(filteredUniqueUsers));
   }
 
   const init = () => {
@@ -142,15 +160,15 @@ export const handleSettings = () => {
     renderSettings();
     handleSettingsForm();
 
-    document.querySelector(`.${DOM_SELECTORS.SETTINGS.WH_USER_TABLE}`).addEventListener('click', event => {
+    document.querySelector(`.${DOM_SELECTORS.SETTINGS.CLASSNAME.WH_USER_TABLE}`).addEventListener('click', event => {
       const target = event.target;
-      if (target.classList.contains(`${DOM_SELECTORS.SETTINGS.WH_USER_TABLE_REMOVE_BUTTON}`)) {
+      if (target.classList.contains(`${DOM_SELECTORS.SETTINGS.CLASSNAME.WH_USER_TABLE_REMOVE_BUTTON}`)) {
         const nick = target.dataset.whuserremove;
         removeTroll(nick);
         target.closest('tr').remove();
       }
     })
   }
-
+  
   init();
 }; 
