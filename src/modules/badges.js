@@ -1,7 +1,7 @@
 import STORAGE_KEY_NAMES from '../constants/localStorageKeyNames';
 import DOM_SELECTORS from '../constants/domSelectors';
 
-import { stylesBadge } from '../model/styles.js';
+import styles from '../model/styles.js';
 import { buttonMarkup, badge } from '../model/modules/badges.model';
 import { modalMarkup } from '../model/utils/badgeInfoModal';
 import { addModal } from '../utils/addModal';
@@ -48,7 +48,8 @@ export const handleBadges = () => {
   //used on element - preferably one returned from getAllNickElements() - returns string with nick name.
   const getNick = el => el.querySelector(DOM.SELECTOR.NICK).innerText;
 
-  const getAllElementsWithNick = nick => document.querySelectorAll(`.${DOM.CLASSNAME.NICK}[class*="color"][href*="ludzie/${nick}"]`);
+  const getAllElementsWithNick = nick => document
+    .querySelectorAll(`.${DOM.CLASSNAME.NICK}[class*="color"][href*="ludzie/${nick}"]`);
 
   // const getAllElementsWithNick = nick => {
   //   const allInstancesOfNick = document.querySelectorAll(`${DOM.CLASSNAME.NICK}[href*="ludzie/${nick}"]`);
@@ -118,8 +119,7 @@ export const handleBadges = () => {
               .closest(`.${DOM.CLASSNAME.NICK_ELEMENT}`)
               .querySelector(`.${DOM.CLASSNAME.MARK_BUTTON}`)
               .remove();
-          })
-            
+          });
         }
       });
     }
@@ -135,7 +135,8 @@ export const handleBadges = () => {
 
     // verified accounts need be handled slightly differently
     const link = event.target.closest(`.${DOM.CLASSNAME.NICK_ELEMENT}`).querySelector(`.verified`) ? 
-      event.target.closest(`.${DOM.CLASSNAME.NICK_ELEMENT}`).querySelector(`.${DOM.CLASSNAME.NICK_VERIFIED_BADGE} + a`).href
+      event.target.closest(`.${DOM.CLASSNAME.NICK_ELEMENT}`)
+        .querySelector(`.${DOM.CLASSNAME.NICK_VERIFIED_BADGE} + a`).href
       : event.target.closest(`.${DOM.CLASSNAME.NICK_ELEMENT}`).querySelector("a + a").href;
 
     event.target.classList.add(DOM.CLASSNAME.MARK_BUTTON_CLICKED);
@@ -215,7 +216,7 @@ export const handleBadges = () => {
    * Above is setup. Actual job gets done below
    */
 
-  injectStyles(stylesBadge);
+  injectStyles(styles.badge);
   markUsers();
   initializeModal();
 

@@ -38,7 +38,12 @@ export const handleSettings = () => {
     const tableBody = document.querySelector(`.${DOM.CLASSNAME.WH_USER_TABLE_BODY}`);
 
     markedUsers.forEach(el => {
-      tableBody.insertAdjacentHTML('beforeend', settingsModel.settingsUserTableRow(el.nick, el.label || settings.BADGE.DEFAULT_NAME, el.link ));
+      tableBody.insertAdjacentHTML(
+        'beforeend', 
+        settingsModel.settingsUserTableRow(
+          el.nick, el.label || settings.BADGE.DEFAULT_NAME, el.link
+        )
+      );
     });
   }
 

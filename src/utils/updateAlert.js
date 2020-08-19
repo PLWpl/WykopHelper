@@ -1,5 +1,5 @@
 import { runOnceOnUpdate } from './runOnceOnUpdate.js';
-import { welcomeText, updateText, version } from './../model/update.js';
+import { welcomeText, updateText, version } from '../model/utils/update';
 
 /**
  * Fires modal on update, if a different (lower) version is indicated in local storage. Alternatively, if no version is specified, a modal with "thanks for installation" is fired

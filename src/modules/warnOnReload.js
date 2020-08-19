@@ -1,5 +1,5 @@
 import DOM_SELECTORS from '../constants/domSelectors';
-import getLocalStorage from '../utils/handleLocalStorage';
+import { getLocalStorage } from '../utils/handleLocalStorage';
 const { BADGE: DOM } = DOM_SELECTORS;
 
 export const isTextareaEmpty = () => {

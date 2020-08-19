@@ -6,7 +6,6 @@ import { annotation } from '../model/utils/annotation';
 import { warningAnnotation } from '../model/modules/domainChecker.model';
 
 export const handleDomainCheck = () => {
-
   /**
    * Check if user settings allow for marking domains.
    * @return {boolean} True if yes, false otherwise

@@ -1,12 +1,12 @@
-import isPath from './checks/path.js';
-import { handleBadges } from './paths/main/badges.js';
-import { handleDomainCheck } from './paths/main/domainChecker.js'
-import { createSettingsPage, handleSettings } from './paths/settings.js';
-import { updateAlert } from './utils/updateAlert.js';
+import isPath from './utils/checkPath';
+import { handleBadges } from './modules/badges';
+import { handleDomainCheck } from './modules/domainChecker'
+import { createSettingsPage, handleSettings } from './modules/settings';
+import { updateAlert } from './utils/updateAlert';
 import { initSettings } from './utils/handleLocalStorage';
-import { highlightOp } from './paths/main/highlightOp.js';
-import { warnOnReload } from './paths/main/warnOnReload.js';
-import { embedOnPaste } from './paths/main/embedOnPaste.js';
+import { highlightOp } from './modules/highlightOp';
+import { warnOnReload } from './modules/warnOnReload';
+import { embedOnPaste } from './modules/embedOnPaste';
 
 /**
 * Capitalize first letter
