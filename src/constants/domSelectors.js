@@ -6,7 +6,8 @@ const DOM = {
       MARK_BUTTON: 'buttonWH',
       MARK_BUTTON_CLICKED: 'buttonWH--clicked',
       MODAL_BUTTON_REMOVE: 'modalWH-button--remove',
-      NICK_VERIFIED_BADGE: 'verified'
+      NICK_VERIFIED_BADGE: 'verified',
+      NICK: 'showProfileSummary'
     },
     ID: {},
     SELECTOR: {
