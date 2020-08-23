@@ -12,7 +12,7 @@ const { SETTINGS: DOM } = DOM_SELECTORS;
  * Inserts navigation item on a /ustawienia/ page with link to WykopHelper settings
  */
 export const createSettingsPage = () => {
-  document.querySelector(DOM.LAST_NAV_ELEMENT).insertAdjacentHTML('beforeend', settingsModel.settingsNav);
+  document.querySelector(DOM.SELECTOR.LAST_NAV_ELEMENT).insertAdjacentHTML('beforeend', settingsModel.settingsNav);
 };
 
 export const handleSettings = () => {
@@ -78,10 +78,13 @@ export const handleSettings = () => {
     const inputs = document.querySelectorAll('input');
 
     inputs.forEach(el => {
+      const category = el.getAttribute('category');
       if (el.id !== DOM.ID.ALLOW_WIPE_MARKED_LIST && el.type === 'checkbox') {
-        el.checked = settings[el.category][el.name];
-      } else if (el.type === 'text') {
-        el.value = settings[el.category][el.name];
+        el.checked = settings[category][el.name];
+        // console.log(category)
+      } else if (el.type === 'text' && el.name !== 'nsQ') {
+        el.value = settings[category][el.name];
+        // console.log(category)
       }
     })    
   }

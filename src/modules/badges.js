@@ -130,7 +130,7 @@ export const handleBadges = () => {
 
   // fired on clicking a button "Oznacz". 
   // First, get nick of the author. Then, get link of the offending comment. 
-  const addNewTroll = event => {
+  const addNewMarked = event => {
     const nick = getNick(event.target.closest(`.${DOM.CLASSNAME.NICK_ELEMENT}`));
 
     // verified accounts need be handled slightly differently
@@ -226,7 +226,7 @@ export const handleBadges = () => {
     .addEventListener('click', event => {
       const target = event.target;
       if (target.classList.contains(DOM.CLASSNAME.MARK_BUTTON)) {
-        addNewTroll(event);
+        addNewMarked(event);
       }
       if (target.classList.contains('affect') && target.closest('.more')) {
         setTimeout(() =>{
