@@ -25,6 +25,8 @@ export const badge = `
   border: 1px solid currentColor;
   padding: .1rem .2rem;
   cursor: pointer;
+  position: relative;
+  top: .1rem;
 }
 .modalWH-button {
   display: block;

@@ -16,12 +16,16 @@ export const handleBadges = () => {
    * uniqueNicksSet - an array keeping nicks of all users added to the troll list. It exists so that before adding any user on a list we can easily check if they haven't already been added, using simple includes() method.
    * markedUsers - an object with user nicks and links to offending posts.
    */
-  const uniqueNicksSet = getLocalStorage('unique');
-  const markedUsers = getLocalStorage('marked');
-  const settings = getLocalStorage('settings');
+  let uniqueNicksSet = getLocalStorage('unique');
+  let markedUsers = getLocalStorage('marked');
+  let settings = getLocalStorage('settings');
+  const newMarked = {};
 
   //checks if user of provided nick is already in uniqueNicksSet array
-  const isMarked = nick => !!(uniqueNicksSet.includes(nick));
+  const isMarked = nick => {
+    uniqueNicksSet = getLocalStorage('unique');
+    return !!(uniqueNicksSet.includes(nick));
+  }
 
   // Adds new nick to uniqueNicksSet array.
   const addNickToUniqueNicksArray = nick => {
@@ -39,6 +43,9 @@ export const handleBadges = () => {
     if (!isMarked(nick)) {
       addNickToUniqueNicksArray(nick);
       addNickToTrollsArray(nick, link, label);
+      newMarked.nick = nick;
+      newMarked.link = link;
+      newMarked.label = label;
     }
   }
 
@@ -51,11 +58,6 @@ export const handleBadges = () => {
   const getAllElementsWithNick = nick => document
     .querySelectorAll(`.${DOM.CLASSNAME.NICK}[class*="color"][href*="ludzie/${nick}"]`);
 
-  // const getAllElementsWithNick = nick => {
-  //   const allInstancesOfNick = document.querySelectorAll(`${DOM.CLASSNAME.NICK}[href*="ludzie/${nick}"]`);
-  //   const real = allInstances.filter(element => element.classList.indexOf('color') > -1);
-  // }
-
   // used on author element, returned from getAllNickElements(), checks if person has already been marked with a badge
   const isNotAwarded = element => !(element.querySelector(`.${DOM.CLASSNAME.BADGE}`));
 
@@ -66,14 +68,14 @@ export const handleBadges = () => {
 
   // goes through all user elements on a page and checks, if user nicks are present in uniqueNicksSet array. If they are, AND they haven't yet been awarded a badge, it injects the badge.
   // takes optional parameter of type, possibly for future expansion.
-  const markUsers = (type = getDefaultBadgeLabelFromSettings()) => {
+  const markUsers = (label = getDefaultBadgeLabelFromSettings()) => {
     try {
       const elements = getAllNickElements();
       elements.forEach(element =>{
         const nick = getNick(element);
 
         if (isMarked(nick) && isNotAwarded(element)) {
-          element.insertAdjacentHTML('afterbegin', badge(nick, type));
+          element.insertAdjacentHTML('afterbegin', badge(nick, label));
         }
         else if (!hasButtonAppended(element)) {
           element.insertAdjacentHTML("beforeend", buttonMarkup);
@@ -87,46 +89,42 @@ export const handleBadges = () => {
 
   
   const updateView = () => {
-    try {
-      const elements = getAllNickElements();
-      
-      elements.forEach(element =>{
-        const nick = getNick(element);
+    markedUsers = getLocalStorage('marked');
+    // const label = () => {
+    //   for (let i = 0; i < markedUsers.length; i++) {
+    //     if (markedUsers[i].nick === nick) {
+    //       return markedUsers[i].label;
+    //     } else if (markedUsers[i] === undefined || markedUsers[i] === null) {
+    //       continue;
+    //     } else {
+    //       return settings.BADGE.DEFAULT_NAME;
+    //     }
+    //   }
+    // };
+    markUsers();
 
-        const label = () => {
-          for (let i = 0; i < markedUsers.length; i++) {
-            if (markedUsers[i].nick === nick) {
-              return markedUsers[i].label;
-            } else if (markedUsers[i] === undefined || markedUsers[i] === null) {
-              continue;
-            } else {
-              return settings.BADGE.DEFAULT_NAME;
-            }
-          }
-        };
+    const elements = getAllNickElements();
 
-        if (isMarked(nick) && isNotAwarded(element)) {
-          element.insertAdjacentHTML('afterbegin', badge(nick, label()));
-        }
-        if (isMarked(nick) 
-          && isNotAwarded(element) 
-          && element.querySelector(`.${DOM.CLASSNAME.MARK_BUTTON}`) 
-          && !element.querySelector(`.${DOM.CLASSNAME.MARK_BUTTON_CLICKED}`)) 
-        {
-          element.querySelector(`.${DOM.CLASSNAME.MARK_BUTTON}`).remove();
-          getAllElementsWithNick(nick).forEach(el => {
-            el
-              .closest(`.${DOM.CLASSNAME.NICK_ELEMENT}`)
-              .querySelector(`.${DOM.CLASSNAME.MARK_BUTTON}`)
-              .remove();
-          });
-        }
-      });
-    }
-    catch (e) {
-      //supress the error
-    }
+    elements.forEach(element => {
+      const nick = getNick(element);
+
+      if (isMarked(nick) && isNotAwarded(element)) {
+        element.insertAdjacentHTML('afterbegin', badge(nick));
+        console.log('marked!')
+      }
+      if (isMarked(nick) 
+        && element.querySelector(`.${DOM.CLASSNAME.MARK_BUTTON}`) 
+        && !element.querySelector(`.${DOM.CLASSNAME.MARK_BUTTON_CLICKED}`)) 
+      {
+        getAllElementsWithNick(nick).forEach(el => {
+          el.querySelector(`.${DOM.CLASSNAME.MARK_BUTTON}`) ? 
+            el.querySelector(`.${DOM.CLASSNAME.MARK_BUTTON}`).remove() :
+            null;
+        });
+      }
+    })
   }
+
 
   // fired on clicking a button "Oznacz". 
   // First, get nick of the author. Then, get link of the offending comment. 
@@ -146,7 +144,12 @@ export const handleBadges = () => {
     setTimeout(() => {
       event.target.remove();
     }, 700)
-    updateView();
+
+    // while checking if button is appended, button is still there, just invisible! Hence, below as a test:
+
+    setTimeout(() => {
+      updateView();
+    }, 780)
   }
 
   const removeTroll = nick => {
@@ -163,6 +166,7 @@ export const handleBadges = () => {
     // checks if user is writing any new comment. If not, reloads the page. If yes, prompts the user for decision.
     if (isTextareaEmpty()) {
       // location.reload();
+      updateView();
       console.log('did buttons disappear?')
     } else {
       // eslint-disable-next-line
@@ -185,6 +189,7 @@ export const handleBadges = () => {
   }
 
   // gets user data from objects inside marked users array. For now the only useful data returned is link to the offending post
+  // @TODO: what if there is no nick? Check
   const getNickData = nick => {
     for (let i = 0; i < markedUsers.length; i++) {
       if (markedUsers[i].nick === nick) {

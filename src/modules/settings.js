@@ -81,10 +81,8 @@ export const handleSettings = () => {
       const category = el.getAttribute('category');
       if (el.id !== DOM.ID.ALLOW_WIPE_MARKED_LIST && el.type === 'checkbox') {
         el.checked = settings[category][el.name];
-        // console.log(category)
       } else if (el.type === 'text' && el.name !== 'nsQ') {
         el.value = settings[category][el.name];
-        // console.log(category)
       }
     })    
   }
