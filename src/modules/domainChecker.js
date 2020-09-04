@@ -1,3 +1,4 @@
+import { $ } from '../utils/dom';
 import { getLocalStorage } from '../utils/handleLocalStorage';
 import DOM from '../constants/domSelectors';
 
@@ -24,13 +25,13 @@ export const handleDomainCheck = () => {
    * if current's thread url is present on the list of russian propaganda domains, then insert annotation with warning
    */
   const handleCheck = () => {
-    const threadLink = document.querySelector(DOM.DOMAIN_CHECKER.SELECTOR.THREAD_LINK).href;
+    const threadLink = $(DOM.DOMAIN_CHECKER.SELECTOR.THREAD_LINK).href;
     const url = new URL(threadLink);
     const threadLinkHostname = url.protocol + '//' + url.hostname;
     const annotationMarkup = annotation(warningAnnotation);
 
     if (russianPropagandaDomains.includes(threadLinkHostname)) {
-      document.querySelector(`.${DOM.DOMAIN_CHECKER.CLASSNAME.WYKOP_ITEM_INTRO}`).insertAdjacentHTML('beforebegin', annotationMarkup)
+      $(`.${DOM.DOMAIN_CHECKER.CLASSNAME.WYKOP_ITEM_INTRO}`).insertAdjacentHTML('beforebegin', annotationMarkup)
     }
   };
 

@@ -1,3 +1,4 @@
+import { $, $$ } from '../utils/dom';
 import STORAGE_KEY_NAMES from '../constants/localStorageKeyNames';
 import DOM_SELECTORS from '../constants/domSelectors';
 
@@ -19,7 +20,6 @@ export const handleBadges = () => {
   let uniqueNicksSet = getLocalStorage('unique');
   let markedUsers = getLocalStorage('marked');
   let settings = getLocalStorage('settings');
-  const newMarked = {};
 
   //checks if user of provided nick is already in uniqueNicksSet array
   const isMarked = nick => {
@@ -43,26 +43,22 @@ export const handleBadges = () => {
     if (!isMarked(nick)) {
       addNickToUniqueNicksArray(nick);
       addNickToTrollsArray(nick, link, label);
-      newMarked.nick = nick;
-      newMarked.link = link;
-      newMarked.label = label;
     }
   }
 
   // function returns a nodeList with all <div> elements containing line with nick, time since comment made, [+][-]
-  const getAllNickElements = () => document.querySelectorAll(DOM.SELECTOR.NICK_ELEMENTS);
+  const getAllNickElements = () => $$(DOM.SELECTOR.NICK_ELEMENTS);
   
   //used on element - preferably one returned from getAllNickElements() - returns string with nick name.
-  const getNick = el => el.querySelector(DOM.SELECTOR.NICK).innerText;
+  const getNick = el => $(DOM.SELECTOR.NICK, el).innerText;
 
-  const getAllElementsWithNick = nick => document
-    .querySelectorAll(`.${DOM.CLASSNAME.NICK}[class*="color"][href*="ludzie/${nick}"]`);
+  const getAllElementsWithNick = nick => $$(`.${DOM.CLASSNAME.NICK}[class*="color"][href*="ludzie/${nick}"]`);
 
   // used on author element, returned from getAllNickElements(), checks if person has already been marked with a badge
-  const isNotAwarded = element => !(element.querySelector(`.${DOM.CLASSNAME.BADGE}`));
+  const isNotAwarded = element => !($(`.${DOM.CLASSNAME.BADGE}`, element));
 
   // used on author element, returned from getAllNickElements(), checks if person has already been given a button
-  const hasButtonAppended = element => !!(element.querySelector(`.${DOM.CLASSNAME.MARK_BUTTON}`));
+  const hasButtonAppended = element => !!($(`.${DOM.CLASSNAME.MARK_BUTTON}`, element));
 
   const getDefaultBadgeLabelFromSettings = () => settings.BADGE.DEFAULT_NAME;
 
@@ -113,12 +109,12 @@ export const handleBadges = () => {
         console.log('marked!')
       }
       if (isMarked(nick) 
-        && element.querySelector(`.${DOM.CLASSNAME.MARK_BUTTON}`) 
-        && !element.querySelector(`.${DOM.CLASSNAME.MARK_BUTTON_CLICKED}`)) 
+        && $(`.${DOM.CLASSNAME.MARK_BUTTON}`, element) 
+        && !$(`.${DOM.CLASSNAME.MARK_BUTTON_CLICKED}`, element)) 
       {
         getAllElementsWithNick(nick).forEach(el => {
-          el.querySelector(`.${DOM.CLASSNAME.MARK_BUTTON}`) ? 
-            el.querySelector(`.${DOM.CLASSNAME.MARK_BUTTON}`).remove() :
+          $(`.${DOM.CLASSNAME.MARK_BUTTON}`, el) ? 
+            $(`.${DOM.CLASSNAME.MARK_BUTTON}`, el).remove() :
             null;
         });
       }
@@ -203,14 +199,14 @@ export const handleBadges = () => {
   // shows modal with marked user info/options
   // eslint-disable-next-line 
   const showUserModal = element => {
-    const nick = document.querySelector(element).dataset.whusername;
+    const nick = $(element).dataset.whusername;
     const userData = getNickData(nick);
     addModal(element, modalMarkup(userData));
   }
 
   const initializeModal = () => {
-    if (document.querySelector(`.${DOM.CLASSNAME.BADGE}`)) {
-      document.querySelectorAll(`.${DOM.CLASSNAME.BADGE}`).forEach(el => {
+    if ($(`.${DOM.CLASSNAME.BADGE}`)) {
+      $$(`.${DOM.CLASSNAME.BADGE}`).forEach(el => {
         const nick = el.dataset.whusername;
         setTimeout(showUserModal(DOM.DYNAMIC.DATASET.USERNAME(nick)), 1150);
       });

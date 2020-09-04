@@ -1,3 +1,4 @@
+import { $, $$ } from '../utils/dom';
 import DOM_SELECTORS from '../constants/domSelectors';
 import STORAGE_KEY_NAMES from '../constants/localStorageKeyNames';
 import { getLocalStorage } from '../utils/handleLocalStorage';
@@ -12,7 +13,7 @@ const { SETTINGS: DOM } = DOM_SELECTORS;
  * Inserts navigation item on a /ustawienia/ page with link to WykopHelper settings
  */
 export const createSettingsPage = () => {
-  document.querySelector(DOM.SELECTOR.LAST_NAV_ELEMENT).insertAdjacentHTML('beforeend', settingsModel.settingsNav);
+  $(DOM.SELECTOR.LAST_NAV_ELEMENT).insertAdjacentHTML('beforeend', settingsModel.settingsNav);
 };
 
 export const handleSettings = () => {
@@ -20,7 +21,7 @@ export const handleSettings = () => {
   const markedUsers = getLocalStorage();
   const uniqueNicksSet = getLocalStorage('unique');
 
-  const settingsFormElement = document.querySelector(DOM.SELECTOR.SETTINGS_FORM_ELEMENT);
+  const settingsFormElement = $(DOM.SELECTOR.SETTINGS_FORM_ELEMENT);
 
   /**
    * clears localstorage. Doesn't remove items, but sets them to empty array
@@ -35,7 +36,7 @@ export const handleSettings = () => {
    * Creates table with marked users.
    */
   const generateUserTables = () => {
-    const tableBody = document.querySelector(`.${DOM.CLASSNAME.WH_USER_TABLE_BODY}`);
+    const tableBody = $(`.${DOM.CLASSNAME.WH_USER_TABLE_BODY}`);
 
     markedUsers.forEach(el => {
       tableBody.insertAdjacentHTML(
@@ -48,10 +49,10 @@ export const handleSettings = () => {
   }
 
   const toggleUserTableVisibility = () => {
-    document.querySelector(`.${DOM.CLASSNAME.WH_USER_TABLE_CONTAINER}`)
+    $(`.${DOM.CLASSNAME.WH_USER_TABLE_CONTAINER}`)
       .classList.toggle(`${DOM.CLASSNAME.WH_USER_TABLE_CONTAINER}--hidden`);
 
-    if (document.querySelector(`.${DOM.CLASSNAME.WH_USER_TABLE_CONTAINER}--hidden`)) {
+    if ($(`.${DOM.CLASSNAME.WH_USER_TABLE_CONTAINER}--hidden`)) {
       document.getElementById(DOM.ID.SHOW_MARKED_TABLE).textContent = settingsModel.textContent.SHOW_ALL_MARKED;
     } else {
       document.getElementById(DOM.ID.SHOW_MARKED_TABLE).textContent = settingsModel.textContent.HIDE_TABLE;
@@ -75,7 +76,7 @@ export const handleSettings = () => {
    * Assigns proper state to inputs in settings, based on saved settings object
    */
   const renderVisibleSettingsValues = () => {
-    const inputs = document.querySelectorAll('input');
+    const inputs = $$('input');
 
     inputs.forEach(el => {
       const category = el.getAttribute('category');
@@ -88,8 +89,8 @@ export const handleSettings = () => {
   }
 
   const renderSettings = () => {
-    document.querySelector(DOM.SELECTOR.ACTIVE_NAV_ELEMENT).classList.remove('active');
-    document.querySelector(`.${DOM.CLASSNAME.WH_NAV_SETTINGS_LINK}`).classList.add('active');
+    $(DOM.SELECTOR.ACTIVE_NAV_ELEMENT).classList.remove('active');
+    $(`.${DOM.CLASSNAME.WH_NAV_SETTINGS_LINK}`).classList.add('active');
   
     settingsFormElement.innerHTML = '';
     settingsFormElement.innerHTML = settingsModel.settingsMarkup;
@@ -166,7 +167,7 @@ export const handleSettings = () => {
     renderSettings();
     handleSettingsForm();
 
-    document.querySelector(`.${DOM_SELECTORS.SETTINGS.CLASSNAME.WH_USER_TABLE}`).addEventListener('click', event => {
+    $(`.${DOM_SELECTORS.SETTINGS.CLASSNAME.WH_USER_TABLE}`).addEventListener('click', event => {
       const target = event.target;
       if (target.classList.contains(`${DOM_SELECTORS.SETTINGS.CLASSNAME.WH_USER_TABLE_REMOVE_BUTTON}`)) {
         const nick = target.dataset.whuserremove;
