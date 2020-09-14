@@ -106,17 +106,17 @@ export const handleBadges = () => {
 
       if (isMarked(nick) && isNotAwarded(element)) {
         element.insertAdjacentHTML('afterbegin', badge(nick));
-        console.log('marked!')
       }
       if (isMarked(nick) 
         && $(`.${DOM.CLASSNAME.MARK_BUTTON}`, element) 
         && !$(`.${DOM.CLASSNAME.MARK_BUTTON_CLICKED}`, element)) 
       {
-        getAllElementsWithNick(nick).forEach(el => {
-          $(`.${DOM.CLASSNAME.MARK_BUTTON}`, el) ? 
-            $(`.${DOM.CLASSNAME.MARK_BUTTON}`, el).remove() :
-            null;
-        });
+        // getAllElementsWithNick(nick).forEach(el => {
+        //   $(`.${DOM.CLASSNAME.MARK_BUTTON}`, el) ? 
+        //     $(`.${DOM.CLASSNAME.MARK_BUTTON}`, el).remove() :
+        //     null;
+        // });
+        $(`.${DOM.CLASSNAME.MARK_BUTTON}`, element).remove();
       }
     })
   }
