@@ -86,17 +86,6 @@ export const handleBadges = () => {
   
   const updateView = () => {
     markedUsers = getLocalStorage('marked');
-    // const label = () => {
-    //   for (let i = 0; i < markedUsers.length; i++) {
-    //     if (markedUsers[i].nick === nick) {
-    //       return markedUsers[i].label;
-    //     } else if (markedUsers[i] === undefined || markedUsers[i] === null) {
-    //       continue;
-    //     } else {
-    //       return settings.BADGE.DEFAULT_NAME;
-    //     }
-    //   }
-    // };
     markUsers();
 
     const elements = getAllNickElements();
@@ -107,16 +96,12 @@ export const handleBadges = () => {
       if (isMarked(nick) && isNotAwarded(element)) {
         element.insertAdjacentHTML('afterbegin', badge(nick));
       }
-      if (isMarked(nick) 
+      if (isMarked(nick)
         && $(`.${DOM.CLASSNAME.MARK_BUTTON}`, element) 
         && !$(`.${DOM.CLASSNAME.MARK_BUTTON_CLICKED}`, element)) 
       {
-        // getAllElementsWithNick(nick).forEach(el => {
-        //   $(`.${DOM.CLASSNAME.MARK_BUTTON}`, el) ? 
-        //     $(`.${DOM.CLASSNAME.MARK_BUTTON}`, el).remove() :
-        //     null;
-        // });
         $(`.${DOM.CLASSNAME.MARK_BUTTON}`, element).remove();
+        initializeModal();
       }
     })
   }
@@ -141,7 +126,7 @@ export const handleBadges = () => {
       event.target.remove();
     }, 700)
 
-    // while checking if button is appended, button is still there, just invisible! Hence, below as a test:
+    // while checking if button is appended, button is still there, just invisible! Hence, below:
 
     setTimeout(() => {
       updateView();
@@ -159,29 +144,9 @@ export const handleBadges = () => {
     const unique = uniqueNicksSet.filter(el => el !== nick);
     localStorage.setItem(STORAGE_KEY_NAMES.UNIQUE_USERS, JSON.stringify(unique));
     
-    // checks if user is writing any new comment. If not, reloads the page. If yes, prompts the user for decision.
-    if (isTextareaEmpty()) {
-      // location.reload();
+    setTimeout(() => {
       updateView();
-      console.log('did buttons disappear?')
-    } else {
-      // eslint-disable-next-line
-      Swal.fire({
-        title: 'Hej!',
-        // eslint-disable-next-line
-        text: 'Wygląda na to, że jesteś w trakcie pisania komentarza. Kliknij "Anuluj" aby dokończyć pisanie i odśwież stronę ręcznie (to aktualnie konieczne, by zniknęło oznaczenie użytkownika). Jeśli jednak nie planujesz nic publikować, naciśnij przycisk "Odśwież".',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Od&#x015b;wie&#x017c;',
-        cancelButtonText: 'Anuluj',
-      }).then(result => {
-        if (result.value) {
-          location.reload();
-        }
-      })
-    }
+    }, 780)
   }
 
   // gets user data from objects inside marked users array. For now the only useful data returned is link to the offending post
