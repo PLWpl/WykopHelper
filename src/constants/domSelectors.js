@@ -5,7 +5,9 @@ const DOM = {
       BADGE: 'badge',
       MARK_BUTTON: 'buttonWH',
       MARK_BUTTON_CLICKED: 'buttonWH--clicked',
+      MODAL_BUTTON: 'modalWH-button',
       MODAL_BUTTON_REMOVE: 'modalWH-button--remove',
+      MODAL_TEXT: 'modalWH-text',
       NICK_VERIFIED_BADGE: 'verified',
       NICK: 'showProfileSummary'
     },
@@ -26,9 +28,13 @@ const DOM = {
     CLASSNAME: {
       WH_NAV_SETTINGS_LINK: 'whSettingsLink',
       WH_USER_TABLE: 'tableWH',
+      WH_USER_TABLE_ROW: 'tableWH__row',
+      WH_USER_TABLE_HEAD: 'tableWH__head',
       WH_USER_TABLE_CONTAINER: 'tableWH__container',
+      WH_USER_TABLE_CONTAINER_HIDDEN: 'tableWH__container--hidden',
       WH_USER_TABLE_BODY: 'tableWH__body',
       WH_USER_TABLE_REMOVE_BUTTON: 'tableWH__nick-remove',
+      WH_SETTINGS_CROSSED: 'settings__crossed',
     },
     ID: {
       SHOW_MARKED_TABLE: 'showAllMarked',
@@ -71,6 +77,11 @@ const DOM = {
       THREAD_LINK: '.article h2 a',
     },
     DYNAMIC: {}
+  },
+  MODAL: {
+    CLASSNAME: {
+      LINK: 'whModalLink',
+    }
   }
 };
 

@@ -1,5 +1,7 @@
+import DOM from '../constants/domSelectors';
+
 export const badge = `
-.wh-button {
+.${DOM.BADGE.CLASSNAME.MARK_BUTTON} {
   display: inline-block;
   padding: .2rem .2rem;
   border: 1px solid #9999996e;
@@ -11,14 +13,14 @@ export const badge = `
   line-height: .7rem;
   transition: .3s all;
 }
-.buttonWH:hover {
+.${DOM.BADGE.CLASSNAME.MARK_BUTTON}:hover {
   border-color: green;
 }
-.buttonWH--clicked {
+.${DOM.BADGE.CLASSNAME.MARK_BUTTON_CLICKED} {
   border-color: green;
   opacity: 0;
 }
-.badge {
+.${DOM.BADGE.CLASSNAME.BADGE} {
   color: red;
   font-weight: bold;
   margin-right: .3rem;
@@ -28,7 +30,7 @@ export const badge = `
   position: relative;
   top: .1rem;
 }
-.modalWH-button {
+.${DOM.BADGE.CLASSNAME.MODAL_BUTTON} {
   display: block;
   padding: .4rem .8rem;
   border: 1px solid #9999996e;
@@ -39,7 +41,7 @@ export const badge = `
   line-height: 1rem;
   transition: .3s all;
 }
-.author .modalWH-text {
+.author .${DOM.BADGE.CLASSNAME.MODAL_TEXT} {
   position: relative;
   margin-bottom: .5rem;
   top: unset;
@@ -55,14 +57,14 @@ export const badge = `
   flex-direction: column;
 }
 
-.button--highlightOp {
+.${DOM.HIGHLIGHT_OP.CLASSNAME.HIGHLIGHT_BUTTON} {
   position: absolute;
   top: .1rem;
   left: 0;
 }
 
 @media screen and (min-width: 722px) {
-  .button--highlightOp {
+  .${DOM.HIGHLIGHT_OP.CLASSNAME.HIGHLIGHT_BUTTON} {
     top: 6rem;
     left: 1rem;
   }
@@ -70,38 +72,38 @@ export const badge = `
 `;
 
 export const settings = `
-.tableWH__container {
+.${DOM.SETTINGS.CLASSNAME.WH_USER_TABLE_CONTAINER} {
   padding: 1rem;
 }
-.tableWH__container--hidden {
+.${DOM.SETTINGS.CLASSNAME.WH_USER_TABLE_CONTAINER_HIDDEN} {
   display: none;
 }
-.tableWH {
+.${DOM.SETTINGS.CLASSNAME.WH_USER_TABLE} {
   counter-reset: row-num;
 }
-.tableWH .tableWH__row {
+.${DOM.SETTINGS.CLASSNAME.WH_USER_TABLE} .${DOM.SETTINGS.CLASSNAME.WH_USER_TABLE_ROW} {
   counter-increment: row-num;
 }
-.tableWH .tableWH__row td:first-child::before {
+.${DOM.SETTINGS.CLASSNAME.WH_USER_TABLE} .${DOM.SETTINGS.CLASSNAME.WH_USER_TABLE_ROW} td:first-child::before {
   content: counter(row-num) ". ";
 }
-.tableWH__head {
+.${DOM.SETTINGS.CLASSNAME.WH_USER_TABLE_HEAD} {
   font-weight: bold;
   border-bottom: 2px solid currentColor;
 }
-.settings__crossed {
+.${DOM.SETTINGS.CLASSNAME.WH_SETTINGS_CROSSED} {
   opacity: .4;
   text-decoration: line-through;
   cursor: not-allowed;
 }
-.tableWH__nick-remove {
+.${DOM.SETTINGS.CLASSNAME.WH_USER_TABLE_REMOVE_BUTTON} {
   cursor: pointer;
   color: #c0392b;
 }
-.whModalLink {
+.${DOM.MODAL.CLASSNAME.LINK} {
   color: #862828;
 }
-.whModalLink:hover {
+.${DOM.MODAL.CLASSNAME.LINK}:hover {
   color: #4a1313 !important;
 }`;
 
