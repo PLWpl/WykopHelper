@@ -69,6 +69,14 @@ export const badge = `
     left: 1rem;
   }
 }
+
+.${DOM.DOMAIN_CHECKER.CLASSNAME.MODAL_TEXT_LIST} {
+  margin-top:1rem;list-style-type: circle;font-size:1rem;
+}
+
+.${DOM.DOMAIN_CHECKER.CLASSNAME.MODAL_TEXT_LIST_ITEM} {
+  text-align:left;margin-left:2rem;margin-bottom:.7rem
+}
 `;
 
 export const settings = `
@@ -106,6 +114,15 @@ export const settings = `
 .${DOM.MODAL.CLASSNAME.LINK}:hover {
   color: #4a1313 !important;
 }`;
+
+export const updateModal = `
+  .${DOM.UPDATE_MODAL.CLASSNAME.LIST} {
+    margin-top:1rem; list-style-type:square";
+  }
+  .${DOM.UPDATE_MODAL.CLASSNAME.LIST_ITEM} {
+    text-align:left;margin-left:2rem;margin-bottom:.7rem
+  }
+`;
 
 const styles = {
   badge,

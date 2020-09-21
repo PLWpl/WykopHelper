@@ -1,4 +1,9 @@
 const DOM = {
+  COMMON: {
+    CLASSNAME: {
+      BUTTON: 'buttonWH',
+    }
+  },
   BADGE: {
     CLASSNAME: {
       NICK_ELEMENT: 'author',
@@ -70,7 +75,10 @@ const DOM = {
   },
   DOMAIN_CHECKER: {
     CLASSNAME: {
-      WYKOP_ITEM_INTRO: 'bspace'
+      WYKOP_ITEM_INTRO: 'bspace',
+      WYKOP_ITEM_ANNOTATION: 'annotation',
+      MODAL_TEXT_LIST: 'whAnnotation__list',
+      MODAL_TEXT_LIST_ITEM: 'whAnnotation__list-item'
     },
     ID: {},
     SELECTOR: {
@@ -81,6 +89,12 @@ const DOM = {
   MODAL: {
     CLASSNAME: {
       LINK: 'whModalLink',
+    }
+  },
+  UPDATE_MODAL: {
+    CLASSNAME: {
+      LIST: 'whUpdate__list',
+      LIST_ITEM: 'whUpdate__list-item',
     }
   }
 };

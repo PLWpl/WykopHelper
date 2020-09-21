@@ -1,3 +1,5 @@
+import DOM from '../../constants/domSelectors';
+
 export const settingsMarkup = `
 <fieldset>
   <h4>WykopHelper - Ustawienia</h4>
