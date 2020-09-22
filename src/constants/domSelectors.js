@@ -31,10 +31,15 @@ const DOM = {
   },
   SETTINGS: {
     CLASSNAME: {
+      SETTINGS_NAV: 'whSettingsLink',
+      SETTINGS_GENERAL: 'settings--general',
+      SETTINGS_BADGE: 'settings--badge',
+      SETTINGS_SPECIAL: 'settings--special',
       WH_NAV_SETTINGS_LINK: 'whSettingsLink',
       WH_USER_TABLE: 'tableWH',
       WH_USER_TABLE_ROW: 'tableWH__row',
       WH_USER_TABLE_HEAD: 'tableWH__head',
+      WH_USER_TABLE_HEADING: 'tableWH__heading',
       WH_USER_TABLE_CONTAINER: 'tableWH__container',
       WH_USER_TABLE_CONTAINER_HIDDEN: 'tableWH__container--hidden',
       WH_USER_TABLE_BODY: 'tableWH__body',

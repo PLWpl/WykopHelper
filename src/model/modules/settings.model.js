@@ -1,10 +1,12 @@
-import DOM from '../../constants/domSelectors';
+import DOM_SELECTORS from '../../constants/domSelectors';
+
+const { SETTINGS: {CLASSNAME} } = DOM_SELECTORS;
 
 export const settingsMarkup = `
 <fieldset>
   <h4>WykopHelper - Ustawienia</h4>
 <!-- GENERAL -->
-  <div class="space settings--general">
+  <div class="space ${CLASSNAME.SETTINGS_GENERAL}">
     <div class="row">
       <input
         class="checkbox"
@@ -27,7 +29,7 @@ export const settingsMarkup = `
     </div>
   </div>
 <!--  BADGE -->
-  <div class="space settings--badge">
+  <div class="space ${CLASSNAME.SETTINGS_BADGE}">
     <div class="row">
       <input
         class="checkbox"
@@ -45,7 +47,7 @@ export const settingsMarkup = `
     </div>
   </div>
 <!-- SPECIAL -->
-  <div class="space settings--special">
+  <div class="space ${CLASSNAME.SETTINGS_SPECIAL}">
     <div class="row">
       <small>Jeśli chcesz wyczyścić listę oznaczonych wcześniej użytkowników, możesz to zrobić poniżej. W związku z tym, że jest to akcja nieodwracalna, musisz najpierw potwierdzić, że na pewno taki jest Twój cel. Uwaga - po kliknięciu przycisku akcja wykonywana jest natychmiast, bez dodatkowych potwierdzeń!</small>
     </div>
@@ -70,10 +72,10 @@ export const settingsMarkup = `
 `;
 
 export const settingsUserTable = `
-<div class="tableWH__container tableWH__container--hidden">
-  <h4 class="tableWH__heading">WykopHelper - Lista oznaczonych użytkowników</h4>
-  <table class="tableWH">
-    <thead class="tableWH__head">
+<div class="${CLASSNAME.WH_USER_TABLE_CONTAINER} ${CLASSNAME.WH_USER_TABLE_CONTAINER_HIDDEN}">
+  <h4 class="${CLASSNAME.WH_USER_TABLE_HEADING}">WykopHelper - Lista oznaczonych użytkowników</h4>
+  <table class="${CLASSNAME.WH_USER_TABLE}">
+    <thead class="${CLASSNAME.WH_USER_TABLE_HEAD}">
       <tr>
         <td>no.</td>
         <td>Nick</td>
@@ -82,23 +84,23 @@ export const settingsUserTable = `
         <td>Usuń</td>
       </tr>
     </thead>
-    <tbody class="tableWH__body">
+    <tbody class="${CLASSNAME.WH_USER_TABLE_BODY}">
     </tbody>
   </table> 
 </div>
 `;
 
 export const settingsUserTableRow = (nick, badgeLabel, link) => `
-<tr class="tableWH__row">
+<tr class="${CLASSNAME.WH_USER_TABLE_ROW}">
   <td></td>
   <td><a href="https://www.wykop.pl/ludzie/${nick}" target="_blank">${nick}</a></td>
   <td>${badgeLabel}</td>
   <td><a href="${link}" target="_blank">&#128279</a></td>
-  <td><span class="tableWH__nick-remove" data-whuserremove="${nick}">&#x02717;</a></td>
+  <td><span class="${CLASSNAME.WH_USER_TABLE_REMOVE_BUTTON}" data-whuserremove="${nick}">&#x02717;</a></td>
 </tr>
 `;
 
-export const settingsNav = `<li class="whSettingsLink"><a href="https://www.wykop.pl/ustawienia/wykophelper/"><span><strong>WykopHelper</strong> &#10024;</span></a></li>`;
+export const settingsNav = `<li class="${CLASSNAME.SETTINGS_NAV}"><a href="https://www.wykop.pl/ustawienia/wykophelper/"><span><strong>WykopHelper</strong> &#10024;</span></a></li>`;
 
 export const textContent = {
   SHOW_ALL_MARKED: 'Pokaż wszystkich oznaczonych użytkowników',
