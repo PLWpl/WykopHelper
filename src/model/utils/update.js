@@ -1,16 +1,17 @@
-import DOM from '../../constants/domSelectors';
+import DOM from "../../constants/domSelectors";
 /* eslint max-len: 0 */
 
 export const version = 0.46;
 
 export const welcomeText = {
-  title: '',
-  content: 'Miłego używania dodatku! Jeśli masz jakiekolwiek problemy, pytania lub sugestie, zgłoś je <a href="https://github.com/PLWpl/wykopoweTrole/issues" target="_blank">tutaj.</a>',
-  button: 'Super!'
-} 
+  title: "",
+  content:
+    'Miłego używania dodatku! Jeśli masz jakiekolwiek problemy, pytania lub sugestie, zgłoś je <a href="https://github.com/PLWpl/wykopoweTrole/issues" target="_blank">tutaj.</a>',
+  button: "Super!",
+};
 
 export const updateText = {
-  title: 'WykopHelper zaktualizowany!',
+  title: "WykopHelper zaktualizowany!",
   content: `
 Dodatek WykopHelper został właśnie zaktualizowany do wersji ${version}. Wprowadzone zmiany to: <br>
 <ul class="${DOM.UPDATE_MODAL.CLASSNAME.LIST}">
@@ -25,5 +26,5 @@ Dodatek WykopHelper został właśnie zaktualizowany do wersji ${version}. Wprow
   </li>
 </ul>
 `,
-  button: 'Okej!'
+  button: "Okej!",
 };

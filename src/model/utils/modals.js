@@ -11,3 +11,12 @@ export const russianPropagandaModal = `
   </ul>
   <p>Lista z czasem będzie uzupełniana, a jedna z aktualizacji już wkrótce przyniesie możliwość przejrzenia (najpierw) i edycji (późniejsza aktualizacja) listy witryn.
 `
+
+export const badgeUserModal = props => {
+  return {
+    title: `${props.nick} — ${props.label}`,
+    content: `<p><a href="${props.link}">Link do treści, która spowodowała oznaczenie</a></p>
+    `,
+    button: "Usuń oznaczenie",
+  };
+};

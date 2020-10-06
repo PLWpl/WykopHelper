@@ -18,7 +18,7 @@ const DOM = {
     },
     ID: {},
     SELECTOR: {
-      NICK_ELEMENTS: 'li div.author',
+      NICK_ELEMENTS: '.grid-main li div.author',
       NICK: '.showProfileSummary > b',
       REPLY_FORM: '.replyForm textarea',
       COMMENT_FORM: '#commentFormContainer textarea',
