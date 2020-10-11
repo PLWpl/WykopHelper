@@ -1,22 +1,28 @@
+import STORAGE_KEY_NAMES from "../constants/localStorageKeyNames";
+import { getLocalStorage } from "../utils/handleLocalStorage";
+
 /**
  * Util function that is supposed to run only once, immediately after script update.
  */
 export const runOnceOnUpdate = () => {
-  let trolls;
+  let marked;
 
   // preparation
-  if (localStorage.getItem('trolls')) {
-    trolls = JSON.parse(localStorage.getItem('trolls'));
+  if (localStorage.getItem(STORAGE_KEY_NAMES.MARKED_USERS)) {
+    marked = getLocalStorage('marked')
   } else {
-    trolls = [];
+    marked = [];
   }
 
   // actual desired action
-  trolls.forEach(el => {
+  marked.forEach(el => {
     if (!el.label) {
       el.label = '';
     }
+    if (!el.content) {
+      el.content = 'Niestety, użytkownik został oznaczony PRZED uaktywnieniem funkcji zapisywania treści komentarzy. Jeśli chcesz by pojawiła się tu jego treść, przejdź do podlinkowanego niżej komentarza, a następnie usuń oznaczenie i dodaj je ponownie.';
+    }
   })
 
-  localStorage.setItem('trolls', JSON.stringify(trolls));
+  localStorage.setItem(STORAGE_KEY_NAMES.MARKED_USERS, JSON.stringify(marked));
 }

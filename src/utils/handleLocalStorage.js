@@ -15,7 +15,7 @@ const initialSettings = {
   },
 };
 const initialUnique = [];
-const initialTroll = [];
+const initialMarked = [];
 
 /**
  * Initializes settings with initial values
@@ -52,7 +52,7 @@ export const getLocalStorage = (name = "marked") => {
       if (!localStorage.getItem(STORAGE_KEY_NAMES.MARKED_USERS)) {
         localStorage.setItem(
           STORAGE_KEY_NAMES.MARKED_USERS,
-          JSON.stringify(initialTroll)
+          JSON.stringify(initialMarked)
         );
       }
       return JSON.parse(localStorage.getItem(STORAGE_KEY_NAMES.MARKED_USERS));

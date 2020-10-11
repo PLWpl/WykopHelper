@@ -20,7 +20,7 @@ export const updateAlert = () => {
     Swal.fire({
       title: welcomeText.title,
       html: welcomeText.content,
-      icon: 'success',
+      icon: 'warning',
       width: '80%',
       confirmButtonText: welcomeText.button
     });
