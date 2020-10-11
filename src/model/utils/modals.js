@@ -13,9 +13,15 @@ export const russianPropagandaModal = `
 `
 
 export const badgeUserModal = props => {
+  const mediaText = link => `<p style="margin-top:5px;"><a href="${link}" target="_blank">Link do osadzonej treści multimedialnej (obrazek lub film)</a></p>`
+
   return {
-    title: `${props.nick} — ${props.label}`,
-    content: `<p><a href="${props.link}">Link do treści, która spowodowała oznaczenie</a></p>
+    title: `${props.nick}`,
+    content: `
+    <p style="text-align:left">Komentarz, który był przyczyną oznaczenia jako <strong>${props.label}</strong>:</p>
+    <div style="margin-top:.5rem;border:1px solid gray;padding: 1rem;text-align:left"><p>${props.content}</p>
+    ${props.media ? mediaText(props.media) : ''}</div>
+    <p style="margin-top:1rem;text-align:right"><a href="${props.link}">Link do komentarza</a></p>
     `,
     button: "Usuń oznaczenie",
   };

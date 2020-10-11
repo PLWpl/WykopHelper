@@ -6,18 +6,21 @@ const DOM = {
   },
   BADGE: {
     CLASSNAME: {
+      // wykop.pl elements
       NICK_ELEMENT: 'author',
-      BADGE: 'badge',
+      NICK_VERIFIED_BADGE: 'verified',
+      NICK: 'showProfileSummary',
+      // custom WH elements
+      BADGE: 'badgeWH',
       MARK_BUTTON: 'buttonWH',
       MARK_BUTTON_CLICKED: 'buttonWH--clicked',
       MODAL_BUTTON: 'modalWH-button',
       MODAL_BUTTON_REMOVE: 'modalWH-button--remove',
       MODAL_TEXT: 'modalWH-text',
-      NICK_VERIFIED_BADGE: 'verified',
-      NICK: 'showProfileSummary'
     },
     ID: {},
     SELECTOR: {
+      // wykop.pl elements
       NICK_ELEMENTS: '.grid-main li div.author',
       NICK: '.showProfileSummary > b',
       REPLY_FORM: '.replyForm textarea',

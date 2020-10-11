@@ -35,18 +35,18 @@ export const handleBadges = () => {
   };
 
   // adds nick to marked users array of objects along with the link and desired label
-  const addNickToTrollsArray = (nick, link, label) => {
-    const marked = [...markedUsers, { nick, link, label }];
+  const addNickToTrollsArray = (nick, link, label, content, media) => {
+    const marked = [...markedUsers, { nick, link, label, content, media }];
     localStorage.setItem(
       STORAGE_KEY_NAMES.MARKED_USERS,
       JSON.stringify(marked)
     );
   };
 
-  const addNickToArrays = (nick, link, label = settings.BADGE.DEFAULT_NAME) => {
+  const addNickToArrays = (nick, link, content = '', media = '', label = settings.BADGE.DEFAULT_NAME) => {
     if (!isMarked(nick)) {
       addNickToUniqueNicksArray(nick);
-      addNickToTrollsArray(nick, link, label);
+      addNickToTrollsArray(nick, link, label, content, media);
     }
   };
 
@@ -127,6 +127,7 @@ export const handleBadges = () => {
     );
 
     // verified accounts need be handled slightly differently
+    // event.target = .buttonWH
     const link = event.target
       .closest(`.${DOM.CLASSNAME.NICK_ELEMENT}`)
       .querySelector(`.verified`)
@@ -137,9 +138,20 @@ export const handleBadges = () => {
         .closest(`.${DOM.CLASSNAME.NICK_ELEMENT}`)
         .querySelector("a + a").href;
 
+    const content = event.target
+      .closest('.wblock')
+      .querySelector('.text p').innerHTML;
+
+    const media = event.target
+      .closest('.wblock')
+      .querySelector('.text .media-content a') ? 
+      event.target
+        .closest('.wblock')
+        .querySelector('.text .media-content a').href : null;
+
     event.target.classList.add(DOM.CLASSNAME.MARK_BUTTON_CLICKED);
     event.target.innerText = "✔";
-    addNickToArrays(nick, link);
+    addNickToArrays(nick, link, content, media);
 
     setTimeout(() => {
       event.target.remove();
@@ -185,6 +197,8 @@ export const handleBadges = () => {
           link: markedUsers[i].link,
           nick: markedUsers[i].nick,
           label: markedUsers[i].label,
+          content: markedUsers[i].content,
+          media: markedUsers[i].media,
         };
       } else if (markedUsers[i] === undefined || markedUsers[i] === null) {
         continue;
@@ -213,7 +227,7 @@ export const handleBadges = () => {
         Swal.fire(
           "Usunięto!",
           "Użytkownik nie będzie już więcej oznaczany.",
-          "success"
+          "info"
         );
       }
     });
