@@ -39,7 +39,7 @@ export const settingsMarkup = `
         id="hideMarkedUser"
         disabled
       />
-      <label title="Ficzer jeszcze nieaktywny" class="inline settings__crossed" for="hideMarkedUser">Ukrywaj treści oznakowanych użytkowników (tak jak na czarnej liście)</label>
+      <label title="Ficzer w trakcie prac koncepcyjnych :)" class="inline settings__crossed" for="hideMarkedUser">Ukrywaj treści oznakowanych użytkowników</label>
     </div>
     <div class="row space">
       <input placeholder="Domyślny tekst odznaki" id="badgeDefaultValue" category="BADGE" value="" name="DEFAULT_NAME" type="text">

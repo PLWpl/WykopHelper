@@ -1,6 +1,7 @@
 import isPath from './utils/checkPath';
 import { handleBadges } from './modules/badges';
 import { handleDomainCheck } from './modules/domainChecker'
+import { hideMarkedUsers } from './modules/hideMarkedUsers'
 import { createSettingsPage, handleSettings } from './modules/settings';
 import { updateAlert } from './utils/updateAlert';
 import { initSettings } from './utils/handleLocalStorage';
@@ -25,6 +26,7 @@ if (isPath.main()) {
   handleBadges();
   warnOnReload();
   embedOnPaste();
+  hideMarkedUsers();
 }
 if (isPath.settings()) {
   createSettingsPage();
