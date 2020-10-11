@@ -49,13 +49,6 @@ export const badge = `
   left: unset;
   bottom: unset;
 }
-.tippy-box {
-  width: 20rem;
-}
-.tippy-content {
-  display: flex;
-  flex-direction: column;
-}
 
 .${DOM.HIGHLIGHT_OP.CLASSNAME.HIGHLIGHT_BUTTON} {
   position: absolute;

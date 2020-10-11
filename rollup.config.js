@@ -30,8 +30,6 @@ export default {
         terser(),
         banner('==/UserScript=='),
         banner('@grant        none'),
-        banner('@require      https://unpkg.com/tippy.js@6'),
-        banner('@require      https://unpkg.com/@popperjs/core@2'),
         banner('@require      https://cdn.jsdelivr.net/npm/sweetalert2@9'),
         banner('@match        https://www.wykop.pl/*'),
         banner('@author       <%= pkg.author %>'),
@@ -50,8 +48,6 @@ export default {
       plugins: [
         banner('==/UserScript=='),
         banner('@grant        none'),
-        banner('@require      https://unpkg.com/tippy.js@6'),
-        banner('@require      https://unpkg.com/@popperjs/core@2'),
         banner('@require      https://cdn.jsdelivr.net/npm/sweetalert2@9'),
         banner('@match        https://www.wykop.pl/*'),
         banner('@author       <%= pkg.author %>'),
