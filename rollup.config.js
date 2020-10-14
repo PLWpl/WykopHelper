@@ -55,7 +55,7 @@ export default {
         banner('@downloadURL  http://plw.usermd.net/whhelper-dev.js'),
         banner('@updateURL    http://plw.usermd.net/whhelper-dev.js'),
         banner('@version      <%= pkg.version %>'),
-        banner('@name         WykopHelper - DEV - REFACTOR'),
+        banner('@name         WykopHelper - DEV'),
         banner('==UserScript=='),
       ]
     }

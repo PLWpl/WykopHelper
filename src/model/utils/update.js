@@ -16,7 +16,7 @@ export const updateText = {
 Dodatek WykopHelper został właśnie zaktualizowany do wersji ${version}. Wprowadzone zmiany to: <br>
 <ul class="${DOM.UPDATE_MODAL.CLASSNAME.LIST}">
   <li class="${DOM.UPDATE_MODAL.CLASSNAME.LIST_ITEM}">
-    Od teraz, najechanie myszką na odznakę nic nie da - należy w nią kliknąć. Po kliknięciu otworzy się okienko z informacjami. Aktualnie znajduje się tam 
+    Od teraz, najechanie myszką na odznakę nic nie da - należy w nią kliknąć. Po kliknięciu otworzy się okienko z informacjami. Aktualnie znajduje się tam informacja o komentarzu, który spowodował oznaczenie: jego treść, link do ew. treści multimedialnych w nim osadzonych oraz link do samego komentarza. Wkrótce pojawi się tutaj kilka innych opcji, w tym m.in. zmiana nazwy oznaczenia na customową, zmiana koloru oznaczenia czy całkowite usuwanie aktywności użytkownika z wykopu.
   </li>
 </ul>
 `,
