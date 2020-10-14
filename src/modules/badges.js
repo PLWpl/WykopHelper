@@ -3,7 +3,7 @@ import STORAGE_KEY_NAMES from "../constants/localStorageKeyNames";
 import DOM_SELECTORS from "../constants/domSelectors";
 
 import styles from "../model/styles.js";
-import { buttonMarkup, badge } from "../model/modules/badges.model";
+import { buttonMarkup, badge, markedInBulk } from "../model/modules/badges.model";
 import { badgeUserModal } from "../model/utils/modals";
 import { injectStyles } from "../utils/inject";
 import { getLocalStorage } from "../utils/handleLocalStorage";
@@ -93,6 +93,13 @@ export const handleBadges = () => {
       //supress the error
     }
   };
+
+  const addMarkAllButton = () => {
+    const nav = document.getElementById(DOM.ID.VOTES_CONTAINER).closest('.rbl-block').querySelector('.nav');
+
+    // @TODO Add button
+
+  }
 
   const updateView = () => {
     markedUsers = getLocalStorage("marked");
@@ -233,6 +240,24 @@ export const handleBadges = () => {
     });
   };
 
+  //Add all users that up/down-voted a thread
+  const markAllWhoVoted = () => {
+    const link = window.location.href;
+    const userCards = $$(`${DOM.ID.VOTES_CONTAINER} .${DOM.CLASSNAME.VOTES_USERCARD}`);
+    const nickArray = [];
+
+    userCards.forEach(el => {
+      const nick = $('a', el).title;
+      nickArray.push(nick);
+    })
+
+    //@TODO Check if id voters or votersBury is active, then use this to pick appropriate form for content message
+
+    nickArray.forEach(el => {
+      addNickToArrays(el, link, markedInBulk)
+    })
+  }
+
   /**
    * Above is setup. Actual job gets done below
    */
@@ -240,7 +265,7 @@ export const handleBadges = () => {
   injectStyles(styles.badge);
   markUsers();
 
-  // on button click, add new troll
+  // on button click, add new marked user
   document.getElementById("itemsStream").addEventListener("click", event => {
     const target = event.target;
     if (target.classList.contains(DOM.CLASSNAME.MARK_BUTTON)) {
@@ -256,4 +281,11 @@ export const handleBadges = () => {
       showUserModal(DOM.DYNAMIC.DATASET.USERNAME(nick));
     }
   });
+
+  document.getElementById(DOM.ID.VOTES_CONTAINER).closest('.rbl-block').querySelector('.nav').addEventListener("click", event => {
+    const target = event.target;
+    if (target.classList.contains(DOM.CLASSNAME.MARK_ALL_BUTTON)) {
+      markAllWhoVoted();
+    }
+  })
 };

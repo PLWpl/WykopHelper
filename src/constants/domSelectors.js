@@ -10,15 +10,19 @@ const DOM = {
       NICK_ELEMENT: 'author',
       NICK_VERIFIED_BADGE: 'verified',
       NICK: 'showProfileSummary',
+      VOTES_USERCARD: 'usercard',
       // custom WH elements
       BADGE: 'badgeWH',
       MARK_BUTTON: 'buttonWH',
       MARK_BUTTON_CLICKED: 'buttonWH--clicked',
+      MARK_ALL_BUTTON: 'buttonWH--markAll',
       MODAL_BUTTON: 'modalWH-button',
       MODAL_BUTTON_REMOVE: 'modalWH-button--remove',
       MODAL_TEXT: 'modalWH-text',
     },
-    ID: {},
+    ID: {
+      VOTES_CONTAINER: 'votesContainer',
+    },
     SELECTOR: {
       // wykop.pl elements
       NICK_ELEMENTS: '.grid-main li div.author',

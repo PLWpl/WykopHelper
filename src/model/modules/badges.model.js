@@ -9,6 +9,8 @@ export const buttonMarkup = `<span class="${DOM.BADGE.CLASSNAME.MARK_BUTTON}">Oz
  */
 export const badge = (nick, label = 'debil') => `<span class="${DOM.BADGE.CLASSNAME.BADGE} ${DOM.BADGE.CLASSNAME.BADGE}--${label.toLowerCase()}" data-whusername="${nick}">${label.toLowerCase().capitalize()}</span>`;
 
+export const markedInBulk = 'Użytkownik wykopał lub zakopał podlinkowane znalezisko.';
+
 
 /* ********************************/
 const badgeModel = {
