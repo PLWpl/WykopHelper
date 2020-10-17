@@ -1,16 +1,17 @@
-import isPath from './checks/path.js';
-import { handleBadges } from './paths/main/badges.js';
-import { handleDomainCheck } from './paths/main/domainChecker.js'
-import { handleSettings, handleWhSettings } from './paths/settings.js';
-import { updateAlert } from './utils/updateAlert.js';
-import { initSettings } from './init/storage.js';
-import { highlightOp } from './paths/main/highlightOp.js';
-import { warnOnReload } from './paths/main/warnOnReload.js';
-import { embedOnPaste } from './paths/main/embedOnPaste.js';
+import isPath from './utils/checkPath';
+import { handleBadges } from './modules/badges';
+import { handleDomainCheck } from './modules/domainChecker'
+import { hideMarkedUsers } from './modules/hideMarkedUsers'
+import { createSettingsPage, handleSettings } from './modules/settings';
+import { updateAlert } from './utils/updateAlert';
+import { initSettings } from './utils/handleLocalStorage';
+import { highlightOp } from './modules/highlightOp';
+import { warnOnReload } from './modules/warnOnReload';
+import { embedOnPaste } from './modules/embedOnPaste';
 
 /**
-   * Helper methods and functions, not directly related to the script's purpose
-   */
+* Capitalize first letter
+*/
 String.prototype.capitalize = function() {
   return this.charAt(0).toUpperCase() + this.slice(1);
 }
@@ -25,12 +26,13 @@ if (isPath.main()) {
   handleBadges();
   warnOnReload();
   embedOnPaste();
+  hideMarkedUsers();
 }
 if (isPath.settings()) {
-  handleSettings();
+  createSettingsPage();
 }
 if (isPath.whSettings()) {
-  handleWhSettings();
+  handleSettings();
 }
 if (isPath.thread()) {
   handleDomainCheck();

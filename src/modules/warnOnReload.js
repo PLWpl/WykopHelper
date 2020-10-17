@@ -1,10 +1,11 @@
-import DOM_SELECTORS from '../../constants/domSelectors';
-import STORAGE_KEY_NAMES from '../../constants/localStorageKeyNames';
+import { $ } from '../utils/dom';
+import DOM_SELECTORS from '../constants/domSelectors';
+import { getLocalStorage } from '../utils/handleLocalStorage';
 const { BADGE: DOM } = DOM_SELECTORS;
 
 export const isTextareaEmpty = () => {
-  const replyForm = document.querySelector(DOM.REPLY_FORM);
-  const commentForm = document.querySelector(DOM.COMMENT_FORM);
+  const replyForm = $(DOM.SELECTOR.REPLY_FORM);
+  const commentForm = $(DOM.SELECTOR.COMMENT_FORM);
 
   const isReplyNotEmpty = replyForm && replyForm.value.split(" ").length > 5;
   const isCommentNotEmpty = commentForm && commentForm.value.split(" ").length > 5;
@@ -17,9 +18,9 @@ export const isTextareaEmpty = () => {
 }
 
 export const warnOnReload = () => {
-  const settings = JSON.parse(localStorage.getItem(STORAGE_KEY_NAMES.WH_SETTINGS));
+  const settings = getLocalStorage('settings');
   if (settings.GENERAL.WARN_ON_RELOAD) {
-    window.addEventListener('beforeunload', e => {
+    window.addEventListener('unload', e => {
       if (!isTextareaEmpty()) {
         e.preventDefault();
       }

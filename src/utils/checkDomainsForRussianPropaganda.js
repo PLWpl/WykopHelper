@@ -1,5 +1,7 @@
-// add new domains. Always add them without protocol (http, https), www or path after domain.
-export let rawDomains = [
+/** An array of all domains suspected of spreading russian propaganda.
+ * When adding new domains, remember to add them without http(s) or www. Just name.domain.
+ */
+export const rawDomains = [
   'alternews.pl',
   'alexjones.pl',
   'dziennik-polityczny.com',
@@ -36,14 +38,17 @@ export let rawDomains = [
   'ligakobietpolskich.pl',
   'ronik.org.pl',
   'obserwatorpolityczny.pl',
-  'mysl-polska.plw'
+  'mysl-polska.pl'
 ];
 
-rawDomains.forEach(domain => {
-  rawDomains.push('https://' + domain);
-  rawDomains.push('https://www.' + domain);
-  rawDomains.push('http://' + domain);
-  rawDomains.push('http://www.' + domain);
+const processedDomains = rawDomains.map(domain => {
+  const https = 'https://' + domain;
+  const www = 'https://www.' + domain;
+  const http = 'http://' + domain;
+  const hwww = 'http://www.' + domain;
+
+  return [https, www, http, hwww];
 });
 
-export const russianPropagandaDomains = rawDomains;
+/** @returns array of strings (domains) */
+export const russianPropagandaDomains = processedDomains.flat();
