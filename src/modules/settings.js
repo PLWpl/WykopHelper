@@ -5,7 +5,7 @@ import { getLocalStorage } from '../utils/handleLocalStorage';
 import settingsModel from '../model/modules/settings.model';
 import styles from '../model/styles';
 import { injectStyles } from '../utils/inject';
-import { russianPropagandaModal } from '../model/utils/modals';
+import { russianPropagandaModal, warnOnReloadModal } from '../model/utils/modals';
 
 const { SETTINGS: DOM } = DOM_SELECTORS;
 
@@ -64,6 +64,19 @@ export const handleSettings = () => {
     Swal.fire({
       title: settingsModel.textContent.RUSSIAN_PROPAGANDA_MODAL_TITLE,
       html: russianPropagandaModal,
+      icon: 'info',
+      showCancelButton: false,
+      confirmButtonColor: '#3085d6',
+      confirmButtonText: 'OK',
+      width: "80%"
+    });
+  };
+  
+  const showModalWithWarnOnReloadExplanation = () => {
+    // eslint-disable-next-line
+    Swal.fire({
+      title: settingsModel.textContent.WARN_ON_RELOAD_MODAL_TITLE,
+      html: warnOnReloadModal,
       icon: 'info',
       showCancelButton: false,
       confirmButtonColor: '#3085d6',
@@ -134,6 +147,9 @@ export const handleSettings = () => {
       if (event.target.id === DOM.ID.RUSSIAN_PROPAGANDA_INFO_LINK) {
         showModalWithPropagandaExplanation();
       }
+      if (event.target.id === DOM.ID.WARN_ON_RELOAD_INFO_LINK) {
+        showModalWithWarnOnReloadExplanation();
+      }
     }, {passive: false})
 
     settingsFormElement.addEventListener('keyup', event => {
@@ -164,6 +180,7 @@ export const handleSettings = () => {
 
   const init = () => {
     injectStyles(styles.settings);
+    injectStyles(styles.modal);
     renderSettings();
     handleSettingsForm();
 

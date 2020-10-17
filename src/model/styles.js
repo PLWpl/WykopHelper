@@ -75,24 +75,6 @@ export const badge = `
 .${DOM.DOMAIN_CHECKER.CLASSNAME.MODAL_TEXT_LIST_ITEM} {
   text-align:left;margin-left:2rem;margin-bottom:.7rem
 }
-
-
-.swal2-popup.swal2-modal.swal2-show {
-  background-color: #1b1b1b !important;
-  border: 1px solid #ff5917 !important;
-}
-.swal2-icon.swal2-info {
-  border-color: #542621 !important;
-  color: #c0392b !important;
-}
-
-.swal2-title {
-  color: #a2a2a2 !important;
-}
-
-.swal2-styled.swal2-confirm {
-  background-color: #e74c3c6b !important;
-}
 `;
 
 export const settings = `
@@ -131,18 +113,41 @@ export const settings = `
   color: #4a1313 !important;
 }`;
 
-export const updateModal = `
-  .${DOM.UPDATE_MODAL.CLASSNAME.LIST} {
-    margin-top:1rem; list-style-type:square";
-  }
-  .${DOM.UPDATE_MODAL.CLASSNAME.LIST_ITEM} {
-    text-align:left;margin-left:2rem;margin-bottom:.7rem
-  }
-`;
+export const modal = `
+.swal2-popup.swal2-modal.swal2-show {
+  background-color: #1b1b1b !important;
+  border: 1px solid #ff5917 !important;
+}
+.swal2-icon.swal2-info {
+  border-color: #542621 !important;
+  color: #c0392b !important;
+}
 
+.swal2-title {
+  color: #a2a2a2 !important;
+}
+
+.swal2-content {
+  color: #888;
+}
+
+.swal2-styled.swal2-confirm {
+  background-color: #e74c3c6b !important;
+}
+.${DOM.MODAL.CLASSNAME.LIST} {
+  margin-top: 1rem;
+  list-style-type: square;
+}
+.${DOM.MODAL.CLASSNAME.LIST_ITEM} {
+  text-align: left;
+  margin-left: 2rem;
+  margin-bottom: .7rem
+}
+`
 const styles = {
   badge,
-  settings
+  settings,
+  modal
 };
 
 export default styles;

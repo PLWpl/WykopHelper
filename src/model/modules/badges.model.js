@@ -15,8 +15,6 @@ export const badge = (nick, label = 'debil') => `<span class="${DOM.BADGE.CLASSN
  * @param {string} action - either "wykop" or "zakop". 
  */
 export const markedInBulk = action => {
-  // if (action === 'wykop' || action === 'zakop') { throw new Error('Invalid action. Must be "wykop" or "zakop"')}
-
   return `Użytkownik ${action}ał podlinkowane znalezisko.`;
 }
 

@@ -25,6 +25,9 @@ export const handleDomainCheck = () => {
    * if current's thread url is present on the list of russian propaganda domains, then insert annotation with warning
    */
   const handleCheck = () => {
+    if (!$(DOM.DOMAIN_CHECKER.SELECTOR.THREAD_LINK).href) {
+      return;
+    }
     const threadLink = $(DOM.DOMAIN_CHECKER.SELECTOR.THREAD_LINK).href;
     const url = new URL(threadLink);
     const threadLinkHostname = url.protocol + '//' + url.hostname;

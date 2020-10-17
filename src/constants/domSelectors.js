@@ -58,7 +58,8 @@ const DOM = {
       SHOW_MARKED_TABLE: 'showAllMarked',
       ALLOW_WIPE_MARKED_LIST: 'allowWipeAllMarked',
       REMOVE_ALL_MARKED: 'whsettings__remove-all-marked',
-      RUSSIAN_PROPAGANDA_INFO_LINK: 'russianPropagandaInfo'
+      RUSSIAN_PROPAGANDA_INFO_LINK: 'russianPropagandaInfo',
+      WARN_ON_RELOAD_INFO_LINK: 'warnOnReloadInfo'
     },
     SELECTOR: {
       LAST_NAV_ELEMENT: '#site .nav > ul > li:last-child',
@@ -90,8 +91,6 @@ const DOM = {
     CLASSNAME: {
       WYKOP_ITEM_INTRO: 'bspace',
       WYKOP_ITEM_ANNOTATION: 'annotation',
-      MODAL_TEXT_LIST: 'whAnnotation__list',
-      MODAL_TEXT_LIST_ITEM: 'whAnnotation__list-item'
     },
     ID: {},
     SELECTOR: {
@@ -102,14 +101,10 @@ const DOM = {
   MODAL: {
     CLASSNAME: {
       LINK: 'whModalLink',
+      LIST: 'whModal__list',
+      LIST_ITEM: 'whModal__list-item',
     }
   },
-  UPDATE_MODAL: {
-    CLASSNAME: {
-      LIST: 'whUpdate__list',
-      LIST_ITEM: 'whUpdate__list-item',
-    }
-  }
 };
 
 export default DOM;

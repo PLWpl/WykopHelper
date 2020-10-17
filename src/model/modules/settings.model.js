@@ -15,7 +15,7 @@ export const settingsMarkup = `
         name="WARN_ON_RELOAD"
         id="warnOnReload"
       />
-      <label class="inline" for="warnOnReload">Ostrzegaj przy próbie zamknięcia/przeładowania strony gdy wykryto pisanie komentarza</label>
+      <label class="inline" for="warnOnReload">Ostrzegaj przy próbie zamknięcia/przeładowania strony gdy wykryto pisanie komentarza </label><span id="warnOnReloadInfo" style="cursor:pointer;border:1px solid currentcolor;padding:0 .5rem">ℹ</span>
     </div>
     <div class="row">
       <input
@@ -25,7 +25,7 @@ export const settingsMarkup = `
         name="WARN_ON_SUSPECTED_RUSSIAN_PROPAGANDA"
         id="warnOnRussian"
       />
-      <label class="inline" for="warnOnRussian">Oznaczaj znaleziska ze źródeł podejrzewanych o szerzenie Rosyjskiej propagandy </label><span id="russianPropagandaInfo" style="cursor:pointer">[Więcej ->]</span>
+      <label class="inline" for="warnOnRussian">Oznaczaj znaleziska ze źródeł podejrzewanych o szerzenie Rosyjskiej propagandy </label><span id="russianPropagandaInfo" style="cursor:pointer;border:1px solid currentcolor;padding:0 .5rem">ℹ</span>
     </div>
   </div>
 <!--  BADGE -->
@@ -106,6 +106,7 @@ export const textContent = {
   SHOW_ALL_MARKED: 'Pokaż wszystkich oznaczonych użytkowników',
   HIDE_TABLE: 'Schowaj tabelę',
   RUSSIAN_PROPAGANDA_MODAL_TITLE: 'Skąd lista stron z propagandą?',
+  WARN_ON_RELOAD_MODAL_TITLE: 'Ostrożnie z tym ficzerem... :(',
 }
 
 /* ********************************/

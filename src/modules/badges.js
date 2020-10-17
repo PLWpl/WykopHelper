@@ -96,8 +96,10 @@ export const handleBadges = () => {
   };
 
   const addMarkAllButton = () => {
-    const nav = document.getElementById(DOM.ID.VOTES_CONTAINER).closest('.rbl-block').querySelector('.nav ul + ul');
-    nav ? nav.insertAdjacentHTML("beforeend", buttonBulkMarkup) : '';
+    if (document.getElementById(DOM.ID.VOTES_CONTAINER)) {
+      const nav = document.getElementById(DOM.ID.VOTES_CONTAINER).closest('.rbl-block').querySelector('.nav ul + ul');
+      nav ? nav.insertAdjacentHTML("beforeend", buttonBulkMarkup) : '';
+    }
   }
 
   const updateView = () => {
@@ -255,6 +257,10 @@ export const handleBadges = () => {
       const nick = $('a', el).title;
       addNickToArrays(nick, link, markedInBulk(action))
     })
+
+    setTimeout(() => {
+      updateView();
+    }, 780);
   }
 
   /**
@@ -262,6 +268,7 @@ export const handleBadges = () => {
    */
 
   injectStyles(styles.badge);
+  injectStyles(styles.modal);
   markUsers();
   addMarkAllButton();
 
@@ -282,18 +289,21 @@ export const handleBadges = () => {
     }
   });
 
-  document.getElementById(DOM.ID.VOTES_CONTAINER).closest('.rbl-block').querySelector('.nav').addEventListener("click", event => {
-    const target = event.target;
-    if (target.classList.contains(DOM.CLASSNAME.MARK_ALL_BUTTON)) {
-      markAllWhoVoted();
-      $(`.${DOM.CLASSNAME.MARK_ALL_BUTTON}`).innerText = 'Zrobione :)';
-      setTimeout(() => {
-        $(`.${DOM.CLASSNAME.MARK_ALL_BUTTON_ELEMENT}`).style.display = 'none';
-        $(`.${DOM.CLASSNAME.MARK_ALL_BUTTON}`).innerText = 'Oznacz wszystkich poniżej';
-      }, 500);
-    }
-    if (target.closest('#voters') || target.closest('#votersBury')) {
-      $(`.${DOM.CLASSNAME.MARK_ALL_BUTTON_ELEMENT}`).style.display = 'block';
-    }
-  })
+  if (document.getElementById(DOM.ID.VOTES_CONTAINER)) {
+    document.getElementById(DOM.ID.VOTES_CONTAINER)
+      .closest('.rbl-block').querySelector('.nav').addEventListener("click", event => {
+        const target = event.target;
+        if (target.classList.contains(DOM.CLASSNAME.MARK_ALL_BUTTON)) {
+          markAllWhoVoted();
+          $(`.${DOM.CLASSNAME.MARK_ALL_BUTTON}`).innerText = 'Zrobione :)';
+          setTimeout(() => {
+            $(`.${DOM.CLASSNAME.MARK_ALL_BUTTON_ELEMENT}`).style.display = 'none';
+            $(`.${DOM.CLASSNAME.MARK_ALL_BUTTON}`).innerText = 'Oznacz wszystkich poniżej';
+          }, 500);
+        }
+        if (target.closest('#voters') || target.closest('#votersBury')) {
+          $(`.${DOM.CLASSNAME.MARK_ALL_BUTTON_ELEMENT}`).style.display = 'block';
+        }
+      })
+  }
 };
