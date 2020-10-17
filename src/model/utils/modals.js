@@ -18,10 +18,10 @@ export const badgeUserModal = props => {
   return {
     title: `${props.nick}`,
     content: `
-    <p style="text-align:left">Komentarz, który był przyczyną oznaczenia jako <strong>${props.label}</strong>:</p>
+    <p style="text-align:left">Przyczyna oznaczenia jako <strong>${props.label}</strong>:</p>
     <div style="margin-top:.5rem;border:1px solid gray;padding: 1rem;text-align:left"><p>${props.content}</p>
     ${props.media ? mediaText(props.media) : ''}</div>
-    <p style="margin-top:1rem;text-align:right"><a href="${props.link}">Link do komentarza</a></p>
+    <p style="margin-top:1rem;text-align:right"><a href="${props.link}">Link do komentarza lub znaleziska</a></p>
     `,
     button: "Usuń oznaczenie",
   };

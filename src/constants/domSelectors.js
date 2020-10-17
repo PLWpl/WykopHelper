@@ -15,6 +15,7 @@ const DOM = {
       BADGE: 'badgeWH',
       MARK_BUTTON: 'buttonWH',
       MARK_BUTTON_CLICKED: 'buttonWH--clicked',
+      MARK_ALL_BUTTON_ELEMENT: 'buttonWH--markAllContainer',
       MARK_ALL_BUTTON: 'buttonWH--markAll',
       MODAL_BUTTON: 'modalWH-button',
       MODAL_BUTTON_REMOVE: 'modalWH-button--remove',

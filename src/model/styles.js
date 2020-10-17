@@ -50,6 +50,11 @@ export const badge = `
   bottom: unset;
 }
 
+.${DOM.BADGE.CLASSNAME.MARK_ALL_BUTTON} {
+  top: 0.8rem;
+  position: relative;
+}
+
 .${DOM.HIGHLIGHT_OP.CLASSNAME.HIGHLIGHT_BUTTON} {
   position: absolute;
   top: .1rem;
@@ -70,6 +75,7 @@ export const badge = `
 .${DOM.DOMAIN_CHECKER.CLASSNAME.MODAL_TEXT_LIST_ITEM} {
   text-align:left;margin-left:2rem;margin-bottom:.7rem
 }
+
 
 .swal2-popup.swal2-modal.swal2-show {
   background-color: #1b1b1b !important;

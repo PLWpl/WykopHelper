@@ -3,7 +3,7 @@ import STORAGE_KEY_NAMES from "../constants/localStorageKeyNames";
 import DOM_SELECTORS from "../constants/domSelectors";
 
 import styles from "../model/styles.js";
-import { buttonMarkup, badge, markedInBulk } from "../model/modules/badges.model";
+import { buttonMarkup, badge, markedInBulk, buttonBulkMarkup } from "../model/modules/badges.model";
 import { badgeUserModal } from "../model/utils/modals";
 import { injectStyles } from "../utils/inject";
 import { getLocalStorage } from "../utils/handleLocalStorage";
@@ -35,7 +35,8 @@ export const handleBadges = () => {
   };
 
   // adds nick to marked users array of objects along with the link and desired label
-  const addNickToTrollsArray = (nick, link, label, content, media) => {
+  const addNickToMarkedUsersArray = (nick, link, label, content, media) => {
+    markedUsers = getLocalStorage("marked");
     const marked = [...markedUsers, { nick, link, label, content, media }];
     localStorage.setItem(
       STORAGE_KEY_NAMES.MARKED_USERS,
@@ -46,7 +47,7 @@ export const handleBadges = () => {
   const addNickToArrays = (nick, link, content = '', media = '', label = settings.BADGE.DEFAULT_NAME) => {
     if (!isMarked(nick)) {
       addNickToUniqueNicksArray(nick);
-      addNickToTrollsArray(nick, link, label, content, media);
+      addNickToMarkedUsersArray(nick, link, label, content, media);
     }
   };
 
@@ -95,10 +96,8 @@ export const handleBadges = () => {
   };
 
   const addMarkAllButton = () => {
-    const nav = document.getElementById(DOM.ID.VOTES_CONTAINER).closest('.rbl-block').querySelector('.nav');
-
-    // @TODO Add button
-
+    const nav = document.getElementById(DOM.ID.VOTES_CONTAINER).closest('.rbl-block').querySelector('.nav ul + ul');
+    nav ? nav.insertAdjacentHTML("beforeend", buttonBulkMarkup) : '';
   }
 
   const updateView = () => {
@@ -243,18 +242,18 @@ export const handleBadges = () => {
   //Add all users that up/down-voted a thread
   const markAllWhoVoted = () => {
     const link = window.location.href;
-    const userCards = $$(`${DOM.ID.VOTES_CONTAINER} .${DOM.CLASSNAME.VOTES_USERCARD}`);
-    const nickArray = [];
+    const userCards = $$(`#${DOM.ID.VOTES_CONTAINER} .${DOM.CLASSNAME.VOTES_USERCARD}`);
+    
+    let action;
+    if ($('#voters').closest('li').classList.contains('active')) {
+      action = 'wykop';
+    } else if ($('#votersBury').closest('li').classList.contains('active')) {
+      action = 'zakop';
+    }
 
     userCards.forEach(el => {
       const nick = $('a', el).title;
-      nickArray.push(nick);
-    })
-
-    //@TODO Check if id voters or votersBury is active, then use this to pick appropriate form for content message
-
-    nickArray.forEach(el => {
-      addNickToArrays(el, link, markedInBulk)
+      addNickToArrays(nick, link, markedInBulk(action))
     })
   }
 
@@ -264,6 +263,7 @@ export const handleBadges = () => {
 
   injectStyles(styles.badge);
   markUsers();
+  addMarkAllButton();
 
   // on button click, add new marked user
   document.getElementById("itemsStream").addEventListener("click", event => {
@@ -286,6 +286,14 @@ export const handleBadges = () => {
     const target = event.target;
     if (target.classList.contains(DOM.CLASSNAME.MARK_ALL_BUTTON)) {
       markAllWhoVoted();
+      $(`.${DOM.CLASSNAME.MARK_ALL_BUTTON}`).innerText = 'Zrobione :)';
+      setTimeout(() => {
+        $(`.${DOM.CLASSNAME.MARK_ALL_BUTTON_ELEMENT}`).style.display = 'none';
+        $(`.${DOM.CLASSNAME.MARK_ALL_BUTTON}`).innerText = 'Oznacz wszystkich poniżej';
+      }, 500);
+    }
+    if (target.closest('#voters') || target.closest('#votersBury')) {
+      $(`.${DOM.CLASSNAME.MARK_ALL_BUTTON_ELEMENT}`).style.display = 'block';
     }
   })
 };
