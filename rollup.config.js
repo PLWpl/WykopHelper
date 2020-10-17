@@ -23,7 +23,7 @@ export default {
       plugins: [terser()]
     },
     {
-      file: 'dist/whhelper.js',
+      file: 'dist/whhelper.user.js',
       format: 'iife',
       name: 'distVersion',
       plugins: [
@@ -34,15 +34,15 @@ export default {
         banner('@match        https://www.wykop.pl/*'),
         banner('@author       <%= pkg.author %>'),
         banner('@description  Zestaw narzędzi pomocnych na wykopie. Pełna, niezminifikowana wersja kodu dostępna na githubie - PLWpl/WykopHelper'),
-        banner('@downloadURL  https://cdn.jsdelivr.net/gh/plwpl/WykopHelper/dist/whhelper.js'),
-        banner('@updateURL    https://cdn.jsdelivr.net/gh/plwpl/WykopHelper/dist/whhelper.js'),
+        banner('@downloadURL  https://cdn.jsdelivr.net/gh/plwpl/WykopHelper/dist/whhelper.user.js'),
+        banner('@updateURL    https://cdn.jsdelivr.net/gh/plwpl/WykopHelper/dist/whhelper.user.js'),
         banner('@version      <%= pkg.version %>'),
         banner('@name         WykopHelper'),
         banner('==UserScript=='),
       ]
     },
     {
-      file: 'dist/whhelper-dev.js',
+      file: 'dist/whhelper-dev.user.js',
       format: 'iife',
       name: 'distVersionDEV',
       plugins: [
@@ -52,8 +52,8 @@ export default {
         banner('@match        https://www.wykop.pl/*'),
         banner('@author       <%= pkg.author %>'),
         banner('@description  Zestaw narzędzi pomocnych na wykopie.'),
-        banner('@downloadURL  https://cdn.jsdelivr.net/gh/plwpl/WykopHelper/dist/whhelper-dev.js'),
-        banner('@updateURL    https://cdn.jsdelivr.net/gh/plwpl/WykopHelper/dist/whhelper-dev.js'),
+        banner('@downloadURL  https://cdn.jsdelivr.net/gh/plwpl/WykopHelper/dist/whhelper-dev.user.js'),
+        banner('@updateURL    https://cdn.jsdelivr.net/gh/plwpl/WykopHelper/dist/whhelper-dev.user.js'),
         banner('@version      <%= pkg.version %>'),
         banner('@name         WykopHelper - DEV'),
         banner('==UserScript=='),

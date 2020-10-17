@@ -1,7 +1,7 @@
 import DOM from "../../constants/domSelectors";
 /* eslint max-len: 0 */
 
-export const version = `0.51`;
+export const version = `0.52`;
 
 export const welcomeText = {
   title: "WykopHelper zainstalowany!",

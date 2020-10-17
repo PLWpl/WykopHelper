@@ -1194,7 +1194,7 @@ const runOnceOnUpdate = () => {
 
 /* eslint max-len: 0 */
 
-const version = `0.51`;
+const version = `0.52`;
 
 const welcomeText = {
   title: "WykopHelper zainstalowany!",
