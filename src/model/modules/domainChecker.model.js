@@ -1,0 +1,1 @@
+export const warningAnnotation = 'Uważaj! Źródło tego znaleziska jest podejrzewane o szerzenie rosyjskiej propagandy.'

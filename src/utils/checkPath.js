@@ -1,5 +1,9 @@
 const path = location.href;
 
+/**
+ * Checks for a path.
+ * @returns boolean if current location matches checked path
+ */
 const isPath = {
   main: () => {
     if (
