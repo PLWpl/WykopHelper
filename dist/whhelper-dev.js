@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         WykopHelper - DEV
 // @version      0.51
-// @updateURL    https://cdn.jsdelivr.net/gh/plwpl/WykopHelper@0.51/dist/whhelper-dev.js
-// @downloadURL  https://cdn.jsdelivr.net/gh/plwpl/WykopHelper@0.51/dist/whhelper-dev.js
+// @updateURL    https://cdn.jsdelivr.net/gh/plwpl/WykopHelper/dist/whhelper-dev.js
+// @downloadURL  https://cdn.jsdelivr.net/gh/plwpl/WykopHelper/dist/whhelper-dev.js
 // @description  Zestaw narzędzi pomocnych na wykopie.
 // @author       PLW
 // @match        https://www.wykop.pl/*
