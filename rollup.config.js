@@ -13,19 +13,19 @@ export default {
   ],
   output: [
     {
-      file: 'output/bundle.js',
+      file: 'dist/bundle.js',
       format: 'cjs'
     },
     {
-      file: 'output/bundle.min.js',
+      file: 'dist/bundle.min.js',
       format: 'iife',
       name: 'miniVersion',
       plugins: [terser()]
     },
     {
-      file: 'output/whhelper.js',
+      file: 'dist/whhelper.js',
       format: 'iife',
-      name: 'outputVersion',
+      name: 'distVersion',
       plugins: [
         terser(),
         banner('==/UserScript=='),
@@ -34,17 +34,17 @@ export default {
         banner('@match        https://www.wykop.pl/*'),
         banner('@author       <%= pkg.author %>'),
         banner('@description  Zestaw narzędzi pomocnych na wykopie. Pełna, niezminifikowana wersja kodu dostępna na githubie - PLWpl/WykopHelper'),
-        banner('@downloadURL  https://cdn.jsdelivr.net/gh/plwpl/WykopHelper@0.5/output/whhelper.js'),
-        banner('@updateURL    https://cdn.jsdelivr.net/gh/plwpl/WykopHelper@0.5/output/whhelper.js'),
+        banner('@downloadURL  https://cdn.jsdelivr.net/gh/plwpl/WykopHelper@0.51/dist/whhelper.js'),
+        banner('@updateURL    https://cdn.jsdelivr.net/gh/plwpl/WykopHelper@0.51/dist/whhelper.js'),
         banner('@version      <%= pkg.version %>'),
         banner('@name         WykopHelper'),
         banner('==UserScript=='),
       ]
     },
     {
-      file: 'output/whhelper-dev.js',
+      file: 'dist/whhelper-dev.js',
       format: 'iife',
-      name: 'outputVersionDEV',
+      name: 'distVersionDEV',
       plugins: [
         banner('==/UserScript=='),
         banner('@grant        none'),
@@ -52,8 +52,8 @@ export default {
         banner('@match        https://www.wykop.pl/*'),
         banner('@author       <%= pkg.author %>'),
         banner('@description  Zestaw narzędzi pomocnych na wykopie.'),
-        banner('@downloadURL  https://cdn.jsdelivr.net/gh/plwpl/WykopHelper@0.5/output/whhelper-dev.js'),
-        banner('@updateURL    https://cdn.jsdelivr.net/gh/plwpl/WykopHelper@0.5/output/whhelper-dev.js'),
+        banner('@downloadURL  https://cdn.jsdelivr.net/gh/plwpl/WykopHelper@0.51/dist/whhelper-dev.js'),
+        banner('@updateURL    https://cdn.jsdelivr.net/gh/plwpl/WykopHelper@0.51/dist/whhelper-dev.js'),
         banner('@version      <%= pkg.version %>'),
         banner('@name         WykopHelper - DEV'),
         banner('==UserScript=='),

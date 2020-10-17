@@ -1,7 +1,7 @@
 const STORAGE_KEY_NAMES = {
-  MARKED_USERS: 'trolls',
-  UNIQUE_USERS: 'uniqueNicks',
-  WH_SETTINGS: 'whsettings',
+  MARKED_USERS: 'whMarkedUsers',
+  UNIQUE_USERS: 'whUniqueNicks',
+  WH_SETTINGS: 'whSettings',
 }
 
 export default STORAGE_KEY_NAMES;
