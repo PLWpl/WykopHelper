@@ -6,3 +6,4 @@
 * Naprawiono wiele bugów, w tym m.in. nieznikające odznaki po usunięciu oznaczenia, czerwona obwódka wokół wykopowych osiągnięć.
 * Uporządkowano (trochę :D) kod dodatku, który umożliwi szybszy dalszy rozwój.
 * Dodano changelog.md
+* changed url for userscript update

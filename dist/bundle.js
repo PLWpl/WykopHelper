@@ -37,9 +37,9 @@ const $ = (selector, node = document) => node.querySelector(selector);
 const $$ = (selector, node = document) => node.querySelectorAll(selector);
 
 const STORAGE_KEY_NAMES = {
-  MARKED_USERS: 'trolls',
-  UNIQUE_USERS: 'uniqueNicks',
-  WH_SETTINGS: 'whsettings',
+  MARKED_USERS: 'whMarkedUsers',
+  UNIQUE_USERS: 'whUniqueNicks',
+  WH_SETTINGS: 'whSettings',
 };
 
 const DOM = {
@@ -370,7 +370,7 @@ const initialSettings = {
     DEFAULT_COLOR: "red",
   },
   GENERAL: {
-    WARN_ON_RELOAD: true,
+    WARN_ON_RELOAD: false,
     WARN_ON_SUSPECTED_RUSSIAN_PROPAGANDA: true,
   },
 };
@@ -1194,12 +1194,12 @@ const runOnceOnUpdate = () => {
 
 /* eslint max-len: 0 */
 
-const version = 0.5;
+const version = `0.51`;
 
 const welcomeText = {
   title: "WykopHelper zainstalowany!",
   content:
-    'Mi\u0142ego u\u017Cywania dodatku! Je\u015Bli masz jakiekolwiek problemy, pytania lub sugestie, zg\u0142o\u015B je <a href="https://github.com/PLWpl/wykopoweTrole/issues" target="_blank">tutaj.</a>',
+    'Mi\u0142ego u\u017Cywania dodatku! Je\u015Bli masz jakiekolwiek problemy, pytania lub sugestie, zg\u0142o\u015B je <a href="https://github.com/PLWpl/WykopHelper/issues" target="_blank">tutaj.</a>',
   button: "Super!",
 };
 
@@ -1208,6 +1208,9 @@ const updateText = {
   content: `
 Dodatek WykopHelper został właśnie zaktualizowany do wersji ${version}. Wprowadzone zmiany to: <br>
 <ul class="${DOM.MODAL.CLASSNAME.LIST}">
+  <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
+    <strong>Istotna zmiana</strong>: jeśli używałeś do tej pory oznaczania użytkowników, najprawdopodobniej po tej aktualizacji nie będą oni już dłużej oznaczani, ze względu na zmiany nazw niektórych kluczy. Jeśli zależy Ci na tym, by ich odzyskać, skontaktuj się z autorem dodatku ;) 
+  </li>
   <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
     Od teraz, najechanie myszką na odznakę nic nie da - należy w nią kliknąć. Po kliknięciu otworzy się okienko z informacjami. Aktualnie znajduje się tam informacja o przyczynie oznaczenia; treść komentarza, link do ew. treści multimedialnych w nim osadzonych oraz link do samego komentarza. Wkrótce pojawi się tutaj kilka innych opcji, w tym m.in. zmiana nazwy oznaczenia na customową, zmiana koloru oznaczenia czy całkowite usuwanie aktywności użytkownika z wykopu.
   </li>
