@@ -112,7 +112,7 @@ Czego można się spodziewać?
  4. Zintegrowanie funkcjonalności podobnych do tych, jakie można odnaleźć w tych dodatkach: https://www.wykop.pl/dodatki/pokaz/1021/ , https://www.wykop.pl/dodatki/pokaz/1013/ , https://www.wykop.pl/dodatki/pokaz/231/
  5. I co tam jeszcze się po drodze nasunie :)
  
- ## 4. Support
+## 4. Support
  
  Jeśli masz jakiekolwiek skargi (coś nie działa lub Ci się nie podoba), sugestie, pytania czy spostrzeżenia, możesz się nimi podzielić tutaj: [https://github.com/PLWpl/WykopHelper/issues](https://github.com/PLWpl/WykopHelper/issues), obiecuję, że (o ile będą poważne) nie pozostaną bez odpowiedzi.
 
