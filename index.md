@@ -3,11 +3,11 @@
 WykopHelper to UserScript dodający kilka nowych funkcjonalności umilających/ułatwiających funkcjonowanie na wykopie.
 
 **Spis treści**:
-1. Ficzery
-2. Instalacja
-3. Plany
-4. Support
-5. FAQ
+1. [Ficzery](#1-ficzery)
+2. [Instalacja](#2-instalacja)
+3. [Plany](#3-plany)
+4. [Support](#4-support)
+5. [FAQ](#5-faq)
 
 
 ## 1. Ficzery
