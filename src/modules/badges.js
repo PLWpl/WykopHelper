@@ -56,11 +56,13 @@ export const handleBadges = () => {
 
   //used on element - preferably one returned from getAllNickElements() - returns string with nick name.
   const getNick = el => {
-    if (!$(DOM.SELECTOR.NICK, el) || $(DOM.SELECTOR.NICK, el) === null) {
+    if ((!$(DOM.SELECTOR.NICK, el) || $(DOM.SELECTOR.NICK, el) === null) && (!$(DOM.SELECTOR.NICK_DELETED, el) || $(DOM.SELECTOR.NICK_DELETED, el) === null)) {
       throw new Error(`getNick didn't work for ${el}`);
     }
     if ($(DOM.SELECTOR.NICK, el) !== null) {
       return $(DOM.SELECTOR.NICK, el).innerText;
+    } else if ($(DOM.SELECTOR.NICK_DELETED, el) !== null) {
+      return $(DOM.SELECTOR.NICK_DELETED, el).innerText;
     }
     // @TODO: add something to handle nicks on the right panel, apparently there is different DOM structure there which causes this above to throw error as nullish
   };
@@ -77,7 +79,6 @@ export const handleBadges = () => {
   const getDefaultBadgeLabelFromSettings = () => settings.BADGE.DEFAULT_NAME;
 
   // goes through all user elements on a page and checks, if user nicks are present in uniqueNicksSet array. If they are, AND they haven't yet been awarded a badge, it injects the badge.
-  // takes optional parameter of type, possibly for future expansion.
   const markUsers = () => {
     try {
       const elements = getAllNickElements();
@@ -199,7 +200,7 @@ export const handleBadges = () => {
   // gets user data from objects inside marked users array. For now the only useful data returned is link to the offending post
   const getNickData = nick => {
     if (!nick) {
-      throw new Error("getNickData requires nick to be provided (line 153).");
+      throw new Error("getNickData requires nick to be provided.");
     }
     for (let i = 0; i < markedUsers.length; i++) {
       if (markedUsers[i].nick === nick) {

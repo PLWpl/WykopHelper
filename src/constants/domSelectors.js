@@ -28,6 +28,7 @@ const DOM = {
       // wykop.pl elements
       NICK_ELEMENTS: '.grid-main li div.author',
       NICK: '.showProfileSummary > b',
+      NICK_DELETED: '.author > .color-1002',
       REPLY_FORM: '.replyForm textarea',
       COMMENT_FORM: '#commentFormContainer textarea',
     },
