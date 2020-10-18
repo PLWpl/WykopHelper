@@ -155,6 +155,10 @@ To zrób na to ticket na githubie. Link w sekcji 4.
 
 To napisz je w tickecie na githubie.
 
+**Ja bym to zrobił lepiej.**
+
+Ok, to zrób. I otwórz PRa. Nie obrażę się, a nawet ucieszę ;)
+
 **Czemu nazwałeś tę sekcję FAQ, skoro nikt tego dodatku dotąd nie znał i nie mógł zadawać pytań?**
 
 Bez komentarza.
