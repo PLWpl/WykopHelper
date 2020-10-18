@@ -7,6 +7,7 @@ WykopHelper to UserScript dodający kilka nowych funkcjonalności umilających/u
 2. Instalacja
 3. Plany
 4. Support
+5. FAQ
 
 
 ## 1. Ficzery
@@ -94,6 +95,10 @@ Poniżej z kolei znajduje się opcja usunięcia wszystkich odznaczeń lub przejr
 ## 2. Instalacja 
 Do skorzystania z WykopHelpera konieczne będzie pobranie rozszerzenia do przeglądarki obsługującego UserScripty: Tampermonkey albo Greasemonkey (dostępne dla każdej sensownej przeglądarki). Po zainstalowaniu, wystarczy wejść pod ten adres: [https://cdn.jsdelivr.net/gh/plwpl/WykopHelper@master/dist/whhelper.user.js](https://cdn.jsdelivr.net/gh/plwpl/WykopHelper@master/dist/whhelper.user.js), a następnie zainstalować skrypt.
 
+> **Hur dur nie chcem zminifikowanego kodu**
+> 
+> Spoko. W takim razie wbijaj na https://cdn.jsdelivr.net/gh/plwpl/WykopHelper@master/dist/whhelper-dev.user.js albo zerknij po prostu na repo tego projektu (link na samej górze strony).
+
 ## 3. Plany
 Po zainstalowaniu dodatek będzie aktualizował się automatycznie. Po każdej istotnej aktualizacji, po wejściu na wykop wyświetli się popup z informacjami o nowych ficzerach czy zmianach.
 
@@ -110,10 +115,44 @@ Czego można się spodziewać?
   - odznaka widoczna również w profilu użytkownika, a nie tylko przy jego komentarzach
   - możliwość eksportu i importu listy oznaczonych userów - tak, by móc je migrować między przeglądarkami, czy komputerami
  4. Zintegrowanie funkcjonalności podobnych do tych, jakie można odnaleźć w tych dodatkach: https://www.wykop.pl/dodatki/pokaz/1021/ , https://www.wykop.pl/dodatki/pokaz/1013/ , https://www.wykop.pl/dodatki/pokaz/231/
- 5. I co tam jeszcze się po drodze nasunie :)
+ 5. Opcja ograniczania dostępu do wypoku - przy walce z uzależnieniem ;)
+ 6. I co tam jeszcze się po drodze nasunie :)
  
 ## 4. Support
 > WykopHelper jest w wersji 0.52 co oznacza, że nie jest to jeszcze wersja całkiem stabilna. Do 1.0 jeszcze trochę brakuje :) W konsekwencji, niektóre ficzery mogą nie działać całkiem poprawnie, zmieniać swoje zachowanie wraz z kolejnymi aktualizacjami lub nawet całkiem znikać. Dlatego zachęcam do korzystania z linku niżej, by zgłaszać wszystkie niedogodności.
 
 Jeśli masz jakiekolwiek skargi (coś nie działa lub Ci się nie podoba), sugestie, pytania czy spostrzeżenia, możesz się nimi podzielić tutaj: [https://github.com/PLWpl/WykopHelper/issues](https://github.com/PLWpl/WykopHelper/issues), obiecuję, że (o ile będą poważne) nie pozostaną bez odpowiedzi.
 
+## 5. FAQ
+
+**Ile to kosztuje?**
+
+Nic.
+
+**Ile to będzie kosztować?**
+
+Nic.
+
+**Czy gwarantujesz, że...**
+
+Nie.
+
+**Czy to bezpieczne?**
+
+Dodatek nie wysyła żadnych zapytań do serwerów trzecich (poza zaciągnięciem biblioteki do wyświetlania modali - https://sweetalert2.github.io/). Całość dzieje się w Twojej przeglądarce i działa na zasadzie wstrzykiwania dodatkowego kodu na wykopie. Dodatek **nie** korzysta z wykopowego API (przynajmniej na razie), więc nie ma ryzyka, że przejmie konto, zmieni jakieś ustawienia czy cokolwiek podobnego. Ustawienia dodatku (domyślny tekst odznaki, w(y)łączanie ficzerów) są zapisywane w `localStorage` przeglądarki.
+
+**Czy testowałeś to na każdą możliwość?**
+
+Oczywiście. Że nie. Do tej pory pracowałem nad tym sam, a używały tego 4 osoby, z czego trzy sporadycznie ;) Więc z pewnością jest sporo bugów.
+
+**Zrób, żeby...**
+
+To zrób na to ticket na githubie. Link w sekcji 4.
+
+**Mojego pytania tu nie ma.**
+
+To napisz je w tickecie na githubie.
+
+**Czemu nazwałeś tę sekcję FAQ, skoro nikt tego dodatku dotąd nie znał i nie mógł zadawać pytań?**
+
+Bez komentarza.
