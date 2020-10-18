@@ -492,11 +492,13 @@ const handleBadges = () => {
 
   // goes through all user elements on a page and checks, if user nicks are present in uniqueNicksSet array. If they are, AND they haven't yet been awarded a badge, it injects the badge.
   // takes optional parameter of type, possibly for future expansion.
-  const markUsers = (label = getDefaultBadgeLabelFromSettings()) => {
+  const markUsers = () => {
     try {
       const elements = getAllNickElements();
       elements.forEach(element => {
         const nick = getNick(element);
+        const userData = getNickData(nick) ? getNickData(nick) : null;
+        const label = userData ? userData.label : getDefaultBadgeLabelFromSettings();
 
         if (isMarked(nick) && isNotAwarded(element)) {
           element.insertAdjacentHTML("afterbegin", badge$1(nick, label));
@@ -505,7 +507,7 @@ const handleBadges = () => {
         }
       });
     } catch (e) {
-      //supress the error
+      console.log(e);
     }
   };
 
