@@ -507,7 +507,7 @@ const handleBadges = () => {
         }
       });
     } catch (e) {
-      console.log(e);
+      // suppress errors
     }
   };
 

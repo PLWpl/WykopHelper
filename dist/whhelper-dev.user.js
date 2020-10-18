@@ -519,7 +519,7 @@
           }
         });
       } catch (e) {
-        console.log(e);
+        // suppress errors
       }
     };
 
