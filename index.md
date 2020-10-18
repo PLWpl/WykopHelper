@@ -93,7 +93,7 @@ W (na razie) jedynym polu tekstowym można ustawić, jaki będzie domyślny teks
 Poniżej z kolei znajduje się opcja usunięcia wszystkich odznaczeń lub przejrzenia tabeli z wyróżnionymi userami. Z poziomu tabeli można również daną osobę usunąć, jak również przejść do komentarza.
 
 ## 2. Instalacja 
-Do skorzystania z WykopHelpera konieczne będzie pobranie rozszerzenia do przeglądarki obsługującego UserScripty: Tampermonkey albo Greasemonkey (dostępne dla każdej sensownej przeglądarki). Po zainstalowaniu, wystarczy wejść pod ten adres: [https://cdn.jsdelivr.net/gh/plwpl/WykopHelper@master/dist/whhelper.user.js](https://cdn.jsdelivr.net/gh/plwpl/WykopHelper@master/dist/whhelper.user.js), a następnie zainstalować skrypt.
+Do skorzystania z WykopHelpera konieczne będzie pobranie rozszerzenia do przeglądarki obsługującego UserScripty: [Tampermonkey](https://www.tampermonkey.net/), [Greasemonkey](https://www.greasespot.net/) albo jeden z miliona innych menadżerów skryptów (dostępne dla każdej sensownej przeglądarki, acz lojalnie uprzedzam, że sam używam tampermonkey i tylko tam testowałem WH; ale powinien działać wszędzie tak samo). Po zainstalowaniu, wystarczy wejść pod ten adres: [https://cdn.jsdelivr.net/gh/plwpl/WykopHelper@master/dist/whhelper.user.js](https://cdn.jsdelivr.net/gh/plwpl/WykopHelper@master/dist/whhelper.user.js), a następnie zainstalować skrypt.
 
 > **Hur dur nie chcem zminifikowanego kodu**
 > 
