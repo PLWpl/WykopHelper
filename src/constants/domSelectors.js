@@ -1,7 +1,11 @@
-const DOM = {
+export const DOM = {
   COMMON: {
     CLASSNAME: {
+      // wykop.pl elements
+      WOODLE: 'woodle',
+      // custom WH elements
       BUTTON: 'buttonWH',
+
     }
   },
   BADGE: {
@@ -104,6 +108,12 @@ const DOM = {
       LINK: 'whModalLink',
       LIST: 'whModal__list',
       LIST_ITEM: 'whModal__list-item',
+      INPUT_LABEL: 'whModal__label',
+      INPUT_TEXT: 'whModal__inputText',
+      SCROLLABLE_TEXT: 'whModal__scrollableText'
+    },
+    ID: {
+      BADGE_TEXT: 'whModal_badgeText',
     }
   },
 };

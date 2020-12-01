@@ -1,11 +1,12 @@
 import { $ } from '../utils/dom';
-import DOM_SELECTORS from '../constants/domSelectors';
+import { DOM } from '../constants/domSelectors';
 import { getLocalStorage } from '../utils/handleLocalStorage';
-const { BADGE: DOM } = DOM_SELECTORS;
+
+const { BADGE: EL } = DOM;
 
 export const isTextareaEmpty = () => {
-  const replyForm = $(DOM.SELECTOR.REPLY_FORM);
-  const commentForm = $(DOM.SELECTOR.COMMENT_FORM);
+  const replyForm = $(EL.SELECTOR.REPLY_FORM);
+  const commentForm = $(EL.SELECTOR.COMMENT_FORM);
 
   const isReplyNotEmpty = replyForm && replyForm.value.split(" ").length > 5;
   const isCommentNotEmpty = commentForm && commentForm.value.split(" ").length > 5;

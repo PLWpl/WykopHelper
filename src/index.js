@@ -8,6 +8,7 @@ import { initSettings } from './utils/handleLocalStorage';
 import { highlightOp } from './modules/highlightOp';
 import { warnOnReload } from './modules/warnOnReload';
 import { embedOnPaste } from './modules/embedOnPaste';
+import { removeWoodle } from './modules/removeWoodle';
 
 /**
 * Capitalize first letter
@@ -22,6 +23,9 @@ updateAlert();
 //initializes settings if none found
 initSettings();
 
+if (isPath.sitewide()) {
+  removeWoodle();
+}
 if (isPath.main()) {
   handleBadges();
   warnOnReload();
