@@ -149,8 +149,8 @@ export const modal = `
   text-transform: none;
 }
 
-.${DOM.MODAL.CLASSNAME.INPUT_TEXT} {
-  color: #464646;
+.${DOM.MODAL.CLASSNAME.INPUT_TEXT}, .${DOM.MODAL.CLASSNAME.INPUT_TEXT}:focus {
+  color: #464646 !important;
 }
 
 .${DOM.MODAL.CLASSNAME.SCROLLABLE_TEXT} {
@@ -158,7 +158,7 @@ export const modal = `
   border:1px solid gray;
   padding: 1rem;
   text-align:left;
-  overflow: scroll;
+  overflow-y: auto;
   max-height: 15rem;
 }
 `

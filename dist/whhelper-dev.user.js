@@ -325,8 +325,8 @@
   text-transform: none;
 }
 
-.${DOM.MODAL.CLASSNAME.INPUT_TEXT} {
-  color: #464646;
+.${DOM.MODAL.CLASSNAME.INPUT_TEXT}, .${DOM.MODAL.CLASSNAME.INPUT_TEXT}:focus {
+  color: #464646 !important;
 }
 
 .${DOM.MODAL.CLASSNAME.SCROLLABLE_TEXT} {
@@ -334,7 +334,7 @@
   border:1px solid gray;
   padding: 1rem;
   text-align:left;
-  overflow: scroll;
+  overflow-y: auto;
   max-height: 15rem;
 }
 `;
@@ -1325,7 +1325,7 @@
 Dodatek WykopHelper został właśnie zaktualizowany do wersji ${version}. Wprowadzone zmiany to: <br>
 <ul class="${DOM.MODAL.CLASSNAME.LIST}">
   <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
-    Dodano możliwość zmiany tekstu na odznace każdego użytkownika z osobna. By zmienić tekst wystarczy kliknąć na odznace przy danym userze, odszukać nowe pole tekstowe i wpisać tam, co dusza zapragnie :) Nowy tekst odznaki będzie widoczny po przeładowaniu strony.
+    Dodano możliwość zmiany tekstu na odznace każdego użytkownika z osobna. By zmienić tekst wystarczy kliknąć na odznace przy danym userze, odszukać nowe pole tekstowe i wpisać tam, co dusza zapragnie :)
   </li>
   <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
     W ustawieniach można teraz zadecydować o ukrywaniu woodle (czyli wykopowej wersji doodle - okolicznościowy obrazek umieszczany na belce menu).
