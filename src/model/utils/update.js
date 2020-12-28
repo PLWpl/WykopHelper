@@ -18,6 +18,9 @@ Dodatek WykopHelper został właśnie zaktualizowany do wersji ${version}. Wprow
   <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
     Dodano możliwość zmiany tekstu na odznace każdego użytkownika z osobna. By zmienić tekst wystarczy kliknąć na odznace przy danym userze, odszukać nowe pole tekstowe i wpisać tam, co dusza zapragnie :)
   </li>
+  <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
+    W ustawieniach można teraz zadecydować o ukrywaniu woodle (czyli wykopowej wersji doodle - okolicznościowy obrazek umieszczany na belce menu).
+  </li>
 </ul>
 `,
   button: "Okej!",

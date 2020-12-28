@@ -1,3 +1,10 @@
+/**
+ * To add new setting option:
+ *  - add it as a default in /utils/handleLocalStorage
+ *  - add HTML for it in /model/modules/settings.model
+ *  - add check in appropriate module. If you want it to be ON by default, you will need to make it so using /utils/rynOnceOnUpdate
+ */
+
 import { $, $$ } from '../utils/dom';
 import { DOM } from '../constants/domSelectors';
 import STORAGE_KEY_NAMES from '../constants/localStorageKeyNames';

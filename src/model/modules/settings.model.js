@@ -27,6 +27,16 @@ export const settingsMarkup = `
       />
       <label class="inline" for="warnOnRussian">Oznaczaj znaleziska ze źródeł podejrzewanych o szerzenie Rosyjskiej propagandy </label><span id="russianPropagandaInfo" style="cursor:pointer;border:1px solid currentcolor;padding:0 .5rem">ℹ</span>
     </div>
+    <div class="row">
+      <input
+        class="checkbox"
+        type="checkbox"
+        category="GENERAL"
+        name="REMOVE_WOODLE"
+        id="removeWoodle"
+      />
+      <label class="inline" for="removeWoodle">Usuwaj woodle (okolicznościowy obrazek na belce)</label>
+    </div>
   </div>
 <!--  BADGE -->
   <div class="space ${CLASSNAME.SETTINGS_BADGE}">

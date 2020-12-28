@@ -107,19 +107,29 @@ export const handleBadges = () => {
     }
   }
 
-  const updateView = () => {
-    console.log(`updating...`)
-    markedUsers = getLocalStorage("marked");
+  /**
+   * Updates view - checks if badges are already present on the page for marked users, and if not - injects them.
+   * @param {boolean} dataChange - set to true if you only want to update label text 
+   */
+  const updateView = dataChange => {
     markUsers();
 
+    // loop through all nicks on page
     const elements = getAllNickElements();
-
     elements.forEach(element => {
       const nick = getNick(element);
 
+      // if user is marked, and there isn't a badge next to his nick, inject it.
       if (isMarked(nick) && isNotAwarded(element)) {
         element.insertAdjacentHTML("afterbegin", badge(nick));
       }
+      // if user is marked and there already is a badge next to him - update text on the badge
+      if (dataChange && isMarked(nick) && !isNotAwarded(element)) {
+        $(`.${EL.CLASSNAME.BADGE}`, element).remove();
+        const nickData = getNickData(nick);
+        element.insertAdjacentHTML("afterbegin", badge(nick, nickData.label));
+      }
+      // if user is marked - remove button to mark him as it's not needed anymore
       if (
         isMarked(nick) &&
         $(`.${EL.CLASSNAME.MARK_BUTTON}`, element) &&
@@ -127,11 +137,11 @@ export const handleBadges = () => {
       ) {
         $(`.${EL.CLASSNAME.MARK_BUTTON}`, element).remove();
       }
+      // if user isn't marked and there is badge next to him (double negation here, might think on renaming it later on) - remove it
       if (!isMarked(nick) && !isNotAwarded(element)) {
         $(`.${EL.CLASSNAME.BADGE}`, element).remove();
       }
     });
-    console.log(`updated`);
   };
 
   // fired on clicking a button "Oznacz".
@@ -202,7 +212,6 @@ export const handleBadges = () => {
   };
 
   const changeMarkedUser = (nick, prop, newValue) => {
-    console.log(`changing...`)
     for (let item of markedUsers.entries()) {
       if (item[1].nick === nick) {
         item[1][prop] = newValue;
@@ -213,7 +222,7 @@ export const handleBadges = () => {
         );
       }
     }
-    console.log(`changed`)
+    updateView(true);
   }
 
   // gets user data from objects inside marked users array. For now the only useful data returned is link to the offending post

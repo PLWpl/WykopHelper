@@ -405,6 +405,7 @@ const initialSettings = {
   GENERAL: {
     WARN_ON_RELOAD: false,
     WARN_ON_SUSPECTED_RUSSIAN_PROPAGANDA: true,
+    REMOVE_WOODLE: false,
   },
 };
 const initialUnique = [];
@@ -554,19 +555,29 @@ const handleBadges = () => {
     }
   };
 
-  const updateView = () => {
-    console.log(`updating...`);
-    markedUsers = getLocalStorage("marked");
+  /**
+   * Updates view - checks if badges are already present on the page for marked users, and if not - injects them.
+   * @param {boolean} dataChange - set to true if you only want to update label text 
+   */
+  const updateView = dataChange => {
     markUsers();
 
+    // loop through all nicks on page
     const elements = getAllNickElements();
-
     elements.forEach(element => {
       const nick = getNick(element);
 
+      // if user is marked, and there isn't a badge next to his nick, inject it.
       if (isMarked(nick) && isNotAwarded(element)) {
         element.insertAdjacentHTML("afterbegin", badge$1(nick));
       }
+      // if user is marked and there already is a badge next to him - update text on the badge
+      if (dataChange && isMarked(nick) && !isNotAwarded(element)) {
+        $(`.${EL.CLASSNAME.BADGE}`, element).remove();
+        const nickData = getNickData(nick);
+        element.insertAdjacentHTML("afterbegin", badge$1(nick, nickData.label));
+      }
+      // if user is marked - remove button to mark him as it's not needed anymore
       if (
         isMarked(nick) &&
         $(`.${EL.CLASSNAME.MARK_BUTTON}`, element) &&
@@ -574,11 +585,11 @@ const handleBadges = () => {
       ) {
         $(`.${EL.CLASSNAME.MARK_BUTTON}`, element).remove();
       }
+      // if user isn't marked and there is badge next to him (double negation here, might think on renaming it later on) - remove it
       if (!isMarked(nick) && !isNotAwarded(element)) {
         $(`.${EL.CLASSNAME.BADGE}`, element).remove();
       }
     });
-    console.log(`updated`);
   };
 
   // fired on clicking a button "Oznacz".
@@ -649,7 +660,6 @@ const handleBadges = () => {
   };
 
   const changeMarkedUser = (nick, prop, newValue) => {
-    console.log(`changing...`);
     for (let item of markedUsers.entries()) {
       if (item[1].nick === nick) {
         item[1][prop] = newValue;
@@ -660,7 +670,7 @@ const handleBadges = () => {
         );
       }
     }
-    console.log(`changed`);
+    updateView(true);
   };
 
   // gets user data from objects inside marked users array. For now the only useful data returned is link to the offending post
@@ -962,6 +972,16 @@ const settingsMarkup = `
       />
       <label class="inline" for="warnOnRussian">Oznaczaj znaleziska ze źródeł podejrzewanych o szerzenie Rosyjskiej propagandy </label><span id="russianPropagandaInfo" style="cursor:pointer;border:1px solid currentcolor;padding:0 .5rem">ℹ</span>
     </div>
+    <div class="row">
+      <input
+        class="checkbox"
+        type="checkbox"
+        category="GENERAL"
+        name="REMOVE_WOODLE"
+        id="removeWoodle"
+      />
+      <label class="inline" for="removeWoodle">Usuwaj woodle (okolicznościowy obrazek na belce)</label>
+    </div>
   </div>
 <!--  BADGE -->
   <div class="space ${CLASSNAME.SETTINGS_BADGE}">
@@ -1052,6 +1072,13 @@ const settingsModel = {
   settingsUserTableRow,
   textContent
 };
+
+/**
+ * To add new setting option:
+ *  - add it as a default in /utils/handleLocalStorage
+ *  - add HTML for it in /model/modules/settings.model
+ *  - add check in appropriate module. If you want it to be ON by default, you will need to make it so using /utils/rynOnceOnUpdate
+ */
 
 const { SETTINGS: EL$1 } = DOM;
 
@@ -1286,7 +1313,10 @@ const updateText = {
 Dodatek WykopHelper został właśnie zaktualizowany do wersji ${version}. Wprowadzone zmiany to: <br>
 <ul class="${DOM.MODAL.CLASSNAME.LIST}">
   <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
-    Dodano możliwość zmiany tekstu na odznace każdego użytkownika z osobna. By zmienić tekst wystarczy kliknąć na odznace przy danym userze, odszukać nowe pole tekstowe i wpisać tam, co dusza zapragnie :)
+    Dodano możliwość zmiany tekstu na odznace każdego użytkownika z osobna. By zmienić tekst wystarczy kliknąć na odznace przy danym userze, odszukać nowe pole tekstowe i wpisać tam, co dusza zapragnie :) Nowy tekst odznaki będzie widoczny po przeładowaniu strony.
+  </li>
+  <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
+    W ustawieniach można teraz zadecydować o ukrywaniu woodle (czyli wykopowej wersji doodle - okolicznościowy obrazek umieszczany na belce menu).
   </li>
 </ul>
 `,
@@ -1387,7 +1417,7 @@ const removeWoodle = () => {
   const isSettingActive = () => {
     const settings = getLocalStorage('settings');
 
-    if (settings.GENERAL.WARN_ON_SUSPECTED_RUSSIAN_PROPAGANDA) {
+    if (settings.GENERAL.REMOVE_WOODLE) {
       return true;
     }
 

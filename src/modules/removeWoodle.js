@@ -10,7 +10,7 @@ export const removeWoodle = () => {
   const isSettingActive = () => {
     const settings = getLocalStorage('settings');
 
-    if (settings.GENERAL.WARN_ON_SUSPECTED_RUSSIAN_PROPAGANDA) {
+    if (settings.GENERAL.REMOVE_WOODLE) {
       return true;
     }
 

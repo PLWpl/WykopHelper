@@ -12,6 +12,7 @@ const initialSettings = {
   GENERAL: {
     WARN_ON_RELOAD: false,
     WARN_ON_SUSPECTED_RUSSIAN_PROPAGANDA: true,
+    REMOVE_WOODLE: false,
   },
 };
 const initialUnique = [];
