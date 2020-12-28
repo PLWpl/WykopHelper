@@ -7,6 +7,8 @@ const path = location.href;
  * @returns boolean if current location matches checked path
  */
 const isPath = {
+  sitewide: () => !!(path.indexOf("wykop.pl") > -1),
+
   main: () => {
     if (
       path.indexOf("wykop.pl/link/") > -1 ||
@@ -45,7 +47,11 @@ const STORAGE_KEY_NAMES = {
 const DOM = {
   COMMON: {
     CLASSNAME: {
+      // wykop.pl elements
+      WOODLE: 'woodle',
+      // custom WH elements
       BUTTON: 'buttonWH',
+
     }
   },
   BADGE: {
@@ -148,6 +154,12 @@ const DOM = {
       LINK: 'whModalLink',
       LIST: 'whModal__list',
       LIST_ITEM: 'whModal__list-item',
+      INPUT_LABEL: 'whModal__label',
+      INPUT_TEXT: 'whModal__inputText',
+      SCROLLABLE_TEXT: 'whModal__scrollableText'
+    },
+    ID: {
+      BADGE_TEXT: 'whModal_badgeText',
     }
   },
 };
@@ -281,6 +293,7 @@ const modal = `
 
 .swal2-content {
   color: #888;
+  text-align: unset;
 }
 
 .swal2-styled.swal2-confirm {
@@ -294,6 +307,23 @@ const modal = `
   text-align: left;
   margin-left: 2rem;
   margin-bottom: .7rem
+}
+
+.${DOM.MODAL.CLASSNAME.INPUT_LABEL} {
+  text-transform: none;
+}
+
+.${DOM.MODAL.CLASSNAME.INPUT_TEXT} {
+  color: #464646;
+}
+
+.${DOM.MODAL.CLASSNAME.SCROLLABLE_TEXT} {
+  margin-top:.5rem;
+  border:1px solid gray;
+  padding: 1rem;
+  text-align:left;
+  overflow: scroll;
+  max-height: 15rem;
 }
 `;
 const styles = {
@@ -343,12 +373,14 @@ const badgeUserModal = props => {
   return {
     title: `${props.nick}`,
     content: `
-    <p style="text-align:left">Przyczyna oznaczenia jako <strong>${props.label}</strong>:</p>
-    <div style="margin-top:.5rem;border:1px solid gray;padding: 1rem;text-align:left"><p>${props.content}</p>
+    <p style="text-align:left">Przyczyna oznaczenia</strong>:</p>
+    <div class="${DOM.MODAL.CLASSNAME.SCROLLABLE_TEXT}"><p>${props.content}</p>
     ${props.media ? mediaText(props.media) : ''}</div>
     <p style="margin-top:1rem;text-align:right"><a href="${props.link}">Link do komentarza lub znaleziska</a></p>
+    <label class="${DOM.MODAL.CLASSNAME.INPUT_LABEL}">Treść odznaki: <input autocomplete="off" value="${props.label}" class="${DOM.MODAL.CLASSNAME.INPUT_TEXT}" id="${DOM.MODAL.ID.BADGE_TEXT}"></label>
     `,
     button: "Usu\u0144 oznaczenie",
+    buttonClose: "Zapisz"
   };
 };
 
@@ -373,6 +405,7 @@ const initialSettings = {
   GENERAL: {
     WARN_ON_RELOAD: false,
     WARN_ON_SUSPECTED_RUSSIAN_PROPAGANDA: true,
+    REMOVE_WOODLE: false,
   },
 };
 const initialUnique = [];
@@ -423,7 +456,7 @@ const getLocalStorage = (name = "marked") => {
   }
 };
 
-const { BADGE: DOM$1 } = DOM;
+const { BADGE: EL } = DOM;
 
 const handleBadges = () => {
   /**
@@ -467,34 +500,35 @@ const handleBadges = () => {
   };
 
   // function returns a nodeList with all <div> elements containing line with nick, time since comment made, [+][-]
-  const getAllNickElements = () => $$(DOM$1.SELECTOR.NICK_ELEMENTS);
+  const getAllNickElements = () => $$(EL.SELECTOR.NICK_ELEMENTS);
 
   //used on element - preferably one returned from getAllNickElements() - returns string with nick name.
   const getNick = el => {
-    if ((!$(DOM$1.SELECTOR.NICK, el) || $(DOM$1.SELECTOR.NICK, el) === null) && (!$(DOM$1.SELECTOR.NICK_DELETED, el) || $(DOM$1.SELECTOR.NICK_DELETED, el) === null)) {
+    if (
+      (!$(EL.SELECTOR.NICK, el) || $(EL.SELECTOR.NICK, el) === null) && 
+      (!$(EL.SELECTOR.NICK_DELETED, el) || $(EL.SELECTOR.NICK_DELETED, el) === null)) {
       throw new Error(`getNick didn't work for ${el}`);
     }
-    if ($(DOM$1.SELECTOR.NICK, el) !== null) {
-      return $(DOM$1.SELECTOR.NICK, el).innerText;
-    } else if ($(DOM$1.SELECTOR.NICK_DELETED, el) !== null) {
-      return $(DOM$1.SELECTOR.NICK_DELETED, el).innerText;
+    if ($(EL.SELECTOR.NICK, el) !== null) {
+      return $(EL.SELECTOR.NICK, el).innerText;
+    } else if ($(EL.SELECTOR.NICK_DELETED, el) !== null) {
+      return $(EL.SELECTOR.NICK_DELETED, el).innerText;
     }
     // @TODO: add something to handle nicks on the right panel, apparently there is different DOM structure there which causes this above to throw error as nullish
   };
 
-  // const getAllElementsWithNick = nick => $$(`.${DOM.CLASSNAME.NICK}[class*="color"][href*="ludzie/${nick}"]`);
+  // const getAllElementsWithNick = nick => $$(`.${EL.CLASSNAME.NICK}[class*="color"][href*="ludzie/${nick}"]`);
 
   // used on author element, returned from getAllNickElements(), checks if person has already been marked with a badge
-  const isNotAwarded = element => !$(`.${DOM$1.CLASSNAME.BADGE}`, element);
+  const isNotAwarded = element => !$(`.${EL.CLASSNAME.BADGE}`, element);
 
   // used on author element, returned from getAllNickElements(), checks if person has already been given a button
   const hasButtonAppended = element =>
-    !!$(`.${DOM$1.CLASSNAME.MARK_BUTTON}`, element);
+    !!$(`.${EL.CLASSNAME.MARK_BUTTON}`, element);
 
   const getDefaultBadgeLabelFromSettings = () => settings.BADGE.DEFAULT_NAME;
 
   // goes through all user elements on a page and checks, if user nicks are present in uniqueNicksSet array. If they are, AND they haven't yet been awarded a badge, it injects the badge.
-  // takes optional parameter of type, possibly for future expansion.
   const markUsers = () => {
     try {
       const elements = getAllNickElements();
@@ -515,33 +549,45 @@ const handleBadges = () => {
   };
 
   const addMarkAllButton = () => {
-    if (document.getElementById(DOM$1.ID.VOTES_CONTAINER)) {
-      const nav = document.getElementById(DOM$1.ID.VOTES_CONTAINER).closest('.rbl-block').querySelector('.nav ul + ul');
+    if (document.getElementById(EL.ID.VOTES_CONTAINER)) {
+      const nav = document.getElementById(EL.ID.VOTES_CONTAINER).closest('.rbl-block').querySelector('.nav ul + ul');
       nav ? nav.insertAdjacentHTML("beforeend", buttonBulkMarkup) : '';
     }
   };
 
-  const updateView = () => {
-    markedUsers = getLocalStorage("marked");
+  /**
+   * Updates view - checks if badges are already present on the page for marked users, and if not - injects them.
+   * @param {boolean} dataChange - set to true if you only want to update label text 
+   */
+  const updateView = dataChange => {
     markUsers();
 
+    // loop through all nicks on page
     const elements = getAllNickElements();
-
     elements.forEach(element => {
       const nick = getNick(element);
 
+      // if user is marked, and there isn't a badge next to his nick, inject it.
       if (isMarked(nick) && isNotAwarded(element)) {
         element.insertAdjacentHTML("afterbegin", badge$1(nick));
       }
+      // if user is marked and there already is a badge next to him - update text on the badge
+      if (dataChange && isMarked(nick) && !isNotAwarded(element)) {
+        $(`.${EL.CLASSNAME.BADGE}`, element).remove();
+        const nickData = getNickData(nick);
+        element.insertAdjacentHTML("afterbegin", badge$1(nick, nickData.label));
+      }
+      // if user is marked - remove button to mark him as it's not needed anymore
       if (
         isMarked(nick) &&
-        $(`.${DOM$1.CLASSNAME.MARK_BUTTON}`, element) &&
-        !$(`.${DOM$1.CLASSNAME.MARK_BUTTON_CLICKED}`, element)
+        $(`.${EL.CLASSNAME.MARK_BUTTON}`, element) &&
+        !$(`.${EL.CLASSNAME.MARK_BUTTON_CLICKED}`, element)
       ) {
-        $(`.${DOM$1.CLASSNAME.MARK_BUTTON}`, element).remove();
+        $(`.${EL.CLASSNAME.MARK_BUTTON}`, element).remove();
       }
+      // if user isn't marked and there is badge next to him (double negation here, might think on renaming it later on) - remove it
       if (!isMarked(nick) && !isNotAwarded(element)) {
-        $(`.${DOM$1.CLASSNAME.BADGE}`, element).remove();
+        $(`.${EL.CLASSNAME.BADGE}`, element).remove();
       }
     });
   };
@@ -550,19 +596,19 @@ const handleBadges = () => {
   // First, get nick of the author. Then, get link of the offending comment.
   const addNewMarked = event => {
     const nick = getNick(
-      event.target.closest(`.${DOM$1.CLASSNAME.NICK_ELEMENT}`)
+      event.target.closest(`.${EL.CLASSNAME.NICK_ELEMENT}`)
     );
 
     // verified accounts need be handled slightly differently
     // event.target = .buttonWH
     const link = event.target
-      .closest(`.${DOM$1.CLASSNAME.NICK_ELEMENT}`)
+      .closest(`.${EL.CLASSNAME.NICK_ELEMENT}`)
       .querySelector(`.verified`)
       ? event.target
-        .closest(`.${DOM$1.CLASSNAME.NICK_ELEMENT}`)
-        .querySelector(`.${DOM$1.CLASSNAME.NICK_VERIFIED_BADGE} + a`).href
+        .closest(`.${EL.CLASSNAME.NICK_ELEMENT}`)
+        .querySelector(`.${EL.CLASSNAME.NICK_VERIFIED_BADGE} + a`).href
       : event.target
-        .closest(`.${DOM$1.CLASSNAME.NICK_ELEMENT}`)
+        .closest(`.${EL.CLASSNAME.NICK_ELEMENT}`)
         .querySelector("a + a").href;
 
     const content = event.target
@@ -576,7 +622,7 @@ const handleBadges = () => {
         .closest('.wblock')
         .querySelector('.text .media-content a').href : null;
 
-    event.target.classList.add(DOM$1.CLASSNAME.MARK_BUTTON_CLICKED);
+    event.target.classList.add(EL.CLASSNAME.MARK_BUTTON_CLICKED);
     event.target.innerText = "\u2714";
     addNickToArrays(nick, link, content, media);
 
@@ -591,7 +637,7 @@ const handleBadges = () => {
     }, 780);
   };
 
-  const removeTroll = nick => {
+  const removeMarkedUser = nick => {
     for (let [index, item] of markedUsers.entries()) {
       if (item.nick === nick) {
         delete markedUsers[index];
@@ -611,6 +657,20 @@ const handleBadges = () => {
     setTimeout(() => {
       updateView();
     }, 780);
+  };
+
+  const changeMarkedUser = (nick, prop, newValue) => {
+    for (let item of markedUsers.entries()) {
+      if (item[1].nick === nick) {
+        item[1][prop] = newValue;
+        const marked = markedUsers.filter(el => el != null);
+        localStorage.setItem(
+          STORAGE_KEY_NAMES.MARKED_USERS,
+          JSON.stringify(marked)
+        );
+      }
+    }
+    updateView(true);
   };
 
   // gets user data from objects inside marked users array. For now the only useful data returned is link to the offending post
@@ -645,17 +705,23 @@ const handleBadges = () => {
       html: modal.content,
       icon: "info",
       showCancelButton: false,
+      showDenyButton: true,
       confirmButtonText: modal.button,
+      denyButtonText: 'Zapisz',
       width: "80%",
     }).then(result => {
       if (result.isConfirmed) {
-        removeTroll(nick);
+        removeMarkedUser(nick);
         // eslint-disable-next-line
         Swal.fire(
           "Usuni\u0119to!",
           "U\u017Cytkownik nie b\u0119dzie ju\u017C wi\u0119cej oznaczany.",
           "info"
         );
+      } else if (result.isDenied) {
+        const newLabel = $(`#${DOM.MODAL.ID.BADGE_TEXT}`).value;
+        changeMarkedUser(nick, 'label', newLabel);
+        updateView();
       }
     });
   };
@@ -663,7 +729,7 @@ const handleBadges = () => {
   //Add all users that up/down-voted a thread
   const markAllWhoVoted = () => {
     const link = window.location.href;
-    const userCards = $$(`#${DOM$1.ID.VOTES_CONTAINER} .${DOM$1.CLASSNAME.VOTES_USERCARD}`);
+    const userCards = $$(`#${EL.ID.VOTES_CONTAINER} .${EL.CLASSNAME.VOTES_USERCARD}`);
     
     let action;
     if ($('#voters').closest('li').classList.contains('active')) {
@@ -683,6 +749,22 @@ const handleBadges = () => {
   };
 
   /**
+   * Setting custom label value for user with given nick
+   */
+  // const setCustomLabelValue = nick => {
+  //   const userData = getNickData(nick);
+  //   const value = document.getElementById(EL.MODAL.ID.BADGE_TEXT).value;
+  //   const marked = getLocalStorage('marked');
+  //   const changedMarked = marked.map(el => el.nick === userData.nick ? { ...el, label: value } : el);
+
+  //   localStorage.setItem(
+      
+  //     STORAGE_KEY_NAMES.MARKED_USERS,
+  //     JSON.stringify(changedMarked)
+  //   );
+  // }
+
+  /**
    * Above is setup. Actual job gets done below
    */
 
@@ -694,7 +776,7 @@ const handleBadges = () => {
   // on button click, add new marked user
   document.getElementById("itemsStream").addEventListener("click", event => {
     const target = event.target;
-    if (target.classList.contains(DOM$1.CLASSNAME.MARK_BUTTON)) {
+    if (target.classList.contains(EL.CLASSNAME.MARK_BUTTON)) {
       addNewMarked(event);
     }
     if (target.classList.contains("affect") && target.closest(".more")) {
@@ -702,26 +784,26 @@ const handleBadges = () => {
         markUsers();
       }, 500);
     }
-    if (target.classList.contains(DOM$1.CLASSNAME.BADGE)) {
+    if (target.classList.contains(EL.CLASSNAME.BADGE)) {
       const nick = target.dataset.whusername;
-      showUserModal(DOM$1.DYNAMIC.DATASET.USERNAME(nick));
+      showUserModal(EL.DYNAMIC.DATASET.USERNAME(nick));
     }
   });
 
-  if (document.getElementById(DOM$1.ID.VOTES_CONTAINER)) {
-    document.getElementById(DOM$1.ID.VOTES_CONTAINER)
+  if (document.getElementById(EL.ID.VOTES_CONTAINER)) {
+    document.getElementById(EL.ID.VOTES_CONTAINER)
       .closest('.rbl-block').querySelector('.nav').addEventListener("click", event => {
         const target = event.target;
-        if (target.classList.contains(DOM$1.CLASSNAME.MARK_ALL_BUTTON)) {
+        if (target.classList.contains(EL.CLASSNAME.MARK_ALL_BUTTON)) {
           markAllWhoVoted();
-          $(`.${DOM$1.CLASSNAME.MARK_ALL_BUTTON}`).innerText = 'Zrobione :)';
+          $(`.${EL.CLASSNAME.MARK_ALL_BUTTON}`).innerText = 'Zrobione :)';
           setTimeout(() => {
-            $(`.${DOM$1.CLASSNAME.MARK_ALL_BUTTON_ELEMENT}`).style.display = 'none';
-            $(`.${DOM$1.CLASSNAME.MARK_ALL_BUTTON}`).innerText = 'Oznacz wszystkich poni\u017Cej';
+            $(`.${EL.CLASSNAME.MARK_ALL_BUTTON_ELEMENT}`).style.display = 'none';
+            $(`.${EL.CLASSNAME.MARK_ALL_BUTTON}`).innerText = 'Oznacz wszystkich poni\u017Cej';
           }, 500);
         }
         if (target.closest('#voters') || target.closest('#votersBury')) {
-          $(`.${DOM$1.CLASSNAME.MARK_ALL_BUTTON_ELEMENT}`).style.display = 'block';
+          $(`.${EL.CLASSNAME.MARK_ALL_BUTTON_ELEMENT}`).style.display = 'block';
         }
       });
   }
@@ -890,6 +972,16 @@ const settingsMarkup = `
       />
       <label class="inline" for="warnOnRussian">Oznaczaj znaleziska ze źródeł podejrzewanych o szerzenie Rosyjskiej propagandy </label><span id="russianPropagandaInfo" style="cursor:pointer;border:1px solid currentcolor;padding:0 .5rem">ℹ</span>
     </div>
+    <div class="row">
+      <input
+        class="checkbox"
+        type="checkbox"
+        category="GENERAL"
+        name="REMOVE_WOODLE"
+        id="removeWoodle"
+      />
+      <label class="inline" for="removeWoodle">Usuwaj woodle (okolicznościowy obrazek na belce)</label>
+    </div>
   </div>
 <!--  BADGE -->
   <div class="space ${CLASSNAME.SETTINGS_BADGE}">
@@ -981,13 +1073,20 @@ const settingsModel = {
   textContent
 };
 
-const { SETTINGS: DOM$2 } = DOM;
+/**
+ * To add new setting option:
+ *  - add it as a default in /utils/handleLocalStorage
+ *  - add HTML for it in /model/modules/settings.model
+ *  - add check in appropriate module. If you want it to be ON by default, you will need to make it so using /utils/rynOnceOnUpdate
+ */
+
+const { SETTINGS: EL$1 } = DOM;
 
 /**
  * Inserts navigation item on a /ustawienia/ page with link to WykopHelper settings
  */
 const createSettingsPage = () => {
-  $(DOM$2.SELECTOR.LAST_NAV_ELEMENT).insertAdjacentHTML('beforeend', settingsModel.settingsNav);
+  $(EL$1.SELECTOR.LAST_NAV_ELEMENT).insertAdjacentHTML('beforeend', settingsModel.settingsNav);
 };
 
 const handleSettings = () => {
@@ -995,7 +1094,7 @@ const handleSettings = () => {
   const markedUsers = getLocalStorage();
   const uniqueNicksSet = getLocalStorage('unique');
 
-  const settingsFormElement = $(DOM$2.SELECTOR.SETTINGS_FORM_ELEMENT);
+  const settingsFormElement = $(EL$1.SELECTOR.SETTINGS_FORM_ELEMENT);
 
   /**
    * clears localstorage. Doesn't remove items, but sets them to empty array
@@ -1010,7 +1109,7 @@ const handleSettings = () => {
    * Creates table with marked users.
    */
   const generateUserTables = () => {
-    const tableBody = $(`.${DOM$2.CLASSNAME.WH_USER_TABLE_BODY}`);
+    const tableBody = $(`.${EL$1.CLASSNAME.WH_USER_TABLE_BODY}`);
 
     markedUsers.forEach(el => {
       tableBody.insertAdjacentHTML(
@@ -1023,13 +1122,13 @@ const handleSettings = () => {
   };
 
   const toggleUserTableVisibility = () => {
-    $(`.${DOM$2.CLASSNAME.WH_USER_TABLE_CONTAINER}`)
-      .classList.toggle(`${DOM$2.CLASSNAME.WH_USER_TABLE_CONTAINER}--hidden`);
+    $(`.${EL$1.CLASSNAME.WH_USER_TABLE_CONTAINER}`)
+      .classList.toggle(`${EL$1.CLASSNAME.WH_USER_TABLE_CONTAINER}--hidden`);
 
-    if ($(`.${DOM$2.CLASSNAME.WH_USER_TABLE_CONTAINER}--hidden`)) {
-      document.getElementById(DOM$2.ID.SHOW_MARKED_TABLE).textContent = settingsModel.textContent.SHOW_ALL_MARKED;
+    if ($(`.${EL$1.CLASSNAME.WH_USER_TABLE_CONTAINER}--hidden`)) {
+      document.getElementById(EL$1.ID.SHOW_MARKED_TABLE).textContent = settingsModel.textContent.SHOW_ALL_MARKED;
     } else {
-      document.getElementById(DOM$2.ID.SHOW_MARKED_TABLE).textContent = settingsModel.textContent.HIDE_TABLE;
+      document.getElementById(EL$1.ID.SHOW_MARKED_TABLE).textContent = settingsModel.textContent.HIDE_TABLE;
     }
   };
 
@@ -1067,7 +1166,7 @@ const handleSettings = () => {
 
     inputs.forEach(el => {
       const category = el.getAttribute('category');
-      if (el.id !== DOM$2.ID.ALLOW_WIPE_MARKED_LIST && el.type === 'checkbox') {
+      if (el.id !== EL$1.ID.ALLOW_WIPE_MARKED_LIST && el.type === 'checkbox') {
         el.checked = settings[category][el.name];
       } else if (el.type === 'text' && el.name !== 'nsQ') {
         el.value = settings[category][el.name];
@@ -1076,8 +1175,8 @@ const handleSettings = () => {
   };
 
   const renderSettings = () => {
-    $(DOM$2.SELECTOR.ACTIVE_NAV_ELEMENT).classList.remove('active');
-    $(`.${DOM$2.CLASSNAME.WH_NAV_SETTINGS_LINK}`).classList.add('active');
+    $(EL$1.SELECTOR.ACTIVE_NAV_ELEMENT).classList.remove('active');
+    $(`.${EL$1.CLASSNAME.WH_NAV_SETTINGS_LINK}`).classList.add('active');
   
     settingsFormElement.innerHTML = '';
     settingsFormElement.innerHTML = settingsModel.settingsMarkup;
@@ -1098,30 +1197,30 @@ const handleSettings = () => {
       const category = event.target.getAttribute('category');
       const name = event.target.name;
 
-      if (event.target.type === 'checkbox' && event.target.id !==  DOM$2.ID.ALLOW_WIPE_MARKED_LIST) {
+      if (event.target.type === 'checkbox' && event.target.id !==  EL$1.ID.ALLOW_WIPE_MARKED_LIST) {
         settings[category][name] = !settings[category][name];
         localStorage.setItem(STORAGE_KEY_NAMES.WH_SETTINGS, JSON.stringify(settings));
       }
     }, {passive: true});
 
     settingsFormElement.addEventListener('click', event => {
-      if (event.target.id === DOM$2.ID.SHOW_MARKED_TABLE) {
+      if (event.target.id === EL$1.ID.SHOW_MARKED_TABLE) {
         event.preventDefault();
         toggleUserTableVisibility();
       }
-      if (event.target.id ===  DOM$2.ID.ALLOW_WIPE_MARKED_LIST) {
+      if (event.target.id ===  EL$1.ID.ALLOW_WIPE_MARKED_LIST) {
         event.target.disabled = true;
-        document.getElementById(DOM$2.ID.REMOVE_ALL_MARKED).disabled = false;
-        document.getElementById(DOM$2.ID.REMOVE_ALL_MARKED).style.opacity = 1;
+        document.getElementById(EL$1.ID.REMOVE_ALL_MARKED).disabled = false;
+        document.getElementById(EL$1.ID.REMOVE_ALL_MARKED).style.opacity = 1;
       }
-      if (event.target.id === DOM$2.ID.REMOVE_ALL_MARKED) {
+      if (event.target.id === EL$1.ID.REMOVE_ALL_MARKED) {
         event.preventDefault();
         wipeAllMarkedUsers();
       }
-      if (event.target.id === DOM$2.ID.RUSSIAN_PROPAGANDA_INFO_LINK) {
+      if (event.target.id === EL$1.ID.RUSSIAN_PROPAGANDA_INFO_LINK) {
         showModalWithPropagandaExplanation();
       }
-      if (event.target.id === DOM$2.ID.WARN_ON_RELOAD_INFO_LINK) {
+      if (event.target.id === EL$1.ID.WARN_ON_RELOAD_INFO_LINK) {
         showModalWithWarnOnReloadExplanation();
       }
     }, {passive: false});
@@ -1199,7 +1298,7 @@ const runOnceOnUpdate = () => {
 
 /* eslint max-len: 0 */
 
-const version = `0.52`;
+const version = `0.53`;
 
 const welcomeText = {
   title: "WykopHelper zainstalowany!",
@@ -1214,25 +1313,10 @@ const updateText = {
 Dodatek WykopHelper został właśnie zaktualizowany do wersji ${version}. Wprowadzone zmiany to: <br>
 <ul class="${DOM.MODAL.CLASSNAME.LIST}">
   <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
-    <strong>Istotna zmiana</strong>: jeśli używałeś do tej pory oznaczania użytkowników, najprawdopodobniej po tej aktualizacji nie będą oni już dłużej oznaczani, ze względu na zmiany nazw niektórych kluczy. Jeśli zależy Ci na tym, by ich odzyskać, skontaktuj się z autorem dodatku ;) 
+    Dodano możliwość zmiany tekstu na odznace każdego użytkownika z osobna. By zmienić tekst wystarczy kliknąć na odznace przy danym userze, odszukać nowe pole tekstowe i wpisać tam, co dusza zapragnie :) Nowy tekst odznaki będzie widoczny po przeładowaniu strony.
   </li>
   <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
-    Od teraz, najechanie myszką na odznakę nic nie da - należy w nią kliknąć. Po kliknięciu otworzy się okienko z informacjami. Aktualnie znajduje się tam informacja o przyczynie oznaczenia; treść komentarza, link do ew. treści multimedialnych w nim osadzonych oraz link do samego komentarza. Wkrótce pojawi się tutaj kilka innych opcji, w tym m.in. zmiana nazwy oznaczenia na customową, zmiana koloru oznaczenia czy całkowite usuwanie aktywności użytkownika z wykopu.
-  </li>
-  <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
-    Opcja dodania oznaczenia hurtem, dla wszystkich użytkowników któzy wykopali/zakopali dane znalezisko. Aby skorzystać, zjedź na sam dół i otwórz listę użytkowników, którzy wykonali interesującą Cię akcję, a następnie kliknij przycisk "Oznacz wszystkich poniżej".
-  </li>
-  <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
-    Ujednolicony styl graficzny modali, czyli takich informacji jak ta.
-  </li>
-  <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
-    Pojawiły się ikony informacji (ℹ) przy niektórych opcjach w ustawieniach dodatku. Po kliknięciu na nie, naturalnie, pojawią się informacje dodatkowe :)
-  </li>
-  <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
-    Naprawiono wiele bugów, w tym m.in. nieznikające odznaki po usunięciu oznaczenia, czerwona obwódka wokół wykopowych osiągnięć.
-  </li>
-  <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
-    Uporządkowano (trochę :D) kod dodatku, który umożliwi szybszy dalszy rozwój.
+    W ustawieniach można teraz zadecydować o ukrywaniu woodle (czyli wykopowej wersji doodle - okolicznościowy obrazek umieszczany na belce menu).
   </li>
 </ul>
 `,
@@ -1285,11 +1369,11 @@ const highlightOp = () => {
   });
 };
 
-const { BADGE: DOM$3 } = DOM;
+const { BADGE: EL$2 } = DOM;
 
 const isTextareaEmpty = () => {
-  const replyForm = $(DOM$3.SELECTOR.REPLY_FORM);
-  const commentForm = $(DOM$3.SELECTOR.COMMENT_FORM);
+  const replyForm = $(EL$2.SELECTOR.REPLY_FORM);
+  const commentForm = $(EL$2.SELECTOR.COMMENT_FORM);
 
   const isReplyNotEmpty = replyForm && replyForm.value.split(" ").length > 5;
   const isCommentNotEmpty = commentForm && commentForm.value.split(" ").length > 5;
@@ -1325,6 +1409,30 @@ const embedOnPaste = () => {
   }, {passive: true});
 };
 
+const removeWoodle = () => {
+  /**
+   * Check if user settings allow for marking domains.
+   * @return {boolean} True if yes, false otherwise
+   */
+  const isSettingActive = () => {
+    const settings = getLocalStorage('settings');
+
+    if (settings.GENERAL.REMOVE_WOODLE) {
+      return true;
+    }
+
+    return false;
+  };
+
+  const handleRemoval = () => {
+    $(`.${DOM.COMMON.CLASSNAME.WOODLE}`).style.display = 'none';
+  };
+
+  if (isSettingActive()) {
+    handleRemoval();
+  }
+};
+
 /**
 * Capitalize first letter
 */
@@ -1338,6 +1446,9 @@ updateAlert();
 //initializes settings if none found
 initSettings();
 
+if (isPath.sitewide()) {
+  removeWoodle();
+}
 if (isPath.main()) {
   handleBadges();
   warnOnReload();

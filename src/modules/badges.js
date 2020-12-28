@@ -1,6 +1,6 @@
 import { $, $$ } from "../utils/dom";
-import STORAGE_KEY_NAMES from "../constants/localStorageKeyNames";
-import DOM_SELECTORS from "../constants/domSelectors";
+import { STORAGE_KEY_NAMES } from "../constants/localStorageKeyNames";
+import { DOM } from "../constants/domSelectors";
 
 import styles from "../model/styles.js";
 import { buttonMarkup, badge, markedInBulk, buttonBulkMarkup } from "../model/modules/badges.model";
@@ -8,7 +8,7 @@ import { badgeUserModal } from "../model/utils/modals";
 import { injectStyles } from "../utils/inject";
 import { getLocalStorage } from "../utils/handleLocalStorage";
 
-const { BADGE: DOM } = DOM_SELECTORS;
+const { BADGE: EL } = DOM;
 
 export const handleBadges = () => {
   /**
@@ -52,29 +52,31 @@ export const handleBadges = () => {
   };
 
   // function returns a nodeList with all <div> elements containing line with nick, time since comment made, [+][-]
-  const getAllNickElements = () => $$(DOM.SELECTOR.NICK_ELEMENTS);
+  const getAllNickElements = () => $$(EL.SELECTOR.NICK_ELEMENTS);
 
   //used on element - preferably one returned from getAllNickElements() - returns string with nick name.
   const getNick = el => {
-    if ((!$(DOM.SELECTOR.NICK, el) || $(DOM.SELECTOR.NICK, el) === null) && (!$(DOM.SELECTOR.NICK_DELETED, el) || $(DOM.SELECTOR.NICK_DELETED, el) === null)) {
+    if (
+      (!$(EL.SELECTOR.NICK, el) || $(EL.SELECTOR.NICK, el) === null) && 
+      (!$(EL.SELECTOR.NICK_DELETED, el) || $(EL.SELECTOR.NICK_DELETED, el) === null)) {
       throw new Error(`getNick didn't work for ${el}`);
     }
-    if ($(DOM.SELECTOR.NICK, el) !== null) {
-      return $(DOM.SELECTOR.NICK, el).innerText;
-    } else if ($(DOM.SELECTOR.NICK_DELETED, el) !== null) {
-      return $(DOM.SELECTOR.NICK_DELETED, el).innerText;
+    if ($(EL.SELECTOR.NICK, el) !== null) {
+      return $(EL.SELECTOR.NICK, el).innerText;
+    } else if ($(EL.SELECTOR.NICK_DELETED, el) !== null) {
+      return $(EL.SELECTOR.NICK_DELETED, el).innerText;
     }
     // @TODO: add something to handle nicks on the right panel, apparently there is different DOM structure there which causes this above to throw error as nullish
   };
 
-  // const getAllElementsWithNick = nick => $$(`.${DOM.CLASSNAME.NICK}[class*="color"][href*="ludzie/${nick}"]`);
+  // const getAllElementsWithNick = nick => $$(`.${EL.CLASSNAME.NICK}[class*="color"][href*="ludzie/${nick}"]`);
 
   // used on author element, returned from getAllNickElements(), checks if person has already been marked with a badge
-  const isNotAwarded = element => !$(`.${DOM.CLASSNAME.BADGE}`, element);
+  const isNotAwarded = element => !$(`.${EL.CLASSNAME.BADGE}`, element);
 
   // used on author element, returned from getAllNickElements(), checks if person has already been given a button
   const hasButtonAppended = element =>
-    !!$(`.${DOM.CLASSNAME.MARK_BUTTON}`, element);
+    !!$(`.${EL.CLASSNAME.MARK_BUTTON}`, element);
 
   const getDefaultBadgeLabelFromSettings = () => settings.BADGE.DEFAULT_NAME;
 
@@ -99,33 +101,45 @@ export const handleBadges = () => {
   };
 
   const addMarkAllButton = () => {
-    if (document.getElementById(DOM.ID.VOTES_CONTAINER)) {
-      const nav = document.getElementById(DOM.ID.VOTES_CONTAINER).closest('.rbl-block').querySelector('.nav ul + ul');
+    if (document.getElementById(EL.ID.VOTES_CONTAINER)) {
+      const nav = document.getElementById(EL.ID.VOTES_CONTAINER).closest('.rbl-block').querySelector('.nav ul + ul');
       nav ? nav.insertAdjacentHTML("beforeend", buttonBulkMarkup) : '';
     }
   }
 
-  const updateView = () => {
-    markedUsers = getLocalStorage("marked");
+  /**
+   * Updates view - checks if badges are already present on the page for marked users, and if not - injects them.
+   * @param {boolean} dataChange - set to true if you only want to update label text 
+   */
+  const updateView = dataChange => {
     markUsers();
 
+    // loop through all nicks on page
     const elements = getAllNickElements();
-
     elements.forEach(element => {
       const nick = getNick(element);
 
+      // if user is marked, and there isn't a badge next to his nick, inject it.
       if (isMarked(nick) && isNotAwarded(element)) {
         element.insertAdjacentHTML("afterbegin", badge(nick));
       }
+      // if user is marked and there already is a badge next to him - update text on the badge
+      if (dataChange && isMarked(nick) && !isNotAwarded(element)) {
+        $(`.${EL.CLASSNAME.BADGE}`, element).remove();
+        const nickData = getNickData(nick);
+        element.insertAdjacentHTML("afterbegin", badge(nick, nickData.label));
+      }
+      // if user is marked - remove button to mark him as it's not needed anymore
       if (
         isMarked(nick) &&
-        $(`.${DOM.CLASSNAME.MARK_BUTTON}`, element) &&
-        !$(`.${DOM.CLASSNAME.MARK_BUTTON_CLICKED}`, element)
+        $(`.${EL.CLASSNAME.MARK_BUTTON}`, element) &&
+        !$(`.${EL.CLASSNAME.MARK_BUTTON_CLICKED}`, element)
       ) {
-        $(`.${DOM.CLASSNAME.MARK_BUTTON}`, element).remove();
+        $(`.${EL.CLASSNAME.MARK_BUTTON}`, element).remove();
       }
+      // if user isn't marked and there is badge next to him (double negation here, might think on renaming it later on) - remove it
       if (!isMarked(nick) && !isNotAwarded(element)) {
-        $(`.${DOM.CLASSNAME.BADGE}`, element).remove();
+        $(`.${EL.CLASSNAME.BADGE}`, element).remove();
       }
     });
   };
@@ -134,19 +148,19 @@ export const handleBadges = () => {
   // First, get nick of the author. Then, get link of the offending comment.
   const addNewMarked = event => {
     const nick = getNick(
-      event.target.closest(`.${DOM.CLASSNAME.NICK_ELEMENT}`)
+      event.target.closest(`.${EL.CLASSNAME.NICK_ELEMENT}`)
     );
 
     // verified accounts need be handled slightly differently
     // event.target = .buttonWH
     const link = event.target
-      .closest(`.${DOM.CLASSNAME.NICK_ELEMENT}`)
+      .closest(`.${EL.CLASSNAME.NICK_ELEMENT}`)
       .querySelector(`.verified`)
       ? event.target
-        .closest(`.${DOM.CLASSNAME.NICK_ELEMENT}`)
-        .querySelector(`.${DOM.CLASSNAME.NICK_VERIFIED_BADGE} + a`).href
+        .closest(`.${EL.CLASSNAME.NICK_ELEMENT}`)
+        .querySelector(`.${EL.CLASSNAME.NICK_VERIFIED_BADGE} + a`).href
       : event.target
-        .closest(`.${DOM.CLASSNAME.NICK_ELEMENT}`)
+        .closest(`.${EL.CLASSNAME.NICK_ELEMENT}`)
         .querySelector("a + a").href;
 
     const content = event.target
@@ -160,7 +174,7 @@ export const handleBadges = () => {
         .closest('.wblock')
         .querySelector('.text .media-content a').href : null;
 
-    event.target.classList.add(DOM.CLASSNAME.MARK_BUTTON_CLICKED);
+    event.target.classList.add(EL.CLASSNAME.MARK_BUTTON_CLICKED);
     event.target.innerText = "✔";
     addNickToArrays(nick, link, content, media);
 
@@ -175,7 +189,7 @@ export const handleBadges = () => {
     }, 780);
   };
 
-  const removeTroll = nick => {
+  const removeMarkedUser = nick => {
     for (let [index, item] of markedUsers.entries()) {
       if (item.nick === nick) {
         delete markedUsers[index];
@@ -196,6 +210,20 @@ export const handleBadges = () => {
       updateView();
     }, 780);
   };
+
+  const changeMarkedUser = (nick, prop, newValue) => {
+    for (let item of markedUsers.entries()) {
+      if (item[1].nick === nick) {
+        item[1][prop] = newValue;
+        const marked = markedUsers.filter(el => el != null);
+        localStorage.setItem(
+          STORAGE_KEY_NAMES.MARKED_USERS,
+          JSON.stringify(marked)
+        );
+      }
+    }
+    updateView(true);
+  }
 
   // gets user data from objects inside marked users array. For now the only useful data returned is link to the offending post
   const getNickData = nick => {
@@ -229,17 +257,25 @@ export const handleBadges = () => {
       html: modal.content,
       icon: "info",
       showCancelButton: false,
+      showDenyButton: true,
       confirmButtonText: modal.button,
+      denyButtonText: 'Zapisz',
       width: "80%",
     }).then(result => {
       if (result.isConfirmed) {
-        removeTroll(nick);
+        removeMarkedUser(nick);
         // eslint-disable-next-line
         Swal.fire(
           "Usunięto!",
           "Użytkownik nie będzie już więcej oznaczany.",
           "info"
         );
+      } else if (result.isDenied) {
+        const newLabel = $(`#${DOM.MODAL.ID.BADGE_TEXT}`).value;
+        changeMarkedUser(nick, 'label', newLabel);
+        updateView();
+      } else {
+        // supress
       }
     });
   };
@@ -247,7 +283,7 @@ export const handleBadges = () => {
   //Add all users that up/down-voted a thread
   const markAllWhoVoted = () => {
     const link = window.location.href;
-    const userCards = $$(`#${DOM.ID.VOTES_CONTAINER} .${DOM.CLASSNAME.VOTES_USERCARD}`);
+    const userCards = $$(`#${EL.ID.VOTES_CONTAINER} .${EL.CLASSNAME.VOTES_USERCARD}`);
     
     let action;
     if ($('#voters').closest('li').classList.contains('active')) {
@@ -267,6 +303,22 @@ export const handleBadges = () => {
   }
 
   /**
+   * Setting custom label value for user with given nick
+   */
+  // const setCustomLabelValue = nick => {
+  //   const userData = getNickData(nick);
+  //   const value = document.getElementById(EL.MODAL.ID.BADGE_TEXT).value;
+  //   const marked = getLocalStorage('marked');
+  //   const changedMarked = marked.map(el => el.nick === userData.nick ? { ...el, label: value } : el);
+
+  //   localStorage.setItem(
+      
+  //     STORAGE_KEY_NAMES.MARKED_USERS,
+  //     JSON.stringify(changedMarked)
+  //   );
+  // }
+
+  /**
    * Above is setup. Actual job gets done below
    */
 
@@ -278,7 +330,7 @@ export const handleBadges = () => {
   // on button click, add new marked user
   document.getElementById("itemsStream").addEventListener("click", event => {
     const target = event.target;
-    if (target.classList.contains(DOM.CLASSNAME.MARK_BUTTON)) {
+    if (target.classList.contains(EL.CLASSNAME.MARK_BUTTON)) {
       addNewMarked(event);
     }
     if (target.classList.contains("affect") && target.closest(".more")) {
@@ -286,26 +338,26 @@ export const handleBadges = () => {
         markUsers();
       }, 500);
     }
-    if (target.classList.contains(DOM.CLASSNAME.BADGE)) {
+    if (target.classList.contains(EL.CLASSNAME.BADGE)) {
       const nick = target.dataset.whusername;
-      showUserModal(DOM.DYNAMIC.DATASET.USERNAME(nick));
+      showUserModal(EL.DYNAMIC.DATASET.USERNAME(nick));
     }
   });
 
-  if (document.getElementById(DOM.ID.VOTES_CONTAINER)) {
-    document.getElementById(DOM.ID.VOTES_CONTAINER)
+  if (document.getElementById(EL.ID.VOTES_CONTAINER)) {
+    document.getElementById(EL.ID.VOTES_CONTAINER)
       .closest('.rbl-block').querySelector('.nav').addEventListener("click", event => {
         const target = event.target;
-        if (target.classList.contains(DOM.CLASSNAME.MARK_ALL_BUTTON)) {
+        if (target.classList.contains(EL.CLASSNAME.MARK_ALL_BUTTON)) {
           markAllWhoVoted();
-          $(`.${DOM.CLASSNAME.MARK_ALL_BUTTON}`).innerText = 'Zrobione :)';
+          $(`.${EL.CLASSNAME.MARK_ALL_BUTTON}`).innerText = 'Zrobione :)';
           setTimeout(() => {
-            $(`.${DOM.CLASSNAME.MARK_ALL_BUTTON_ELEMENT}`).style.display = 'none';
-            $(`.${DOM.CLASSNAME.MARK_ALL_BUTTON}`).innerText = 'Oznacz wszystkich poniżej';
+            $(`.${EL.CLASSNAME.MARK_ALL_BUTTON_ELEMENT}`).style.display = 'none';
+            $(`.${EL.CLASSNAME.MARK_ALL_BUTTON}`).innerText = 'Oznacz wszystkich poniżej';
           }, 500);
         }
         if (target.closest('#voters') || target.closest('#votersBury')) {
-          $(`.${DOM.CLASSNAME.MARK_ALL_BUTTON_ELEMENT}`).style.display = 'block';
+          $(`.${EL.CLASSNAME.MARK_ALL_BUTTON_ELEMENT}`).style.display = 'block';
         }
       })
   }

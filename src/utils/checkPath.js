@@ -5,6 +5,8 @@ const path = location.href;
  * @returns boolean if current location matches checked path
  */
 const isPath = {
+  sitewide: () => !!(path.indexOf("wykop.pl") > -1),
+
   main: () => {
     if (
       path.indexOf("wykop.pl/link/") > -1 ||

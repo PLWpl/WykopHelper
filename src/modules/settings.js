@@ -1,5 +1,12 @@
+/**
+ * To add new setting option:
+ *  - add it as a default in /utils/handleLocalStorage
+ *  - add HTML for it in /model/modules/settings.model
+ *  - add check in appropriate module. If you want it to be ON by default, you will need to make it so using /utils/rynOnceOnUpdate
+ */
+
 import { $, $$ } from '../utils/dom';
-import DOM_SELECTORS from '../constants/domSelectors';
+import { DOM } from '../constants/domSelectors';
 import STORAGE_KEY_NAMES from '../constants/localStorageKeyNames';
 import { getLocalStorage } from '../utils/handleLocalStorage';
 import settingsModel from '../model/modules/settings.model';
@@ -7,13 +14,13 @@ import styles from '../model/styles';
 import { injectStyles } from '../utils/inject';
 import { russianPropagandaModal, warnOnReloadModal } from '../model/utils/modals';
 
-const { SETTINGS: DOM } = DOM_SELECTORS;
+const { SETTINGS: EL } = DOM;
 
 /**
  * Inserts navigation item on a /ustawienia/ page with link to WykopHelper settings
  */
 export const createSettingsPage = () => {
-  $(DOM.SELECTOR.LAST_NAV_ELEMENT).insertAdjacentHTML('beforeend', settingsModel.settingsNav);
+  $(EL.SELECTOR.LAST_NAV_ELEMENT).insertAdjacentHTML('beforeend', settingsModel.settingsNav);
 };
 
 export const handleSettings = () => {
@@ -21,7 +28,7 @@ export const handleSettings = () => {
   const markedUsers = getLocalStorage();
   const uniqueNicksSet = getLocalStorage('unique');
 
-  const settingsFormElement = $(DOM.SELECTOR.SETTINGS_FORM_ELEMENT);
+  const settingsFormElement = $(EL.SELECTOR.SETTINGS_FORM_ELEMENT);
 
   /**
    * clears localstorage. Doesn't remove items, but sets them to empty array
@@ -36,7 +43,7 @@ export const handleSettings = () => {
    * Creates table with marked users.
    */
   const generateUserTables = () => {
-    const tableBody = $(`.${DOM.CLASSNAME.WH_USER_TABLE_BODY}`);
+    const tableBody = $(`.${EL.CLASSNAME.WH_USER_TABLE_BODY}`);
 
     markedUsers.forEach(el => {
       tableBody.insertAdjacentHTML(
@@ -49,13 +56,13 @@ export const handleSettings = () => {
   }
 
   const toggleUserTableVisibility = () => {
-    $(`.${DOM.CLASSNAME.WH_USER_TABLE_CONTAINER}`)
-      .classList.toggle(`${DOM.CLASSNAME.WH_USER_TABLE_CONTAINER}--hidden`);
+    $(`.${EL.CLASSNAME.WH_USER_TABLE_CONTAINER}`)
+      .classList.toggle(`${EL.CLASSNAME.WH_USER_TABLE_CONTAINER}--hidden`);
 
-    if ($(`.${DOM.CLASSNAME.WH_USER_TABLE_CONTAINER}--hidden`)) {
-      document.getElementById(DOM.ID.SHOW_MARKED_TABLE).textContent = settingsModel.textContent.SHOW_ALL_MARKED;
+    if ($(`.${EL.CLASSNAME.WH_USER_TABLE_CONTAINER}--hidden`)) {
+      document.getElementById(EL.ID.SHOW_MARKED_TABLE).textContent = settingsModel.textContent.SHOW_ALL_MARKED;
     } else {
-      document.getElementById(DOM.ID.SHOW_MARKED_TABLE).textContent = settingsModel.textContent.HIDE_TABLE;
+      document.getElementById(EL.ID.SHOW_MARKED_TABLE).textContent = settingsModel.textContent.HIDE_TABLE;
     }
   }
 
@@ -93,7 +100,7 @@ export const handleSettings = () => {
 
     inputs.forEach(el => {
       const category = el.getAttribute('category');
-      if (el.id !== DOM.ID.ALLOW_WIPE_MARKED_LIST && el.type === 'checkbox') {
+      if (el.id !== EL.ID.ALLOW_WIPE_MARKED_LIST && el.type === 'checkbox') {
         el.checked = settings[category][el.name];
       } else if (el.type === 'text' && el.name !== 'nsQ') {
         el.value = settings[category][el.name];
@@ -102,8 +109,8 @@ export const handleSettings = () => {
   }
 
   const renderSettings = () => {
-    $(DOM.SELECTOR.ACTIVE_NAV_ELEMENT).classList.remove('active');
-    $(`.${DOM.CLASSNAME.WH_NAV_SETTINGS_LINK}`).classList.add('active');
+    $(EL.SELECTOR.ACTIVE_NAV_ELEMENT).classList.remove('active');
+    $(`.${EL.CLASSNAME.WH_NAV_SETTINGS_LINK}`).classList.add('active');
   
     settingsFormElement.innerHTML = '';
     settingsFormElement.innerHTML = settingsModel.settingsMarkup;
@@ -124,30 +131,30 @@ export const handleSettings = () => {
       const category = event.target.getAttribute('category');
       const name = event.target.name;
 
-      if (event.target.type === 'checkbox' && event.target.id !==  DOM.ID.ALLOW_WIPE_MARKED_LIST) {
+      if (event.target.type === 'checkbox' && event.target.id !==  EL.ID.ALLOW_WIPE_MARKED_LIST) {
         settings[category][name] = !settings[category][name];
         localStorage.setItem(STORAGE_KEY_NAMES.WH_SETTINGS, JSON.stringify(settings));
       }
     }, {passive: true});
 
     settingsFormElement.addEventListener('click', event => {
-      if (event.target.id === DOM.ID.SHOW_MARKED_TABLE) {
+      if (event.target.id === EL.ID.SHOW_MARKED_TABLE) {
         event.preventDefault();
         toggleUserTableVisibility();
       }
-      if (event.target.id ===  DOM.ID.ALLOW_WIPE_MARKED_LIST) {
+      if (event.target.id ===  EL.ID.ALLOW_WIPE_MARKED_LIST) {
         event.target.disabled = true;
-        document.getElementById(DOM.ID.REMOVE_ALL_MARKED).disabled = false;
-        document.getElementById(DOM.ID.REMOVE_ALL_MARKED).style.opacity = 1;
+        document.getElementById(EL.ID.REMOVE_ALL_MARKED).disabled = false;
+        document.getElementById(EL.ID.REMOVE_ALL_MARKED).style.opacity = 1;
       }
-      if (event.target.id === DOM.ID.REMOVE_ALL_MARKED) {
+      if (event.target.id === EL.ID.REMOVE_ALL_MARKED) {
         event.preventDefault();
         wipeAllMarkedUsers();
       }
-      if (event.target.id === DOM.ID.RUSSIAN_PROPAGANDA_INFO_LINK) {
+      if (event.target.id === EL.ID.RUSSIAN_PROPAGANDA_INFO_LINK) {
         showModalWithPropagandaExplanation();
       }
-      if (event.target.id === DOM.ID.WARN_ON_RELOAD_INFO_LINK) {
+      if (event.target.id === EL.ID.WARN_ON_RELOAD_INFO_LINK) {
         showModalWithWarnOnReloadExplanation();
       }
     }, {passive: false})
@@ -184,9 +191,9 @@ export const handleSettings = () => {
     renderSettings();
     handleSettingsForm();
 
-    $(`.${DOM_SELECTORS.SETTINGS.CLASSNAME.WH_USER_TABLE}`).addEventListener('click', event => {
+    $(`.${DOM.SETTINGS.CLASSNAME.WH_USER_TABLE}`).addEventListener('click', event => {
       const target = event.target;
-      if (target.classList.contains(`${DOM_SELECTORS.SETTINGS.CLASSNAME.WH_USER_TABLE_REMOVE_BUTTON}`)) {
+      if (target.classList.contains(`${DOM.SETTINGS.CLASSNAME.WH_USER_TABLE_REMOVE_BUTTON}`)) {
         const nick = target.dataset.whuserremove;
         removeTroll(nick);
         target.closest('tr').remove();

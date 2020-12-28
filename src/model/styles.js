@@ -129,6 +129,7 @@ export const modal = `
 
 .swal2-content {
   color: #888;
+  text-align: unset;
 }
 
 .swal2-styled.swal2-confirm {
@@ -142,6 +143,23 @@ export const modal = `
   text-align: left;
   margin-left: 2rem;
   margin-bottom: .7rem
+}
+
+.${DOM.MODAL.CLASSNAME.INPUT_LABEL} {
+  text-transform: none;
+}
+
+.${DOM.MODAL.CLASSNAME.INPUT_TEXT} {
+  color: #464646;
+}
+
+.${DOM.MODAL.CLASSNAME.SCROLLABLE_TEXT} {
+  margin-top:.5rem;
+  border:1px solid gray;
+  padding: 1rem;
+  text-align:left;
+  overflow: scroll;
+  max-height: 15rem;
 }
 `
 const styles = {
