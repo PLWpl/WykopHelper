@@ -567,6 +567,7 @@
     };
 
     const updateView = () => {
+      console.log(`updating...`);
       markedUsers = getLocalStorage("marked");
       markUsers();
 
@@ -589,6 +590,7 @@
           $(`.${EL.CLASSNAME.BADGE}`, element).remove();
         }
       });
+      console.log(`updated`);
     };
 
     // fired on clicking a button "Oznacz".
@@ -659,15 +661,10 @@
     };
 
     const changeMarkedUser = (nick, prop, newValue) => {
-      console.log(`ls: nick ${nick}`);
-      console.log(`ls: prop ${prop}`);
-      console.log(`ls: newValue ${newValue}`);
+      console.log(`changing...`);
       for (let item of markedUsers.entries()) {
-        if (item.nick === nick) {
-          console.log(`ls: item.prop ${item.prop}`);
-          console.log(`ls: val ${newValue}`);
-          item[prop] = newValue;
-          console.log(item[prop]);
+        if (item[1].nick === nick) {
+          item[1][prop] = newValue;
           const marked = markedUsers.filter(el => el != null);
           localStorage.setItem(
             STORAGE_KEY_NAMES.MARKED_USERS,
@@ -675,6 +672,7 @@
           );
         }
       }
+      console.log(`changed`);
     };
 
     // gets user data from objects inside marked users array. For now the only useful data returned is link to the offending post
@@ -715,7 +713,6 @@
         width: "80%",
       }).then(result => {
         if (result.isConfirmed) {
-          console.log(`removing`);
           removeMarkedUser(nick);
           // eslint-disable-next-line
           Swal.fire(
@@ -724,12 +721,9 @@
             "info"
           );
         } else if (result.isDenied) {
-          console.log(`saving...`);
           const newLabel = $(`#${DOM.MODAL.ID.BADGE_TEXT}`).value;
-          console.log(newLabel);
           changeMarkedUser(nick, 'label', newLabel);
-        } else {
-          console.log(`sth else xd`);
+          updateView();
         }
       });
     };

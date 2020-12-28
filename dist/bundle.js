@@ -555,6 +555,7 @@ const handleBadges = () => {
   };
 
   const updateView = () => {
+    console.log(`updating...`);
     markedUsers = getLocalStorage("marked");
     markUsers();
 
@@ -577,6 +578,7 @@ const handleBadges = () => {
         $(`.${EL.CLASSNAME.BADGE}`, element).remove();
       }
     });
+    console.log(`updated`);
   };
 
   // fired on clicking a button "Oznacz".
@@ -647,14 +649,10 @@ const handleBadges = () => {
   };
 
   const changeMarkedUser = (nick, prop, newValue) => {
+    console.log(`changing...`);
     for (let item of markedUsers.entries()) {
-      if (item.nick === nick) {
-        console.log(`ls: nick ${nick}`);
-        console.log(`ls: prop ${prop}`);
-        console.log(`ls: item.prop ${item.prop}`);
-        console.log(`ls: val ${newValue}`);
-        item[prop] = newValue;
-        console.log(item[prop]);
+      if (item[1].nick === nick) {
+        item[1][prop] = newValue;
         const marked = markedUsers.filter(el => el != null);
         localStorage.setItem(
           STORAGE_KEY_NAMES.MARKED_USERS,
@@ -662,6 +660,7 @@ const handleBadges = () => {
         );
       }
     }
+    console.log(`changed`);
   };
 
   // gets user data from objects inside marked users array. For now the only useful data returned is link to the offending post
@@ -702,7 +701,6 @@ const handleBadges = () => {
       width: "80%",
     }).then(result => {
       if (result.isConfirmed) {
-        console.log(`removing`);
         removeMarkedUser(nick);
         // eslint-disable-next-line
         Swal.fire(
@@ -711,12 +709,9 @@ const handleBadges = () => {
           "info"
         );
       } else if (result.isDenied) {
-        console.log(`saving...`);
         const newLabel = $(`#${DOM.MODAL.ID.BADGE_TEXT}`).value;
-        console.log(newLabel);
         changeMarkedUser(nick, 'label', newLabel);
-      } else {
-        console.log(`sth else xd`);
+        updateView();
       }
     });
   };
