@@ -27,6 +27,9 @@ Dodatek WykopHelper został właśnie zaktualizowany do wersji ${version}. Wprow
   <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
     Chcesz widzieć znaleziska z określonych kategorii (np. #polityka), ale dla własnego komfortu psychicznego preferujesz nie widzieć komentarzy pod nim? Od teraz możesz zdefiniować w ustawieniach listę tagów, dla których komentarze pod znaleziskiem będą usuwane.
   </li>
+  <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
+    Na stronie ustawień pojawiły się linki do historii zmian oraz do strony opisującej ficzery dodatku.
+  </li>
 </ul>
 `,
   button: "Okej!",

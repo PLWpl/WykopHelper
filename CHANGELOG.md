@@ -3,6 +3,7 @@
 * pole tekstowe wyświetlające tekst komentarza w popupie odznaki uzyskało możliwość przewijania. To oznacza, że teraz bardzo długie komentarze nie będą rozciągać okna popupu nawet poza monitor.
 * możliwość zdecydowania w ustawieniach, czy "woodle" - czyli ten okolicznościowy obrazek na belce menu - będzie ukrywany. Domyślnie nie jest. :)
 * Chcesz widzieć znaleziska z określonych kategorii (np. #polityka), ale dla własnego komfortu psychicznego preferujesz nie widzieć komentarzy pod nim? Od teraz możesz zdefiniować w ustawieniach listę tagów, dla których komentarze pod znaleziskiem będą usuwane.
+* Na stronie ustawień pojawiły się linki do historii zmian oraz do strony opisującej ficzery dodatku.
 
 0.52
 * fix linka ze źródłem do aktualizacji skryptu
