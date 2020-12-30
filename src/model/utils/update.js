@@ -1,7 +1,7 @@
 import DOM from "../../constants/domSelectors";
 /* eslint max-len: 0 */
 
-export const version = `0.52`;
+export const version = `0.6`;
 
 export const welcomeText = {
   title: "WykopHelper zainstalowany!",
@@ -16,27 +16,25 @@ export const updateText = {
 Dodatek WykopHelper został właśnie zaktualizowany do wersji ${version}. Wprowadzone zmiany to: <br>
 <ul class="${DOM.MODAL.CLASSNAME.LIST}">
   <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
-    <strong>Istotna zmiana</strong>: jeśli używałeś do tej pory oznaczania użytkowników, najprawdopodobniej po tej aktualizacji nie będą oni już dłużej oznaczani, ze względu na zmiany nazw niektórych kluczy. Jeśli zależy Ci na tym, by ich odzyskać, skontaktuj się z autorem dodatku ;) 
+    Dodano możliwość zmiany tekstu na odznace każdego użytkownika z osobna. By zmienić tekst wystarczy kliknąć na odznace przy danym userze, odszukać nowe pole tekstowe i wpisać tam, co dusza zapragnie :)
   </li>
   <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
-    Od teraz, najechanie myszką na odznakę nic nie da - należy w nią kliknąć. Po kliknięciu otworzy się okienko z informacjami. Aktualnie znajduje się tam informacja o przyczynie oznaczenia; treść komentarza, link do ew. treści multimedialnych w nim osadzonych oraz link do samego komentarza. Wkrótce pojawi się tutaj kilka innych opcji, w tym m.in. zmiana nazwy oznaczenia na customową, zmiana koloru oznaczenia czy całkowite usuwanie aktywności użytkownika z wykopu.
+    Pole tekstowe wyświetlające tekst komentarza w popupie odznaki uzyskało możliwość przewijania. To oznacza, że teraz bardzo długie komentarze nie będą rozciągać okna popupu nawet poza monitor.
   </li>
   <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
-    Opcja dodania oznaczenia hurtem, dla wszystkich użytkowników któzy wykopali/zakopali dane znalezisko. Aby skorzystać, zjedź na sam dół i otwórz listę użytkowników, którzy wykonali interesującą Cię akcję, a następnie kliknij przycisk "Oznacz wszystkich poniżej".
+    W ustawieniach można teraz zadecydować o ukrywaniu woodle (czyli wykopowej wersji doodle - okolicznościowy obrazek umieszczany na belce menu).
   </li>
   <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
-    Ujednolicony styl graficzny modali, czyli takich informacji jak ta.
+    Chcesz widzieć znaleziska z określonych kategorii (np. #polityka), ale dla własnego komfortu psychicznego preferujesz nie widzieć komentarzy pod nim? Od teraz możesz zdefiniować w ustawieniach listę tagów, dla których komentarze pod znaleziskiem będą usuwane.
   </li>
   <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
-    Pojawiły się ikony informacji (ℹ) przy niektórych opcjach w ustawieniach dodatku. Po kliknięciu na nie, naturalnie, pojawią się informacje dodatkowe :)
+    Na stronie ustawień pojawiły się linki do historii zmian oraz do strony opisującej ficzery dodatku.
   </li>
   <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
-    Naprawiono wiele bugów, w tym m.in. nieznikające odznaki po usunięciu oznaczenia, czerwona obwódka wokół wykopowych osiągnięć.
-  </li>
-  <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
-    Uporządkowano (trochę :D) kod dodatku, który umożliwi szybszy dalszy rozwój.
+    Kilka pomniejszych fixów i ulepszeń.
   </li>
 </ul>
+🎉🎉 <strong>Szczęśliwego Nowego Roku!</strong> 🎉🎉
 `,
   button: "Okej!",
 };

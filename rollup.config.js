@@ -30,7 +30,7 @@ export default {
         terser(),
         banner('==/UserScript=='),
         banner('@grant        none'),
-        banner('@require      https://cdn.jsdelivr.net/npm/sweetalert2@9'),
+        banner('@require      https://cdn.jsdelivr.net/npm/sweetalert2@10'),
         banner('@match        https://www.wykop.pl/*'),
         banner('@author       <%= pkg.author %>'),
         banner('@description  Zestaw narzędzi pomocnych na wykopie. Pełna, niezminifikowana wersja kodu dostępna na githubie - PLWpl/WykopHelper'),
@@ -48,7 +48,7 @@ export default {
       plugins: [
         banner('==/UserScript=='),
         banner('@grant        none'),
-        banner('@require      https://cdn.jsdelivr.net/npm/sweetalert2@9'),
+        banner('@require      https://cdn.jsdelivr.net/npm/sweetalert2@10'),
         banner('@match        https://www.wykop.pl/*'),
         banner('@author       <%= pkg.author %>'),
         banner('@description  Zestaw narzędzi pomocnych na wykopie.'),
@@ -56,6 +56,24 @@ export default {
         banner('@updateURL    https://cdn.jsdelivr.net/gh/plwpl/WykopHelper/dist/whhelper-dev.user.js'),
         banner('@version      <%= pkg.version %>'),
         banner('@name         WykopHelper - DEV'),
+        banner('==UserScript=='),
+      ]
+    },
+    {
+      file: 'dist/whhelper-dev.js',
+      format: 'iife',
+      name: 'distVersionDEV',
+      plugins: [
+        banner('==/UserScript=='),
+        banner('@grant        none'),
+        banner('@require      https://cdn.jsdelivr.net/npm/sweetalert2@10'),
+        banner('@match        https://www.wykop.pl/*'),
+        banner('@author       <%= pkg.author %>'),
+        banner('@description  Zestaw narzędzi pomocnych na wykopie.'),
+        banner('@downloadURL  https://cdn.jsdelivr.net/gh/plwpl/WykopHelper/dist/whhelper-dev.user.js'),
+        banner('@updateURL    https://cdn.jsdelivr.net/gh/plwpl/WykopHelper/dist/whhelper-dev.user.js'),
+        banner('@version      <%= pkg.version %>'),
+        banner('@name         WykopHelper - DEV ALPHA'),
         banner('==UserScript=='),
       ]
     }

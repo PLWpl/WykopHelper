@@ -7,11 +7,13 @@ const initialSettings = {
   BADGE: {
     HIDE_MARKED_USERS: false,
     DEFAULT_NAME: "Debil",
-    DEFAULT_COLOR: "red",
+    DEFAULT_COLOR: "#ff0000",
   },
   GENERAL: {
     WARN_ON_RELOAD: false,
     WARN_ON_SUSPECTED_RUSSIAN_PROPAGANDA: true,
+    REMOVE_WOODLE: false,
+    REMOVE_COMMENTS: '',
   },
 };
 const initialUnique = [];

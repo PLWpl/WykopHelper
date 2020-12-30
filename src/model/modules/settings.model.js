@@ -4,9 +4,12 @@ const { SETTINGS: {CLASSNAME} } = DOM_SELECTORS;
 
 export const settingsMarkup = `
 <fieldset>
+  <small>
+    <a target="_blank" href="https://plwpl.github.io/WykopHelper">ᴅᴏᴄs</a> ‖ <a target="_blank" href="https://plwpl.github.io/WykopHelper/#6-changelog">ᴄʜᴀɴɢᴇʟᴏɢ</a>
+  <small>
   <h4>WykopHelper - Ustawienia</h4>
 <!-- GENERAL -->
-  <div class="space ${CLASSNAME.SETTINGS_GENERAL}">
+  <div class="space ${CLASSNAME.SETTINGS_BOX} ${CLASSNAME.SETTINGS_GENERAL}">
     <div class="row">
       <input
         class="checkbox"
@@ -27,9 +30,30 @@ export const settingsMarkup = `
       />
       <label class="inline" for="warnOnRussian">Oznaczaj znaleziska ze źródeł podejrzewanych o szerzenie Rosyjskiej propagandy </label><span id="russianPropagandaInfo" style="cursor:pointer;border:1px solid currentcolor;padding:0 .5rem">ℹ</span>
     </div>
+    <div class="row">
+      <input
+        class="checkbox"
+        type="checkbox"
+        category="GENERAL"
+        name="REMOVE_WOODLE"
+        id="removeWoodle"
+      />
+      <label class="inline" for="removeWoodle">Usuwaj woodle (okolicznościowy obrazek na belce)</label>
+    </div>
+    <div class="row space">
+      <label class="inline" for="removeByTag" style="margin-left:0;display:block;">Usuń komentarze w znaleziskach z następującymi tagami:</label>
+      <input 
+        value="" 
+        type="text" 
+        placeholder="Tagi oddzielaj przecinkiem, nie używaj hasha #" 
+        category="GENERAL" 
+        name="REMOVE_BY_TAG" 
+        id="removeByTag"
+      />
+    </div>
   </div>
 <!--  BADGE -->
-  <div class="space ${CLASSNAME.SETTINGS_BADGE}">
+  <div class="space ${CLASSNAME.SETTINGS_BOX} ${CLASSNAME.SETTINGS_BADGE}">
     <div class="row">
       <input
         class="checkbox"
@@ -42,12 +66,19 @@ export const settingsMarkup = `
       <label title="Ficzer w trakcie prac koncepcyjnych :)" class="inline settings__crossed" for="hideMarkedUser">Ukrywaj treści oznakowanych użytkowników</label>
     </div>
     <div class="row space">
-      <input placeholder="Domyślny tekst odznaki" id="badgeDefaultValue" category="BADGE" value="" name="DEFAULT_NAME" type="text">
-      <small>Domyślny tekst odznaki</small>
+      <label class="inline" for="badgeDefaultValue" style="margin-left:0;display:block;">Domyślny tekst odznaki:</label>
+      <input 
+        placeholder="Domyślny tekst odznaki" 
+        id="badgeDefaultValue" 
+        category="BADGE" 
+        value=""
+        name="DEFAULT_NAME" 
+        type="text"
+      />
     </div>
   </div>
 <!-- SPECIAL -->
-  <div class="space ${CLASSNAME.SETTINGS_SPECIAL}">
+  <div class="space ${CLASSNAME.SETTINGS_BOX} ${CLASSNAME.SETTINGS_SPECIAL}">
     <div class="row">
       <small>Jeśli chcesz wyczyścić listę oznaczonych wcześniej użytkowników, możesz to zrobić poniżej. W związku z tym, że jest to akcja nieodwracalna, musisz najpierw potwierdzić, że na pewno taki jest Twój cel. Uwaga - po kliknięciu przycisku akcja wykonywana jest natychmiast, bez dodatkowych potwierdzeń!</small>
     </div>

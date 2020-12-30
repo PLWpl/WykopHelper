@@ -8,6 +8,8 @@ import { initSettings } from './utils/handleLocalStorage';
 import { highlightOp } from './modules/highlightOp';
 import { warnOnReload } from './modules/warnOnReload';
 import { embedOnPaste } from './modules/embedOnPaste';
+import { removeWoodle } from './modules/removeWoodle';
+import { removeCommentsByTag } from './modules/removeCommentsByTag';
 
 /**
 * Capitalize first letter
@@ -22,6 +24,9 @@ updateAlert();
 //initializes settings if none found
 initSettings();
 
+if (isPath.sitewide()) {
+  removeWoodle();
+}
 if (isPath.main()) {
   handleBadges();
   warnOnReload();
@@ -36,6 +41,7 @@ if (isPath.whSettings()) {
 }
 if (isPath.thread()) {
   handleDomainCheck();
+  removeCommentsByTag();
 }
 if (isPath.mirkoThread()) {
   highlightOp();

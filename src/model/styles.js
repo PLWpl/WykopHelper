@@ -106,12 +106,18 @@ export const settings = `
   cursor: pointer;
   color: #c0392b;
 }
+.${DOM.SETTINGS.CLASSNAME.SETTINGS_BOX} {
+  border-bottom: 1px solid #d3d3d329;
+  border-left: 1px solid #d3d3d329;
+  border-right: 1px solid #d3d3d329;
+}
 .${DOM.MODAL.CLASSNAME.LINK} {
   color: #862828;
 }
 .${DOM.MODAL.CLASSNAME.LINK}:hover {
   color: #4a1313 !important;
-}`;
+}
+`;
 
 export const modal = `
 .swal2-popup.swal2-modal.swal2-show {
@@ -129,6 +135,7 @@ export const modal = `
 
 .swal2-content {
   color: #888;
+  text-align: unset;
 }
 
 .swal2-styled.swal2-confirm {
@@ -142,6 +149,23 @@ export const modal = `
   text-align: left;
   margin-left: 2rem;
   margin-bottom: .7rem
+}
+
+.${DOM.MODAL.CLASSNAME.INPUT_LABEL} {
+  text-transform: none;
+}
+
+.${DOM.MODAL.CLASSNAME.INPUT_TEXT}, .${DOM.MODAL.CLASSNAME.INPUT_TEXT}:focus {
+  color: #464646 !important;
+}
+
+.${DOM.MODAL.CLASSNAME.SCROLLABLE_TEXT} {
+  margin-top:.5rem;
+  border:1px solid gray;
+  padding: 1rem;
+  text-align:left;
+  overflow-y: auto;
+  max-height: 15rem;
 }
 `
 const styles = {

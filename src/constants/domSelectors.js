@@ -1,7 +1,17 @@
-const DOM = {
+export const DOM = {
   COMMON: {
     CLASSNAME: {
+      // wykop.pl elements
+      WOODLE: 'woodle',
+      // custom WH elements
       BUTTON: 'buttonWH',
+    },
+    ID: {
+      // wykop.pl elements
+      COMMENTS_STREAM: 'itemsStream',
+    },
+    SELECTOR: {
+      TAGS: '.fix-tagline > .tag.affect.create[href]'
     }
   },
   BADGE: {
@@ -44,6 +54,7 @@ const DOM = {
       SETTINGS_GENERAL: 'settings--general',
       SETTINGS_BADGE: 'settings--badge',
       SETTINGS_SPECIAL: 'settings--special',
+      SETTINGS_BOX: 'settings__box',
       WH_NAV_SETTINGS_LINK: 'whSettingsLink',
       WH_USER_TABLE: 'tableWH',
       WH_USER_TABLE_ROW: 'tableWH__row',
@@ -104,6 +115,12 @@ const DOM = {
       LINK: 'whModalLink',
       LIST: 'whModal__list',
       LIST_ITEM: 'whModal__list-item',
+      INPUT_LABEL: 'whModal__label',
+      INPUT_TEXT: 'whModal__inputText',
+      SCROLLABLE_TEXT: 'whModal__scrollableText'
+    },
+    ID: {
+      BADGE_TEXT: 'whModal_badgeText',
     }
   },
 };

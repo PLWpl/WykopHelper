@@ -23,11 +23,13 @@ export const badgeUserModal = props => {
   return {
     title: `${props.nick}`,
     content: `
-    <p style="text-align:left">Przyczyna oznaczenia jako <strong>${props.label}</strong>:</p>
-    <div style="margin-top:.5rem;border:1px solid gray;padding: 1rem;text-align:left"><p>${props.content}</p>
+    <p style="text-align:left">Przyczyna oznaczenia</strong>:</p>
+    <div class="${DOM.MODAL.CLASSNAME.SCROLLABLE_TEXT}"><p>${props.content}</p>
     ${props.media ? mediaText(props.media) : ''}</div>
     <p style="margin-top:1rem;text-align:right"><a href="${props.link}">Link do komentarza lub znaleziska</a></p>
+    <label class="${DOM.MODAL.CLASSNAME.INPUT_LABEL}">Treść odznaki: <input autocomplete="off" value="${props.label}" class="${DOM.MODAL.CLASSNAME.INPUT_TEXT}" id="${DOM.MODAL.ID.BADGE_TEXT}"></label>
     `,
     button: "Usuń oznaczenie",
+    buttonClose: "Zapisz"
   };
 };
