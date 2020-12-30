@@ -1,7 +1,7 @@
 import DOM from "../../constants/domSelectors";
 /* eslint max-len: 0 */
 
-export const version = `0.55`;
+export const version = `0.6`;
 
 export const welcomeText = {
   title: "WykopHelper zainstalowany!",
@@ -30,7 +30,11 @@ Dodatek WykopHelper został właśnie zaktualizowany do wersji ${version}. Wprow
   <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
     Na stronie ustawień pojawiły się linki do historii zmian oraz do strony opisującej ficzery dodatku.
   </li>
+  <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
+    Kilka pomniejszych fixów i ulepszeń.
+  </li>
 </ul>
+🎉🎉 <strong>Szczęśliwego Nowego Roku!</strong> 🎉🎉
 `,
   button: "Okej!",
 };
