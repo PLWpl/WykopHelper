@@ -4,6 +4,9 @@ const { SETTINGS: {CLASSNAME} } = DOM_SELECTORS;
 
 export const settingsMarkup = `
 <fieldset>
+  <small>
+    <a target="_blank" href="https://plwpl.github.io/WykopHelper">ᴅᴏᴄs</a> ‖ <a target="_blank" href="https://plwpl.github.io/WykopHelper/#6-changelog">ᴄʜᴀɴɢᴇʟᴏɢ</a>
+  <small>
   <h4>WykopHelper - Ustawienia</h4>
 <!-- GENERAL -->
   <div class="space ${CLASSNAME.SETTINGS_BOX} ${CLASSNAME.SETTINGS_GENERAL}">
