@@ -103,7 +103,7 @@ export const handleSettings = () => {
       if (el.id !== EL.ID.ALLOW_WIPE_MARKED_LIST && el.type === 'checkbox') {
         el.checked = settings[category][el.name];
       } else if (el.type === 'text' && el.name !== 'nsQ') {
-        el.value = settings[category][el.name];
+        el.value = settings[category][el.name] || '';
       }
     })    
   }

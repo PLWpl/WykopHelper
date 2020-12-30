@@ -106,12 +106,18 @@ export const settings = `
   cursor: pointer;
   color: #c0392b;
 }
+.${DOM.SETTINGS.CLASSNAME.SETTINGS_BOX} {
+  border-bottom: 1px solid #d3d3d329;
+  border-left: 1px solid #d3d3d329;
+  border-right: 1px solid #d3d3d329;
+}
 .${DOM.MODAL.CLASSNAME.LINK} {
   color: #862828;
 }
 .${DOM.MODAL.CLASSNAME.LINK}:hover {
   color: #4a1313 !important;
-}`;
+}
+`;
 
 export const modal = `
 .swal2-popup.swal2-modal.swal2-show {

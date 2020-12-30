@@ -1,7 +1,7 @@
 import DOM from "../../constants/domSelectors";
 /* eslint max-len: 0 */
 
-export const version = `0.53`;
+export const version = `0.55`;
 
 export const welcomeText = {
   title: "WykopHelper zainstalowany!",
@@ -19,7 +19,13 @@ Dodatek WykopHelper został właśnie zaktualizowany do wersji ${version}. Wprow
     Dodano możliwość zmiany tekstu na odznace każdego użytkownika z osobna. By zmienić tekst wystarczy kliknąć na odznace przy danym userze, odszukać nowe pole tekstowe i wpisać tam, co dusza zapragnie :)
   </li>
   <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
+    Pole tekstowe wyświetlające tekst komentarza w popupie odznaki uzyskało możliwość przewijania. To oznacza, że teraz bardzo długie komentarze nie będą rozciągać okna popupu nawet poza monitor.
+  </li>
+  <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
     W ustawieniach można teraz zadecydować o ukrywaniu woodle (czyli wykopowej wersji doodle - okolicznościowy obrazek umieszczany na belce menu).
+  </li>
+  <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
+    Chcesz widzieć znaleziska z określonych kategorii (np. #polityka), ale dla własnego komfortu psychicznego preferujesz nie widzieć komentarzy pod nim? Od teraz możesz zdefiniować w ustawieniach listę tagów, dla których komentarze pod znaleziskiem będą usuwane.
   </li>
 </ul>
 `,

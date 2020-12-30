@@ -5,7 +5,13 @@ export const DOM = {
       WOODLE: 'woodle',
       // custom WH elements
       BUTTON: 'buttonWH',
-
+    },
+    ID: {
+      // wykop.pl elements
+      COMMENTS_STREAM: 'itemsStream',
+    },
+    SELECTOR: {
+      TAGS: '.fix-tagline > .tag.affect.create[href]'
     }
   },
   BADGE: {
@@ -48,6 +54,7 @@ export const DOM = {
       SETTINGS_GENERAL: 'settings--general',
       SETTINGS_BADGE: 'settings--badge',
       SETTINGS_SPECIAL: 'settings--special',
+      SETTINGS_BOX: 'settings__box',
       WH_NAV_SETTINGS_LINK: 'whSettingsLink',
       WH_USER_TABLE: 'tableWH',
       WH_USER_TABLE_ROW: 'tableWH__row',
