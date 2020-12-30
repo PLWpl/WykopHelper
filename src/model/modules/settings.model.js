@@ -6,7 +6,7 @@ export const settingsMarkup = `
 <fieldset>
   <h4>WykopHelper - Ustawienia</h4>
 <!-- GENERAL -->
-  <div class="space ${CLASSNAME.SETTINGS_GENERAL}">
+  <div class="space ${CLASSNAME.SETTINGS_BOX} ${CLASSNAME.SETTINGS_GENERAL}">
     <div class="row">
       <input
         class="checkbox"
@@ -37,9 +37,20 @@ export const settingsMarkup = `
       />
       <label class="inline" for="removeWoodle">Usuwaj woodle (okolicznościowy obrazek na belce)</label>
     </div>
+    <div class="row">
+      <label class="inline" for="removeByTag">Usuń komentarze w znaleziskach z następującymi tagami:</label>
+      <input 
+        value="" 
+        type="text" 
+        placeholder="Tagi oddzielaj przecinkiem, nie używaj hasha #" 
+        category="GENERAL" 
+        name="REMOVE_BY_TAG" 
+        id="removeByTag"
+      />
+    </div>
   </div>
 <!--  BADGE -->
-  <div class="space ${CLASSNAME.SETTINGS_BADGE}">
+  <div class="space ${CLASSNAME.SETTINGS_BOX} ${CLASSNAME.SETTINGS_BADGE}">
     <div class="row">
       <input
         class="checkbox"
@@ -51,13 +62,20 @@ export const settingsMarkup = `
       />
       <label title="Ficzer w trakcie prac koncepcyjnych :)" class="inline settings__crossed" for="hideMarkedUser">Ukrywaj treści oznakowanych użytkowników</label>
     </div>
-    <div class="row space">
-      <input placeholder="Domyślny tekst odznaki" id="badgeDefaultValue" category="BADGE" value="" name="DEFAULT_NAME" type="text">
-      <small>Domyślny tekst odznaki</small>
+    <div class="row">
+      <label class="inline" for="badgeDefaultValue">Domyślny tekst odznaki:</label>
+      <input 
+        placeholder="Domyślny tekst odznaki" 
+        id="badgeDefaultValue" 
+        category="BADGE" 
+        value=""
+        name="DEFAULT_NAME" 
+        type="text"
+      />
     </div>
   </div>
 <!-- SPECIAL -->
-  <div class="space ${CLASSNAME.SETTINGS_SPECIAL}">
+  <div class="space ${CLASSNAME.SETTINGS_BOX} ${CLASSNAME.SETTINGS_SPECIAL}">
     <div class="row">
       <small>Jeśli chcesz wyczyścić listę oznaczonych wcześniej użytkowników, możesz to zrobić poniżej. W związku z tym, że jest to akcja nieodwracalna, musisz najpierw potwierdzić, że na pewno taki jest Twój cel. Uwaga - po kliknięciu przycisku akcja wykonywana jest natychmiast, bez dodatkowych potwierdzeń!</small>
     </div>

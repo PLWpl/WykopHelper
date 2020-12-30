@@ -51,7 +51,10 @@ const DOM = {
       WOODLE: 'woodle',
       // custom WH elements
       BUTTON: 'buttonWH',
-
+    },
+    ID: {
+      // wykop.pl elements
+      COMMENTS_STREAM: 'itemsStream',
     }
   },
   BADGE: {
@@ -94,6 +97,7 @@ const DOM = {
       SETTINGS_GENERAL: 'settings--general',
       SETTINGS_BADGE: 'settings--badge',
       SETTINGS_SPECIAL: 'settings--special',
+      SETTINGS_BOX: 'settings__box',
       WH_NAV_SETTINGS_LINK: 'whSettingsLink',
       WH_USER_TABLE: 'tableWH',
       WH_USER_TABLE_ROW: 'tableWH__row',
@@ -270,12 +274,18 @@ const settings = `
   cursor: pointer;
   color: #c0392b;
 }
+.${DOM.SETTINGS.CLASSNAME.SETTINGS_BOX} {
+  border-bottom: 1px solid #d3d3d329;
+  border-left: 1px solid #d3d3d329;
+  border-right: 1px solid #d3d3d329;
+}
 .${DOM.MODAL.CLASSNAME.LINK} {
   color: #862828;
 }
 .${DOM.MODAL.CLASSNAME.LINK}:hover {
   color: #4a1313 !important;
-}`;
+}
+`;
 
 const modal = `
 .swal2-popup.swal2-modal.swal2-show {
@@ -400,12 +410,13 @@ const initialSettings = {
   BADGE: {
     HIDE_MARKED_USERS: false,
     DEFAULT_NAME: "Debil",
-    DEFAULT_COLOR: "red",
+    DEFAULT_COLOR: "#ff0000",
   },
   GENERAL: {
     WARN_ON_RELOAD: false,
     WARN_ON_SUSPECTED_RUSSIAN_PROPAGANDA: true,
     REMOVE_WOODLE: false,
+    REMOVE_COMMENTS: '',
   },
 };
 const initialUnique = [];
@@ -951,7 +962,7 @@ const settingsMarkup = `
 <fieldset>
   <h4>WykopHelper - Ustawienia</h4>
 <!-- GENERAL -->
-  <div class="space ${CLASSNAME.SETTINGS_GENERAL}">
+  <div class="space ${CLASSNAME.SETTINGS_BOX} ${CLASSNAME.SETTINGS_GENERAL}">
     <div class="row">
       <input
         class="checkbox"
@@ -982,9 +993,20 @@ const settingsMarkup = `
       />
       <label class="inline" for="removeWoodle">Usuwaj woodle (okolicznościowy obrazek na belce)</label>
     </div>
+    <div class="row">
+      <label class="inline" for="removeByTag">Usuń komentarze w znaleziskach z następującymi tagami:</label>
+      <input 
+        value="" 
+        type="text" 
+        placeholder="Tagi oddzielaj przecinkiem, nie używaj hasha #" 
+        category="GENERAL" 
+        name="REMOVE_BY_TAG" 
+        id="removeByTag"
+      />
+    </div>
   </div>
 <!--  BADGE -->
-  <div class="space ${CLASSNAME.SETTINGS_BADGE}">
+  <div class="space ${CLASSNAME.SETTINGS_BOX} ${CLASSNAME.SETTINGS_BADGE}">
     <div class="row">
       <input
         class="checkbox"
@@ -996,13 +1018,20 @@ const settingsMarkup = `
       />
       <label title="Ficzer w trakcie prac koncepcyjnych :)" class="inline settings__crossed" for="hideMarkedUser">Ukrywaj treści oznakowanych użytkowników</label>
     </div>
-    <div class="row space">
-      <input placeholder="Domyślny tekst odznaki" id="badgeDefaultValue" category="BADGE" value="" name="DEFAULT_NAME" type="text">
-      <small>Domyślny tekst odznaki</small>
+    <div class="row">
+      <label class="inline" for="badgeDefaultValue">Domyślny tekst odznaki:</label>
+      <input 
+        placeholder="Domyślny tekst odznaki" 
+        id="badgeDefaultValue" 
+        category="BADGE" 
+        value=""
+        name="DEFAULT_NAME" 
+        type="text"
+      />
     </div>
   </div>
 <!-- SPECIAL -->
-  <div class="space ${CLASSNAME.SETTINGS_SPECIAL}">
+  <div class="space ${CLASSNAME.SETTINGS_BOX} ${CLASSNAME.SETTINGS_SPECIAL}">
     <div class="row">
       <small>Jeśli chcesz wyczyścić listę oznaczonych wcześniej użytkowników, możesz to zrobić poniżej. W związku z tym, że jest to akcja nieodwracalna, musisz najpierw potwierdzić, że na pewno taki jest Twój cel. Uwaga - po kliknięciu przycisku akcja wykonywana jest natychmiast, bez dodatkowych potwierdzeń!</small>
     </div>
@@ -1169,7 +1198,7 @@ const handleSettings = () => {
       if (el.id !== EL$1.ID.ALLOW_WIPE_MARKED_LIST && el.type === 'checkbox') {
         el.checked = settings[category][el.name];
       } else if (el.type === 'text' && el.name !== 'nsQ') {
-        el.value = settings[category][el.name];
+        el.value = settings[category][el.name] || '';
       }
     });    
   };
@@ -1433,6 +1462,45 @@ const removeWoodle = () => {
   }
 };
 
+const removeCommentsByTag = () => {
+  const settings = getLocalStorage('settings');
+  const tagsSubmitted = settings.GENERAL.REMOVE_BY_TAG;
+  const offendingTags = tagsSubmitted.replace(' ', '').replace('#', '').split(',');
+  const wykopTags = Object.assign({}, window.dataLayer2[1]);
+
+  // remove some key-values from that object that aren't needed, so only tags remain
+  delete wykopTags.action;
+  delete wykopTags.event;
+  delete wykopTags.logged;
+  delete wykopTags.method;
+
+  /**
+   * Check if user settings have any tags added, and thus the feature is active.
+   * @return {boolean} True if yes, false otherwise
+   */
+  const isSettingActive = () => {
+    if (offendingTags.length > 0) {
+      return true;
+    }
+
+    return false;
+  };
+
+  // check if tags in a thread match at least one of tags from user settings. If so - remove comments
+  const test = tag => offendingTags.includes(tag);
+  const checkIfTagsPresent = () => Object.values(wykopTags).some(test);
+
+  const handleRemoval = () => {
+    if (checkIfTagsPresent()) {
+      $(`#${DOM.COMMON.ID.COMMENTS_STREAM}`).remove();
+    }
+  };
+
+  if (isSettingActive()) {
+    handleRemoval();
+  }
+};
+
 /**
 * Capitalize first letter
 */
@@ -1463,6 +1531,7 @@ if (isPath.whSettings()) {
 }
 if (isPath.thread()) {
   handleDomainCheck();
+  removeCommentsByTag();
 }
 if (isPath.mirkoThread()) {
   highlightOp();

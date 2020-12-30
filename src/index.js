@@ -9,6 +9,7 @@ import { highlightOp } from './modules/highlightOp';
 import { warnOnReload } from './modules/warnOnReload';
 import { embedOnPaste } from './modules/embedOnPaste';
 import { removeWoodle } from './modules/removeWoodle';
+import { removeCommentsByTag } from './modules/removeCommentsByTag';
 
 /**
 * Capitalize first letter
@@ -40,6 +41,7 @@ if (isPath.whSettings()) {
 }
 if (isPath.thread()) {
   handleDomainCheck();
+  removeCommentsByTag();
 }
 if (isPath.mirkoThread()) {
   highlightOp();
