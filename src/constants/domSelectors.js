@@ -9,6 +9,9 @@ export const DOM = {
     ID: {
       // wykop.pl elements
       COMMENTS_STREAM: 'itemsStream',
+    },
+    SELECTOR: {
+      TAGS: '.fix-tagline > .tag.affect.create[href]'
     }
   },
   BADGE: {

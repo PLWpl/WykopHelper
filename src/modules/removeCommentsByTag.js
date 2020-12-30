@@ -6,15 +6,22 @@ export const removeCommentsByTag = () => {
   const settings = getLocalStorage('settings');
   const tagsSubmitted = settings.GENERAL.REMOVE_BY_TAG;
   const offendingTags = tagsSubmitted.replace(' ', '').replace('#', '').split(',');
-  const wykopTags = Object.assign({}, window.dataLayer2[1]);
+  let wykopTags;
+  
+  if (window.dataLayer2[1]) {
+    wykopTags = Object.assign({}, window.dataLayer2[1]);
 
-  // ALTERNATIVE NEEDED _ WHAT IF THERE IS NO dataLayer2[1], like here? https://www.wykop.pl/link/5873551/skandal-pis-anuluje-podatek-dochodowy-dla-zagranicznych-bankow-centralnych/
-
-  // remove some key-values from that object that aren't needed, so only tags remain
-  delete wykopTags.action;
-  delete wykopTags.event;
-  delete wykopTags.logged;
-  delete wykopTags.method;
+    // remove some key-values from that object that aren't needed, so only tags remain
+    delete wykopTags.action;
+    delete wykopTags.event;
+    delete wykopTags.logged;
+    delete wykopTags.method;
+  } else {
+    wykopTags = [];
+    document.querySelectorAll(DOM.COMMON.SELECTOR.TAGS).forEach(el => {
+      wykopTags.push(el.textContent.replace('#', ''));
+    })
+  }
 
   /**
    * Check if user settings have any tags added, and thus the feature is active.

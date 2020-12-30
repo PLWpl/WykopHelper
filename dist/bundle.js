@@ -55,6 +55,9 @@ const DOM = {
     ID: {
       // wykop.pl elements
       COMMENTS_STREAM: 'itemsStream',
+    },
+    SELECTOR: {
+      TAGS: '.fix-tagline > .tag.affect.create[href]'
     }
   },
   BADGE: {
@@ -993,8 +996,8 @@ const settingsMarkup = `
       />
       <label class="inline" for="removeWoodle">Usuwaj woodle (okolicznościowy obrazek na belce)</label>
     </div>
-    <div class="row">
-      <label class="inline" for="removeByTag">Usuń komentarze w znaleziskach z następującymi tagami:</label>
+    <div class="row space">
+      <label class="inline" for="removeByTag" style="margin-left:0;display:block;">Usuń komentarze w znaleziskach z następującymi tagami:</label>
       <input 
         value="" 
         type="text" 
@@ -1018,8 +1021,8 @@ const settingsMarkup = `
       />
       <label title="Ficzer w trakcie prac koncepcyjnych :)" class="inline settings__crossed" for="hideMarkedUser">Ukrywaj treści oznakowanych użytkowników</label>
     </div>
-    <div class="row">
-      <label class="inline" for="badgeDefaultValue">Domyślny tekst odznaki:</label>
+    <div class="row space">
+      <label class="inline" for="badgeDefaultValue" style="margin-left:0;display:block;">Domyślny tekst odznaki:</label>
       <input 
         placeholder="Domyślny tekst odznaki" 
         id="badgeDefaultValue" 
@@ -1466,13 +1469,22 @@ const removeCommentsByTag = () => {
   const settings = getLocalStorage('settings');
   const tagsSubmitted = settings.GENERAL.REMOVE_BY_TAG;
   const offendingTags = tagsSubmitted.replace(' ', '').replace('#', '').split(',');
-  const wykopTags = Object.assign({}, window.dataLayer2[1]);
+  let wykopTags;
+  
+  if (window.dataLayer2[1]) {
+    wykopTags = Object.assign({}, window.dataLayer2[1]);
 
-  // remove some key-values from that object that aren't needed, so only tags remain
-  delete wykopTags.action;
-  delete wykopTags.event;
-  delete wykopTags.logged;
-  delete wykopTags.method;
+    // remove some key-values from that object that aren't needed, so only tags remain
+    delete wykopTags.action;
+    delete wykopTags.event;
+    delete wykopTags.logged;
+    delete wykopTags.method;
+  } else {
+    wykopTags = [];
+    document.querySelectorAll(DOM.COMMON.SELECTOR.TAGS).forEach(el => {
+      wykopTags.push(el.textContent.replace('#', ''));
+    });
+  }
 
   /**
    * Check if user settings have any tags added, and thus the feature is active.

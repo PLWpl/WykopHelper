@@ -37,8 +37,8 @@ export const settingsMarkup = `
       />
       <label class="inline" for="removeWoodle">Usuwaj woodle (okolicznościowy obrazek na belce)</label>
     </div>
-    <div class="row">
-      <label class="inline" for="removeByTag">Usuń komentarze w znaleziskach z następującymi tagami:</label>
+    <div class="row space">
+      <label class="inline" for="removeByTag" style="margin-left:0;display:block;">Usuń komentarze w znaleziskach z następującymi tagami:</label>
       <input 
         value="" 
         type="text" 
@@ -62,8 +62,8 @@ export const settingsMarkup = `
       />
       <label title="Ficzer w trakcie prac koncepcyjnych :)" class="inline settings__crossed" for="hideMarkedUser">Ukrywaj treści oznakowanych użytkowników</label>
     </div>
-    <div class="row">
-      <label class="inline" for="badgeDefaultValue">Domyślny tekst odznaki:</label>
+    <div class="row space">
+      <label class="inline" for="badgeDefaultValue" style="margin-left:0;display:block;">Domyślny tekst odznaki:</label>
       <input 
         placeholder="Domyślny tekst odznaki" 
         id="badgeDefaultValue" 
