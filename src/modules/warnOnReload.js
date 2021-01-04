@@ -21,9 +21,10 @@ export const isTextareaEmpty = () => {
 export const warnOnReload = () => {
   const settings = getLocalStorage('settings');
   if (settings.GENERAL.WARN_ON_RELOAD) {
-    window.addEventListener('unload', e => {
+    window.addEventListener('beforeunload', e => {
       if (!isTextareaEmpty()) {
         e.preventDefault();
+        e.returnValue = 'Wygląda na to, że jesteś w trakcie pisania komentarza. Czy na pewno chcesz opuścić stronę?';
       }
     })
   }

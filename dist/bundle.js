@@ -1436,9 +1436,10 @@ const isTextareaEmpty = () => {
 const warnOnReload = () => {
   const settings = getLocalStorage('settings');
   if (settings.GENERAL.WARN_ON_RELOAD) {
-    window.addEventListener('unload', e => {
+    window.addEventListener('beforeunload', e => {
       if (!isTextareaEmpty()) {
         e.preventDefault();
+        e.returnValue = 'Wygl\u0105da na to, \u017Ce jeste\u015B w trakcie pisania komentarza. Czy na pewno chcesz opu\u015Bci\u0107 stron\u0119?';
       }
     });
   }
