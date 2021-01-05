@@ -30,6 +30,8 @@ Odznaka będzie widoczna przy nicku użytkownika w każdym jego komentarzu w dow
 
 W widocznej na screenie ramce znajdzie się treść komentarza (na wypadek, gdyby user zdecydował się go usunąć, lub gdyby moderator zrobił to za niego), a pod ramką - link do miejsca, gdzie został zamieszczony. Jeśli w treści komentarza znajduje się osadzony obrazek lub film, link do niego znajdzie się również tutaj.
 
+Ostatnia opcja to możliwość zmiany tekstu odznaki. Domyślnie nadawana jest taka, jaką zdefiniowano w ustawieniach (czytaj dalej). Jednak każdego użytkownika z osobna możemy oznaczyć osobno właśnie tutaj. Zmiana następuje po potwierdzeniu przyciskiem "Zapisz".
+
 > Docelowo będzie tu znacznie więcej opcji - po szczegóły zapraszam do sekcji trzeciej, "Plany".
 
 Może też się tak zdarzyć, że po pewnym czasie uznasz, że user już nie zasługuje na dalszą stygmatyzację. Wtedy wystarczy kliknąć ten duży przycisk "Usuń oznaczenie".
@@ -74,6 +76,12 @@ Korzystając z funkcji "Dodaj zdjęcie lub film", jeśli masz w schowku skopiowa
 
 Ficzer inspirowany, żeby nie rzec zerżnięty, od https://www.wykop.pl/dodatki/pokaz/1107/
 
+### Usuwanie komentarzy w znaleziskach z tagami zdefiniowanymi w ustawieniach
+
+Czasem może być tak, że chcesz widzieć znaleziska z jakiejś kategorii (np. #polityka), ale dla własnego komfortu psychicznego preferujesz nie czytać tam komentarzy. Od teraz masz możliwość zdefiniowania w ustawieniach listy tagów; jeśli w znalezisku pojawi się którykolwiek z nich, komentarze będą automatycznie usuwane.
+
+![comments-removed](/comments-removed.png)
+
 ### Ostrzeganie przed wyjściem ze strony, gdy zostanie wykryte pisanie komentarza 🔧
 
 Gdy zostanie wykryte pisanie komentarza (w polu tekstowym znajdzie się co najmniej 6 słów), przed przeładowaniem/zamknięciem strony zostanie wyświetlony monit z pytaniem, czy użytkownik jest pewien swoich działań.
@@ -88,7 +96,9 @@ Po wejściu do ustawień, na belce z kategoriami można odnaleźć nową - "Wyko
 
 Można tu wybrać, jakie opcje mają być aktywowane, a jakie nie. Po kliknięciu ikony informacji otworzy się okno z dodatkowymi, przydatnymi informacjami (w przypadku ostrzeżeń przed propagandą choćby, będzie to lista źródeł, które posłużyły do skomponowania listy podejrzanych i oznaczanych stron).
 
-W (na razie) jedynym polu tekstowym można ustawić, jaki będzie domyślny tekst na odznace nadawanej użytkownikowi po kliknięciu przycisku "Oznacz" (lub masowym oznaczaniu). 
+W pierwszym polu tekstowym można zdefiniować, po przecinku, listę tagów po wystąpieniu których ze znaleziska będą usuwane komentarze.
+
+W drugim zaś polu tekstowym można ustawić, jaki będzie domyślny tekst na odznace nadawanej użytkownikowi po kliknięciu przycisku "Oznacz" (lub masowym oznaczaniu). 
 
 Poniżej z kolei znajduje się opcja usunięcia wszystkich odznaczeń lub przejrzenia tabeli z wyróżnionymi userami. Z poziomu tabeli można również daną osobę usunąć, jak również przejść do komentarza.
 
@@ -97,31 +107,34 @@ Do skorzystania z WykopHelpera konieczne będzie pobranie rozszerzenia do przegl
 
 > **Hur dur nie chcem zminifikowanego kodu**
 > 
-> Spoko. W takim razie wbijaj na https://cdn.jsdelivr.net/gh/plwpl/WykopHelper@master/dist/whhelper-dev.user.js albo zerknij po prostu na repo tego projektu (link na samej górze strony). **Miej tylko na uwadze, że wersja `-dev` to wersja mniej stabilna, przeznaczona do testów. Używając jej szybciej dostaniesz nowe ficzery, ale i szybciej dostaniesz nowe bugi :)**
+> Spoko. W takim razie wbijaj na [https://cdn.jsdelivr.net/gh/plwpl/WykopHelper@master/dist/whhelper-dev.user.js](https://cdn.jsdelivr.net/gh/plwpl/WykopHelper@master/dist/whhelper-dev.user.js) albo zerknij po prostu na repo tego projektu (link na samej górze strony). **Miej tylko na uwadze, że wersja `-dev` to wersja mniej stabilna, przeznaczona do testów. Używając jej szybciej dostaniesz nowe ficzery, ale i szybciej dostaniesz nowe bugi :)**
 
 ## 3. Plany
 Po zainstalowaniu dodatek będzie aktualizował się automatycznie. Po każdej istotnej aktualizacji, po wejściu na wykop wyświetli się popup z informacjami o nowych ficzerach czy zmianach.
 
-Czego można się spodziewać?
+Czego można się spodziewać? (:feet: - oznacza, że nad tym aktualnie pracuję, i zapewne znajdzie się to w najbliższej aktualizacji)
 
- 1. Naprawa ficzera z ostrzeganiem przed zamknięciem strony
- 2. Rozszerzenie funkcjonalności ostrzeżeń przed propagandą
-  - możliwość podejrzenia listy domen podejrzanych
-  - możliwość edycji tej listy
-  - możliwość edycji treści komunikatu
- 3. Rozwinięcie funkcjonalności odznak:
-  - Możliwość ustawienia customowego tekstu odznaki (odmienny od domyślnego, definiowanego w ustawieniach) i jej koloru dla każdego oznaczonego użytkownika z osobna
-  - możliwość zadecydowania, że treści od danego użytkownika nie chcemy już widzieć w ogóle (taka super-czarna lista, całkowicie usuwająca treści danego usera)
-  - odznaka widoczna również w profilu użytkownika, a nie tylko przy jego komentarzach
-  - możliwość eksportu i importu listy oznaczonych userów - tak, by móc je migrować między przeglądarkami, czy komputerami
- 4. Zintegrowanie funkcjonalności podobnych do tych, jakie można odnaleźć w tych dodatkach: https://www.wykop.pl/dodatki/pokaz/1021/ , https://www.wykop.pl/dodatki/pokaz/1013/ , https://www.wykop.pl/dodatki/pokaz/231/
- 5. Opcja ograniczania dostępu do wypoku - przy walce z uzależnieniem ;)
- 6. I co tam jeszcze się po drodze nasunie :)
- 
+ * Naprawa ficzera z ostrzeganiem przed zamknięciem strony :feet: 
+ * Rozszerzenie funkcjonalności ostrzeżeń przed propagandą
+   - możliwość podejrzenia listy domen podejrzanych :feet:
+   - możliwość edycji tej listy
+   - możliwość edycji treści komunikatu
+ * Rozwinięcie funkcjonalności odznak:
+   - Możliwość ustawienia domyślnego, jak również customowego koloru dla każdego oznaczonego użytkownika z osobna :feet:
+   - możliwość zadecydowania, że treści od danego użytkownika nie chcemy już widzieć w ogóle (taka super-czarna lista, całkowicie usuwająca treści danego usera)
+   - odznaka widoczna również w profilu użytkownika, a nie tylko przy jego komentarzach :feet:
+   - możliwość eksportu i importu listy oznaczonych userów - tak, by móc je migrować między przeglądarkami, czy komputerami
+ * Zintegrowanie funkcjonalności podobnych do tych, jakie można odnaleźć w tych dodatkach: https://www.wykop.pl/dodatki/pokaz/1021/ , https://www.wykop.pl/dodatki/pokaz/1013/ , https://www.wykop.pl/dodatki/pokaz/231/
+ * Opcja ograniczania dostępu do wypoku - przy walce z uzależnieniem ;)
+ * Możliwość usuwania komentarzy ze **wszystkich** znalezisk. :feet:
+ * możliwość włączenia podglądu na żywo, jak wyglądać będzie post po opublikowaniu
+
+...i co tam jeszcze się nasunie, lista jest niepełna :)
+
  Docelowo dodatek będzie zwykłym rozszerzeniem do przeglądarki, co wyeliminuje konieczność instalacji menadżera skryptów, jednak to dopiero w okolicach wersji 1.0.
  
 ## 4. Support
-> WykopHelper jest w wersji 0.52 co oznacza, że nie jest to jeszcze wersja całkiem stabilna. Do 1.0 jeszcze trochę brakuje :) W konsekwencji, niektóre ficzery mogą nie działać całkiem poprawnie, zmieniać swoje zachowanie wraz z kolejnymi aktualizacjami lub nawet całkiem znikać. Dlatego zachęcam do korzystania z linku niżej, by zgłaszać wszystkie niedogodności.
+> WykopHelper jest w wersji 0.60 co oznacza, że nie jest to jeszcze wersja całkiem stabilna. Do 1.0 jeszcze trochę brakuje :) W konsekwencji, niektóre ficzery mogą nie działać całkiem poprawnie, zmieniać swoje zachowanie wraz z kolejnymi aktualizacjami lub nawet całkiem znikać. Dlatego zachęcam do korzystania z linku niżej, by zgłaszać wszystkie niedogodności.
 
 Jeśli masz jakiekolwiek skargi (coś nie działa lub Ci się nie podoba), sugestie, pytania czy spostrzeżenia, możesz się nimi podzielić tutaj: [https://github.com/PLWpl/WykopHelper/issues](https://github.com/PLWpl/WykopHelper/issues), obiecuję, że (o ile będą poważne) nie pozostaną bez odpowiedzi.
 
@@ -145,7 +158,7 @@ Dodatek nie wysyła żadnych zapytań do serwerów trzecich (poza zaciągnięcie
 
 **Czy testowałeś to na każdą możliwość?**
 
-Oczywiście. Że nie. Do tej pory pracowałem nad tym sam, a używały tego 4 osoby, z czego trzy sporadycznie ;) Więc z pewnością jest sporo bugów.
+Oczywiście. Że nie. Do tej pory pracowałem nad tym sam, a używało tego dosłownie kilka osób, z czego większość sporadycznie ;) Więc z pewnością jest sporo bugów.
 
 **Zrób, żeby...**
 
@@ -166,7 +179,7 @@ Bez komentarza.
 
 ## 6. Changelog
 
-**0.6** _upcoming_
+**0.60** 
 * Dodano możliwość zmiany tekstu na odznace każdego użytkownika z osobna. By zmienić tekst wystarczy kliknąć na odznace przy danym userze, odszukać nowe pole tekstowe i wpisać tam, co dusza zapragnie :)
 * pole tekstowe wyświetlające tekst komentarza w popupie odznaki uzyskało możliwość przewijania. To oznacza, że teraz bardzo długie komentarze nie będą rozciągać okna popupu nawet poza monitor.
 * możliwość zdecydowania w ustawieniach, czy "woodle" - czyli ten okolicznościowy obrazek na belce menu - będzie ukrywany. Domyślnie nie jest. :)
@@ -179,7 +192,7 @@ Bez komentarza.
 **0.51**
 * Uporządkowano kilka nazw używanych wewnątrz src
 
-**0.5**
+**0.50**
 * Od teraz, najechanie myszką na odznakę nic nie da - należy w nią kliknąć. Po kliknięciu otworzy się okienko z informacjami. Aktualnie znajduje się tam informacja o przyczynie oznaczenia; treść komentarza, link do ew. treści multimedialnych w nim osadzonych oraz link do samego komentarza. Wkrótce pojawi się tutaj kilka innych opcji, w tym m.in. zmiana nazwy oznaczenia na customową, zmiana koloru oznaczenia czy całkowite usuwanie aktywności użytkownika z wykopu.
 * Opcja dodania oznaczenia hurtem, dla wszystkich użytkowników któzy wykopali/zakopali dane znalezisko. Aby skorzystać, zjedź na sam dół i otwórz listę użytkowników, którzy wykonali interesującą Cię akcję, a następnie kliknij przycisk "Oznacz wszystkich poniżej".
 * Ujednolicony styl graficzny modali, czyli takich informacji jak ta.
