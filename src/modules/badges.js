@@ -319,7 +319,7 @@ export const handleBadges = () => {
   // }
 
   /**
-   * Above is setup. Actual job gets done below
+   * Above is setup.
    */
 
   injectStyles(styles.badge);
