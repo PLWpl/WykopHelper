@@ -791,7 +791,7 @@
     // }
 
     /**
-     * Above is setup. Actual job gets done below
+     * Above is setup.
      */
 
     injectStyles(styles.badge);
@@ -989,7 +989,7 @@
         name="WARN_ON_RELOAD"
         id="warnOnReload"
       />
-      <label class="inline" for="warnOnReload">Ostrzegaj przy próbie zamknięcia/przeładowania strony gdy wykryto pisanie komentarza </label><span id="warnOnReloadInfo" style="cursor:pointer;border:1px solid currentcolor;padding:0 .5rem">ℹ</span>
+      <label class="inline" for="warnOnReload">Ostrzegaj przy próbie zamknięcia/przeładowania strony gdy wykryto pisanie komentarza </label><span id="warnOnReloadInfo" style="cursor:pointer;border:1px solid currentcolor;padding:0 .5rem;position:relative;bottom:.5rem;border-radius:5px">ℹ</span>
     </div>
     <div class="row">
       <input
@@ -999,7 +999,7 @@
         name="WARN_ON_SUSPECTED_RUSSIAN_PROPAGANDA"
         id="warnOnRussian"
       />
-      <label class="inline" for="warnOnRussian">Oznaczaj znaleziska ze źródeł podejrzewanych o szerzenie Rosyjskiej propagandy </label><span id="russianPropagandaInfo" style="cursor:pointer;border:1px solid currentcolor;padding:0 .5rem">ℹ</span>
+      <label class="inline" for="warnOnRussian">Oznaczaj znaleziska ze źródeł podejrzewanych o szerzenie Rosyjskiej propagandy </label><span id="russianPropagandaInfo" style="cursor:pointer;border:1px solid currentcolor;padding:0 .5rem;position:relative;bottom:.5rem;border-radius:5px">ℹ</span>
     </div>
     <div class="row">
       <input
@@ -1345,7 +1345,7 @@
 
   /* eslint max-len: 0 */
 
-  const version = `0.6`;
+  const version = `0.61`;
 
   const welcomeText = {
     title: "WykopHelper zainstalowany!",
@@ -1360,25 +1360,9 @@
 Dodatek WykopHelper został właśnie zaktualizowany do wersji ${version}. Wprowadzone zmiany to: <br>
 <ul class="${DOM.MODAL.CLASSNAME.LIST}">
   <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
-    Dodano możliwość zmiany tekstu na odznace każdego użytkownika z osobna. By zmienić tekst wystarczy kliknąć na odznace przy danym userze, odszukać nowe pole tekstowe i wpisać tam, co dusza zapragnie :)
-  </li>
-  <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
-    Pole tekstowe wyświetlające tekst komentarza w popupie odznaki uzyskało możliwość przewijania. To oznacza, że teraz bardzo długie komentarze nie będą rozciągać okna popupu nawet poza monitor.
-  </li>
-  <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
-    W ustawieniach można teraz zadecydować o ukrywaniu woodle (czyli wykopowej wersji doodle - okolicznościowy obrazek umieszczany na belce menu).
-  </li>
-  <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
-    Chcesz widzieć znaleziska z określonych kategorii (np. #polityka), ale dla własnego komfortu psychicznego preferujesz nie widzieć komentarzy pod nim? Od teraz możesz zdefiniować w ustawieniach listę tagów, dla których komentarze pod znaleziskiem będą usuwane.
-  </li>
-  <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
-    Na stronie ustawień pojawiły się linki do historii zmian oraz do strony opisującej ficzery dodatku.
-  </li>
-  <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
-    Kilka pomniejszych fixów i ulepszeń.
+    Funkcja ostrzegająca przed zamknięciem strony gdy wykryte zostanie pisanie komentarza <em>powinna</em> już działać poprawnie.
   </li>
 </ul>
-🎉🎉 <strong>Szczęśliwego Nowego Roku!</strong> 🎉🎉
 `,
     button: "Okej!",
   };
@@ -1435,8 +1419,16 @@ Dodatek WykopHelper został właśnie zaktualizowany do wersji ${version}. Wprow
     const replyForm = $(EL$2.SELECTOR.REPLY_FORM);
     const commentForm = $(EL$2.SELECTOR.COMMENT_FORM);
 
-    const isReplyNotEmpty = replyForm && replyForm.value.split(" ").length > 5;
-    const isCommentNotEmpty = commentForm && commentForm.value.split(" ").length > 5;
+    // for whatever reason, chrome just can't handle belows checks the way they should work (so simply assigning the check to const); instead of simple boolean false if it encounters something like undef or null, it throws all sorts of different errors. Hence, it's done like that. Took about an hour experimenting.
+    let isCommentNotEmpty = false;
+    let isReplyNotEmpty = false;
+
+    if (replyForm && replyForm.value.length > 0) {
+      isReplyNotEmpty = replyForm && replyForm.value.split(" ").length > 5;
+    }
+    if (commentForm && commentForm.value.length > 0) {
+      isCommentNotEmpty = commentForm && commentForm.value.split(" ").length > 5;
+    }
 
     if (isReplyNotEmpty || isCommentNotEmpty) {
       return false;
@@ -1497,7 +1489,7 @@ Dodatek WykopHelper został właśnie zaktualizowany do wersji ${version}. Wprow
   const removeCommentsByTag = () => {
     const settings = getLocalStorage('settings');
     const tagsSubmitted = settings.GENERAL.REMOVE_BY_TAG;
-    const offendingTags = tagsSubmitted.replace(' ', '').replace('#', '').split(',');
+    const offendingTags = tagsSubmitted ? tagsSubmitted.replace(' ', '').replace('#', '').split(',') : '';
     let wykopTags;
     
     if (window.dataLayer2[1]) {
