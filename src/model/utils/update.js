@@ -21,6 +21,9 @@ Dodatek WykopHelper został właśnie zaktualizowany do wersji ${version}. Wprow
   <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
     Od teraz odznaka widoczna będzie również w profilu użytkownika, między avatarem a nickiem.
   </li>
+  <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
+    Drobne poprawki stylistyczne tu i ówdzie (np. nowy kolor przycisku "zapisz" w popupie odznaki; redesign całego popupu wkrótce)
+  </li>
 </ul>
 `,
   button: "Okej!",

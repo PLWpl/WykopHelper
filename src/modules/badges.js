@@ -256,10 +256,13 @@ export const handleBadges = () => {
       title: modal.title,
       html: modal.content,
       icon: "info",
+      allowEnterKey: false,
       showCancelButton: false,
+      showCloseButton: true,
       showDenyButton: true,
       confirmButtonText: modal.button,
-      denyButtonText: 'Zapisz',
+      denyButtonText: modal.buttonClose,
+      denyButtonColor: '#0a8658',
       width: "80%",
     }).then(result => {
       if (result.isConfirmed) {
