@@ -30,6 +30,8 @@ const isPath = {
   thread: () => !!(path.indexOf("wykop.pl/link/") > -1),
 
   mirkoThread: () => !!(path.indexOf("wykop.pl/wpis/") > -1),
+
+  userProfile: () => !!(path.indexOf("wykop.pl/ludzie/") > -1),
 };
 
 /** document.querySelector() */
@@ -67,8 +69,11 @@ const DOM = {
       NICK_VERIFIED_BADGE: 'verified',
       NICK: 'showProfileSummary',
       VOTES_USERCARD: 'usercard',
+      USER_PROFILE: 'user-profile',
       // custom WH elements
       BADGE: 'badgeWH',
+      BADGE_UNCLICKABLE: 'badgeWH--unclickable',
+      BADGE_CLICKABLE: 'badgeWH--clickable',
       MARK_BUTTON: 'buttonWH',
       MARK_BUTTON_CLICKED: 'buttonWH--clicked',
       MARK_ALL_BUTTON_ELEMENT: 'buttonWH--markAllContainer',
@@ -87,6 +92,8 @@ const DOM = {
       NICK_DELETED: '.author > .color-1002',
       REPLY_FORM: '.replyForm textarea',
       COMMENT_FORM: '#commentFormContainer textarea',
+      USER_PROFILE_NICK_ELEMENT: '.user-profile h2',
+      USER_PROFILE_NICK: '.user-profile h2 span',
     },
     DYNAMIC: {
       DATASET: {
@@ -197,9 +204,14 @@ const badge = `
   margin-right: .3rem;
   border: 1px solid currentColor;
   padding: .1rem .2rem;
-  cursor: pointer;
   position: relative;
   top: .1rem;
+}
+.${DOM.BADGE.CLASSNAME.BADGE_CLICKABLE} {
+  cursor: pointer;
+}
+.${DOM.BADGE.CLASSNAME.BADGE_UNCLICKABLE} {
+  cursor: default;
 }
 .${DOM.BADGE.CLASSNAME.MODAL_BUTTON} {
   display: block;
@@ -352,8 +364,9 @@ const buttonBulkMarkup = `<li class="${DOM.BADGE.CLASSNAME.MARK_ALL_BUTTON_ELEME
  * 
  * @param {string} nick - nickname of user
  * @param {string} [label=debil] - what will be displayed as a badge
+ * @param {boolean} [clickable=true] - if badge should be styled with cursor:pointer
  */
-const badge$1 = (nick, label = 'debil') => `<span class="${DOM.BADGE.CLASSNAME.BADGE} ${DOM.BADGE.CLASSNAME.BADGE}--${label.toLowerCase()}" data-whusername="${nick}">${label.toLowerCase().capitalize()}</span>`;
+const badge$1 = (nick, label = 'debil', clickable = true) => `<span class="${DOM.BADGE.CLASSNAME.BADGE} ${clickable ? DOM.BADGE.CLASSNAME.BADGE_CLICKABLE : DOM.BADGE.CLASSNAME.BADGE_UNCLICKABLE}" data-whusername="${nick}">${label.toLowerCase().capitalize()}</span>`;
 
 /**
  * 
@@ -763,22 +776,6 @@ const handleBadges = () => {
   };
 
   /**
-   * Setting custom label value for user with given nick
-   */
-  // const setCustomLabelValue = nick => {
-  //   const userData = getNickData(nick);
-  //   const value = document.getElementById(EL.MODAL.ID.BADGE_TEXT).value;
-  //   const marked = getLocalStorage('marked');
-  //   const changedMarked = marked.map(el => el.nick === userData.nick ? { ...el, label: value } : el);
-
-  //   localStorage.setItem(
-      
-  //     STORAGE_KEY_NAMES.MARKED_USERS,
-  //     JSON.stringify(changedMarked)
-  //   );
-  // }
-
-  /**
    * Above is setup.
    */
 
@@ -820,6 +817,69 @@ const handleBadges = () => {
           $(`.${EL.CLASSNAME.MARK_ALL_BUTTON_ELEMENT}`).style.display = 'block';
         }
       });
+  }
+};
+
+const { BADGE: EL$1 } = DOM;
+
+let uniqueNicksSet = getLocalStorage("unique");
+
+/**
+ * Checks if user of provided nick is already in uniqueNicksSet array
+ * @param {String} nick - nick to check
+ */
+const isMarked = nick => {
+  uniqueNicksSet = getLocalStorage("unique");
+  return !!uniqueNicksSet.includes(nick);
+};
+
+/**
+ * used on author element, returned from getAllNickElements(), checks if person has already been marked with a badge
+ * @param {HTMLElement} element - element to check
+ */
+const isNotAwarded = element => !$(`.${EL$1.CLASSNAME.BADGE}`, element);
+
+let markedUsers = getLocalStorage("marked");
+let settings$1 = getLocalStorage("settings");
+
+/**
+ * gets user data from objects inside marked users array.
+ * @param {String} nick 
+ */
+const getNickData = nick => {
+  if (!nick) {
+    throw new Error("getNickData requires nick to be provided.");
+  }
+  for (let i = 0; i < markedUsers.length; i++) {
+    if (markedUsers[i].nick === nick) {
+      return {
+        link: markedUsers[i].link,
+        nick: markedUsers[i].nick,
+        label: markedUsers[i].label,
+        content: markedUsers[i].content,
+        media: markedUsers[i].media,
+      };
+    } else if (markedUsers[i] === undefined || markedUsers[i] === null) {
+      continue;
+    }
+  }
+};
+
+/**
+ * @returns {String} default name for badge set in settings by user.
+ */
+const getDefaultBadgeLabelFromSettings = () => settings$1.BADGE.DEFAULT_NAME;
+
+const { BADGE: EL$2 } = DOM;
+
+const displayBadgeInUserProfile = () => {
+  const nickElement = $(EL$2.SELECTOR.USER_PROFILE_NICK_ELEMENT);
+  const nick = $(EL$2.SELECTOR.USER_PROFILE_NICK).textContent;
+  const userData = getNickData(nick) ? getNickData(nick) : null;
+  const label = userData ? userData.label : getDefaultBadgeLabelFromSettings();
+
+  if (isMarked(nick) && isNotAwarded(nickElement)) {
+    nickElement.insertAdjacentHTML("afterbegin", badge$1(nick, label, false));
   }
 };
 
@@ -1115,13 +1175,13 @@ const settingsModel = {
  *  - add check in appropriate module. If you want it to be ON by default, you will need to make it so using /utils/rynOnceOnUpdate
  */
 
-const { SETTINGS: EL$1 } = DOM;
+const { SETTINGS: EL$3 } = DOM;
 
 /**
  * Inserts navigation item on a /ustawienia/ page with link to WykopHelper settings
  */
 const createSettingsPage = () => {
-  $(EL$1.SELECTOR.LAST_NAV_ELEMENT).insertAdjacentHTML('beforeend', settingsModel.settingsNav);
+  $(EL$3.SELECTOR.LAST_NAV_ELEMENT).insertAdjacentHTML('beforeend', settingsModel.settingsNav);
 };
 
 const handleSettings = () => {
@@ -1129,7 +1189,7 @@ const handleSettings = () => {
   const markedUsers = getLocalStorage();
   const uniqueNicksSet = getLocalStorage('unique');
 
-  const settingsFormElement = $(EL$1.SELECTOR.SETTINGS_FORM_ELEMENT);
+  const settingsFormElement = $(EL$3.SELECTOR.SETTINGS_FORM_ELEMENT);
 
   /**
    * clears localstorage. Doesn't remove items, but sets them to empty array
@@ -1144,7 +1204,7 @@ const handleSettings = () => {
    * Creates table with marked users.
    */
   const generateUserTables = () => {
-    const tableBody = $(`.${EL$1.CLASSNAME.WH_USER_TABLE_BODY}`);
+    const tableBody = $(`.${EL$3.CLASSNAME.WH_USER_TABLE_BODY}`);
 
     markedUsers.forEach(el => {
       tableBody.insertAdjacentHTML(
@@ -1157,13 +1217,13 @@ const handleSettings = () => {
   };
 
   const toggleUserTableVisibility = () => {
-    $(`.${EL$1.CLASSNAME.WH_USER_TABLE_CONTAINER}`)
-      .classList.toggle(`${EL$1.CLASSNAME.WH_USER_TABLE_CONTAINER}--hidden`);
+    $(`.${EL$3.CLASSNAME.WH_USER_TABLE_CONTAINER}`)
+      .classList.toggle(`${EL$3.CLASSNAME.WH_USER_TABLE_CONTAINER}--hidden`);
 
-    if ($(`.${EL$1.CLASSNAME.WH_USER_TABLE_CONTAINER}--hidden`)) {
-      document.getElementById(EL$1.ID.SHOW_MARKED_TABLE).textContent = settingsModel.textContent.SHOW_ALL_MARKED;
+    if ($(`.${EL$3.CLASSNAME.WH_USER_TABLE_CONTAINER}--hidden`)) {
+      document.getElementById(EL$3.ID.SHOW_MARKED_TABLE).textContent = settingsModel.textContent.SHOW_ALL_MARKED;
     } else {
-      document.getElementById(EL$1.ID.SHOW_MARKED_TABLE).textContent = settingsModel.textContent.HIDE_TABLE;
+      document.getElementById(EL$3.ID.SHOW_MARKED_TABLE).textContent = settingsModel.textContent.HIDE_TABLE;
     }
   };
 
@@ -1201,7 +1261,7 @@ const handleSettings = () => {
 
     inputs.forEach(el => {
       const category = el.getAttribute('category');
-      if (el.id !== EL$1.ID.ALLOW_WIPE_MARKED_LIST && el.type === 'checkbox') {
+      if (el.id !== EL$3.ID.ALLOW_WIPE_MARKED_LIST && el.type === 'checkbox') {
         el.checked = settings[category][el.name];
       } else if (el.type === 'text' && el.name !== 'nsQ') {
         el.value = settings[category][el.name] || '';
@@ -1210,8 +1270,8 @@ const handleSettings = () => {
   };
 
   const renderSettings = () => {
-    $(EL$1.SELECTOR.ACTIVE_NAV_ELEMENT).classList.remove('active');
-    $(`.${EL$1.CLASSNAME.WH_NAV_SETTINGS_LINK}`).classList.add('active');
+    $(EL$3.SELECTOR.ACTIVE_NAV_ELEMENT).classList.remove('active');
+    $(`.${EL$3.CLASSNAME.WH_NAV_SETTINGS_LINK}`).classList.add('active');
   
     settingsFormElement.innerHTML = '';
     settingsFormElement.innerHTML = settingsModel.settingsMarkup;
@@ -1232,30 +1292,30 @@ const handleSettings = () => {
       const category = event.target.getAttribute('category');
       const name = event.target.name;
 
-      if (event.target.type === 'checkbox' && event.target.id !==  EL$1.ID.ALLOW_WIPE_MARKED_LIST) {
+      if (event.target.type === 'checkbox' && event.target.id !==  EL$3.ID.ALLOW_WIPE_MARKED_LIST) {
         settings[category][name] = !settings[category][name];
         localStorage.setItem(STORAGE_KEY_NAMES.WH_SETTINGS, JSON.stringify(settings));
       }
     }, {passive: true});
 
     settingsFormElement.addEventListener('click', event => {
-      if (event.target.id === EL$1.ID.SHOW_MARKED_TABLE) {
+      if (event.target.id === EL$3.ID.SHOW_MARKED_TABLE) {
         event.preventDefault();
         toggleUserTableVisibility();
       }
-      if (event.target.id ===  EL$1.ID.ALLOW_WIPE_MARKED_LIST) {
+      if (event.target.id ===  EL$3.ID.ALLOW_WIPE_MARKED_LIST) {
         event.target.disabled = true;
-        document.getElementById(EL$1.ID.REMOVE_ALL_MARKED).disabled = false;
-        document.getElementById(EL$1.ID.REMOVE_ALL_MARKED).style.opacity = 1;
+        document.getElementById(EL$3.ID.REMOVE_ALL_MARKED).disabled = false;
+        document.getElementById(EL$3.ID.REMOVE_ALL_MARKED).style.opacity = 1;
       }
-      if (event.target.id === EL$1.ID.REMOVE_ALL_MARKED) {
+      if (event.target.id === EL$3.ID.REMOVE_ALL_MARKED) {
         event.preventDefault();
         wipeAllMarkedUsers();
       }
-      if (event.target.id === EL$1.ID.RUSSIAN_PROPAGANDA_INFO_LINK) {
+      if (event.target.id === EL$3.ID.RUSSIAN_PROPAGANDA_INFO_LINK) {
         showModalWithPropagandaExplanation();
       }
-      if (event.target.id === EL$1.ID.WARN_ON_RELOAD_INFO_LINK) {
+      if (event.target.id === EL$3.ID.WARN_ON_RELOAD_INFO_LINK) {
         showModalWithWarnOnReloadExplanation();
       }
     }, {passive: false});
@@ -1401,11 +1461,11 @@ const highlightOp = () => {
   });
 };
 
-const { BADGE: EL$2 } = DOM;
+const { BADGE: EL$4 } = DOM;
 
 const isTextareaEmpty = () => {
-  const replyForm = $(EL$2.SELECTOR.REPLY_FORM);
-  const commentForm = $(EL$2.SELECTOR.COMMENT_FORM);
+  const replyForm = $(EL$4.SELECTOR.REPLY_FORM);
+  const commentForm = $(EL$4.SELECTOR.COMMENT_FORM);
 
   // for whatever reason, chrome just can't handle belows checks the way they should work (so simply assigning the check to const); instead of simple boolean false if it encounters something like undef or null, it throws all sorts of different errors. Hence, it's done like that. Took about an hour experimenting.
   let isCommentNotEmpty = false;
@@ -1543,6 +1603,9 @@ if (isPath.main()) {
   warnOnReload();
   embedOnPaste();
   hideMarkedUsers();
+}
+if (isPath.userProfile()) {
+  displayBadgeInUserProfile();
 }
 if (isPath.settings()) {
   createSettingsPage();

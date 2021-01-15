@@ -18,6 +18,9 @@ Dodatek WykopHelper został właśnie zaktualizowany do wersji ${version}. Wprow
   <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
     Funkcja ostrzegająca przed zamknięciem strony gdy wykryte zostanie pisanie komentarza <em>powinna</em> już działać poprawnie.
   </li>
+  <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
+    Od teraz odznaka widoczna będzie również w profilu użytkownika, między avatarem a nickiem.
+  </li>
 </ul>
 `,
   button: "Okej!",

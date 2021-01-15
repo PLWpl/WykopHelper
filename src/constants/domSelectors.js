@@ -21,8 +21,11 @@ export const DOM = {
       NICK_VERIFIED_BADGE: 'verified',
       NICK: 'showProfileSummary',
       VOTES_USERCARD: 'usercard',
+      USER_PROFILE: 'user-profile',
       // custom WH elements
       BADGE: 'badgeWH',
+      BADGE_UNCLICKABLE: 'badgeWH--unclickable',
+      BADGE_CLICKABLE: 'badgeWH--clickable',
       MARK_BUTTON: 'buttonWH',
       MARK_BUTTON_CLICKED: 'buttonWH--clicked',
       MARK_ALL_BUTTON_ELEMENT: 'buttonWH--markAllContainer',
@@ -41,6 +44,8 @@ export const DOM = {
       NICK_DELETED: '.author > .color-1002',
       REPLY_FORM: '.replyForm textarea',
       COMMENT_FORM: '#commentFormContainer textarea',
+      USER_PROFILE_NICK_ELEMENT: '.user-profile h2',
+      USER_PROFILE_NICK: '.user-profile h2 span',
     },
     DYNAMIC: {
       DATASET: {
