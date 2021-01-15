@@ -731,6 +731,7 @@ const handleBadges = () => {
       title: modal.title,
       html: modal.content,
       icon: "info",
+      iconColor: '#a5dc86',
       allowEnterKey: false,
       showCancelButton: false,
       showCloseButton: true,
@@ -1436,6 +1437,7 @@ const updateAlert = () => {
     Swal.fire({
       title: updateText.title,
       html: updateText.content,
+      showCloseButton: true,
       icon: 'info',
       width: '80%',
       confirmButtonText: updateText.button

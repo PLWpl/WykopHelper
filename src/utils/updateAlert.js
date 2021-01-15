@@ -12,6 +12,7 @@ export const updateAlert = () => {
     Swal.fire({
       title: updateText.title,
       html: updateText.content,
+      showCloseButton: true,
       icon: 'info',
       width: '80%',
       confirmButtonText: updateText.button
