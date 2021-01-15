@@ -76,7 +76,7 @@ Korzystając z funkcji "Dodaj zdjęcie lub film", jeśli masz w schowku skopiowa
 
 Ficzer inspirowany, żeby nie rzec zerżnięty, od https://www.wykop.pl/dodatki/pokaz/1107/
 
-### Usuwanie komentarzy w znaleziskach z tagami zdefiniowanymi w ustawieniach
+### Usuwanie komentarzy w znaleziskach z tagami zdefiniowanymi w ustawieniach 🔧
 
 Czasem może być tak, że chcesz widzieć znaleziska z jakiejś kategorii (np. #polityka), ale dla własnego komfortu psychicznego preferujesz nie czytać tam komentarzy. Od teraz masz możliwość zdefiniowania w ustawieniach listy tagów; jeśli w znalezisku pojawi się którykolwiek z nich, komentarze będą automatycznie usuwane.
 
@@ -137,7 +137,7 @@ Czego można się spodziewać? (🐾 - oznacza, że nad tym aktualnie pracuję, 
 ## 4. Support
 > WykopHelper jest w wersji 0.60 co oznacza, że nie jest to jeszcze wersja całkiem stabilna. Do 1.0 jeszcze trochę brakuje :) W konsekwencji, niektóre ficzery mogą nie działać całkiem poprawnie, zmieniać swoje zachowanie wraz z kolejnymi aktualizacjami lub nawet całkiem znikać. Dlatego zachęcam do korzystania z linku niżej, by zgłaszać wszystkie niedogodności.
 
-Jeśli masz jakiekolwiek skargi (coś nie działa lub Ci się nie podoba), sugestie, pytania czy spostrzeżenia, możesz się nimi podzielić tutaj: [https://github.com/PLWpl/WykopHelper/issues](https://github.com/PLWpl/WykopHelper/issues), obiecuję, że (o ile będą poważne) nie pozostaną bez odpowiedzi.
+Jeśli masz jakiekolwiek skargi (coś nie działa lub Ci się nie podoba), sugestie, pytania czy spostrzeżenia, możesz się nimi podzielić tutaj: [https://github.com/PLWpl/WykopHelper/discussions](https://github.com/PLWpl/WykopHelper/discussions), obiecuję, że (o ile będą poważne) nie pozostaną bez odpowiedzi.
 
 ## 5. FAQ
 
@@ -163,7 +163,7 @@ Oczywiście. Że nie. Do tej pory pracowałem nad tym sam, a używało tego dos�
 
 **Zrób, żeby...**
 
-To zrób na to ticket na githubie. Link w sekcji 4.
+To zrób na to ticket na githubie.
 
 **Mojego pytania tu nie ma.**
 
