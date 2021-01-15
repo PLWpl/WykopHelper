@@ -743,10 +743,13 @@
         title: modal.title,
         html: modal.content,
         icon: "info",
+        allowEnterKey: false,
         showCancelButton: false,
+        showCloseButton: true,
         showDenyButton: true,
         confirmButtonText: modal.button,
-        denyButtonText: 'Zapisz',
+        denyButtonText: modal.buttonClose,
+        denyButtonColor: '#0a8658',
         width: "80%",
       }).then(result => {
         if (result.isConfirmed) {
@@ -884,6 +887,9 @@
 
   const { BADGE: EL$2 } = DOM;
 
+  /**
+   * This is responsible for displaying mark badge next to user's nickname in user's profile (wykop.pl/ludzie/XXXX).
+   */
   const displayBadgeInUserProfile = () => {
     const nickElement = $(EL$2.SELECTOR.USER_PROFILE_NICK_ELEMENT);
     const nick = $(EL$2.SELECTOR.USER_PROFILE_NICK).textContent;
@@ -1421,6 +1427,12 @@ Dodatek WykopHelper został właśnie zaktualizowany do wersji ${version}. Wprow
 <ul class="${DOM.MODAL.CLASSNAME.LIST}">
   <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
     Funkcja ostrzegająca przed zamknięciem strony gdy wykryte zostanie pisanie komentarza <em>powinna</em> już działać poprawnie.
+  </li>
+  <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
+    Od teraz odznaka widoczna będzie również w profilu użytkownika, między avatarem a nickiem.
+  </li>
+  <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
+    Drobne poprawki stylistyczne tu i ówdzie (np. nowy kolor przycisku "zapisz" w popupie odznaki; redesign całego popupu wkrótce)
   </li>
 </ul>
 `,
