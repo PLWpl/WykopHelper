@@ -7,8 +7,9 @@ export const buttonBulkMarkup = `<li class="${DOM.BADGE.CLASSNAME.MARK_ALL_BUTTO
  * 
  * @param {string} nick - nickname of user
  * @param {string} [label=debil] - what will be displayed as a badge
+ * @param {boolean} [clickable=true] - if badge should be styled with cursor:pointer
  */
-export const badge = (nick, label = 'debil') => `<span class="${DOM.BADGE.CLASSNAME.BADGE} ${DOM.BADGE.CLASSNAME.BADGE}--${label.toLowerCase()}" data-whusername="${nick}">${label.toLowerCase().capitalize()}</span>`;
+export const badge = (nick, label = 'debil', clickable = true) => `<span class="${DOM.BADGE.CLASSNAME.BADGE} ${clickable ? DOM.BADGE.CLASSNAME.BADGE_CLICKABLE : DOM.BADGE.CLASSNAME.BADGE_UNCLICKABLE}" data-whusername="${nick}">${label.toLowerCase().capitalize()}</span>`;
 
 /**
  * 

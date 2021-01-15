@@ -28,6 +28,8 @@ const isPath = {
   thread: () => !!(path.indexOf("wykop.pl/link/") > -1),
 
   mirkoThread: () => !!(path.indexOf("wykop.pl/wpis/") > -1),
+
+  userProfile: () => !!(path.indexOf("wykop.pl/ludzie/") > -1),
 };
 
 export default isPath;

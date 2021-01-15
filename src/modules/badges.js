@@ -303,22 +303,6 @@ export const handleBadges = () => {
   }
 
   /**
-   * Setting custom label value for user with given nick
-   */
-  // const setCustomLabelValue = nick => {
-  //   const userData = getNickData(nick);
-  //   const value = document.getElementById(EL.MODAL.ID.BADGE_TEXT).value;
-  //   const marked = getLocalStorage('marked');
-  //   const changedMarked = marked.map(el => el.nick === userData.nick ? { ...el, label: value } : el);
-
-  //   localStorage.setItem(
-      
-  //     STORAGE_KEY_NAMES.MARKED_USERS,
-  //     JSON.stringify(changedMarked)
-  //   );
-  // }
-
-  /**
    * Above is setup.
    */
 
