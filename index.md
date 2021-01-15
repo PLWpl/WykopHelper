@@ -112,11 +112,11 @@ Do skorzystania z WykopHelpera konieczne będzie pobranie rozszerzenia do przegl
 ## 3. Plany
 Po zainstalowaniu dodatek będzie aktualizował się automatycznie. Po każdej istotnej aktualizacji, po wejściu na wykop wyświetli się popup z informacjami o nowych ficzerach czy zmianach.
 
-Czego można się spodziewać? (:arrow_left: - oznacza, że nad tym aktualnie pracuję, i zapewne znajdzie się to w najbliższej aktualizacji)
+Czego można się spodziewać? (🐾 - oznacza, że nad tym aktualnie pracuję, i zapewne znajdzie się to w najbliższej aktualizacji)
 
- * Naprawa ficzera z ostrzeganiem przed zamknięciem strony :up: 
+ * Naprawa ficzera z ostrzeganiem przed zamknięciem strony 🐾 
  * Rozszerzenie funkcjonalności ostrzeżeń przed propagandą
-   - możliwość podejrzenia listy domen podejrzanych :up:
+   - możliwość podejrzenia listy domen podejrzanych 🐾
    - możliwość edycji tej listy
    - możliwość edycji treści komunikatu
  * Rozwinięcie funkcjonalności odznak:
@@ -124,9 +124,10 @@ Czego można się spodziewać? (:arrow_left: - oznacza, że nad tym aktualnie pr
    - możliwość zadecydowania, że treści od danego użytkownika nie chcemy już widzieć w ogóle (taka super-czarna lista, całkowicie usuwająca treści danego usera)
    - odznaka widoczna również w profilu użytkownika, a nie tylko przy jego komentarzach :up:
    - możliwość eksportu i importu listy oznaczonych userów - tak, by móc je migrować między przeglądarkami, czy komputerami
+   - redesign popupu odznaki
  * Zintegrowanie funkcjonalności podobnych do tych, jakie można odnaleźć w tych dodatkach: https://www.wykop.pl/dodatki/pokaz/1021/ , https://www.wykop.pl/dodatki/pokaz/1013/ , https://www.wykop.pl/dodatki/pokaz/231/
  * Opcja ograniczania dostępu do wypoku - przy walce z uzależnieniem ;)
- * Możliwość usuwania komentarzy ze **wszystkich** znalezisk. :up:
+ * Możliwość usuwania komentarzy ze **wszystkich** znalezisk. 🐾
  * możliwość włączenia podglądu na żywo, jak wyglądać będzie post po opublikowaniu
 
 ...i co tam jeszcze się nasunie, lista jest niepełna :)
