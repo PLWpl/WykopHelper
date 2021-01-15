@@ -120,9 +120,9 @@ Czego można się spodziewać? (🐾 - oznacza, że nad tym aktualnie pracuję, 
    - możliwość edycji tej listy
    - możliwość edycji treści komunikatu
  * Rozwinięcie funkcjonalności odznak:
-   - Możliwość ustawienia domyślnego, jak również customowego koloru dla każdego oznaczonego użytkownika z osobna :up:
+   - Możliwość ustawienia domyślnego, jak również customowego koloru dla każdego oznaczonego użytkownika z osobna 🐾
    - możliwość zadecydowania, że treści od danego użytkownika nie chcemy już widzieć w ogóle (taka super-czarna lista, całkowicie usuwająca treści danego usera)
-   - odznaka widoczna również w profilu użytkownika, a nie tylko przy jego komentarzach :up:
+   - odznaka widoczna również w profilu użytkownika, a nie tylko przy jego komentarzach 🐾
    - możliwość eksportu i importu listy oznaczonych userów - tak, by móc je migrować między przeglądarkami, czy komputerami
    - redesign popupu odznaki
  * Zintegrowanie funkcjonalności podobnych do tych, jakie można odnaleźć w tych dodatkach: https://www.wykop.pl/dodatki/pokaz/1021/ , https://www.wykop.pl/dodatki/pokaz/1013/ , https://www.wykop.pl/dodatki/pokaz/231/
