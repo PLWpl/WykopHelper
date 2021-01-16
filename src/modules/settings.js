@@ -2,7 +2,7 @@
  * To add new setting option:
  *  - add it as a default in /utils/handleLocalStorage
  *  - add HTML for it in /model/modules/settings.model
- *  - add check in appropriate module. If you want it to be ON by default, you will need to make it so using /utils/rynOnceOnUpdate
+ *  - add check in appropriate module. If you want it to be ON by default, you will need to make it so using /utils/runOnceOnUpdate
  */
 
 import { $, $$ } from '../utils/dom';
