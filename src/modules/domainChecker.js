@@ -3,7 +3,8 @@ import { getLocalStorage } from '../utils/handleLocalStorage';
 import DOM from '../constants/domSelectors';
 
 import { annotation } from '../model/utils/annotation';
-import { warningAnnotation } from '../model/modules/domainChecker.model';
+
+const settings = getLocalStorage('settings');
 
 export const handleDomainCheck = () => {
   /**
@@ -11,8 +12,6 @@ export const handleDomainCheck = () => {
    * @return {boolean} True if yes, false otherwise
    */
   const isSettingActive = () => {
-    const settings = getLocalStorage('settings');
-
     if (settings.GENERAL.WARN_ON_SUSPECTED_RUSSIAN_PROPAGANDA) {
       return true;
     }
@@ -21,8 +20,7 @@ export const handleDomainCheck = () => {
   }
 
   const processDomains = () => {
-    const settings = getLocalStorage('settings');
-    const domains = settings.GENERAL.SUSPECT_DOMAINS;
+    const domains = settings.GENERAL.SUSPECT_DOMAINS || [];
 
     const processedDomains = domains.map(domain => {
       const https = 'https://' + domain;
@@ -48,7 +46,7 @@ export const handleDomainCheck = () => {
     const threadLink = $(DOM.DOMAIN_CHECKER.SELECTOR.THREAD_LINK).href;
     const url = new URL(threadLink);
     const threadLinkHostname = url.protocol + '//' + url.hostname;
-    const annotationMarkup = annotation(warningAnnotation);
+    const annotationMarkup = annotation(settings.GENERAL.SUSPECT_DOMAINS_LABEL);
 
     if (suspectDomains.includes(threadLinkHostname)) {
       $(`.${DOM.DOMAIN_CHECKER.CLASSNAME.WYKOP_ITEM_INTRO}`).insertAdjacentHTML('beforebegin', annotationMarkup)

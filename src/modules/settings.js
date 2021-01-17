@@ -12,7 +12,7 @@ import { getLocalStorage } from '../utils/handleLocalStorage';
 import settingsModel from '../model/modules/settings.model';
 import styles from '../model/styles';
 import { injectStyles } from '../utils/inject';
-import { russianPropagandaModal, warnOnReloadModal } from '../model/utils/modals';
+import { suspectDomainsSettingsModal, warnOnReloadModal } from '../model/utils/modals';
 
 const { SETTINGS: EL } = DOM;
 
@@ -24,7 +24,7 @@ export const createSettingsPage = () => {
 };
 
 export const handleSettings = () => {
-  const settings = getLocalStorage('settings');
+  let settings = getLocalStorage('settings');
   const markedUsers = getLocalStorage();
   const uniqueNicksSet = getLocalStorage('unique');
 
@@ -69,13 +69,33 @@ export const handleSettings = () => {
   const showModalWithPropagandaExplanation = () => {
     // eslint-disable-next-line
     Swal.fire({
-      title: settingsModel.textContent.RUSSIAN_PROPAGANDA_MODAL_TITLE,
-      html: russianPropagandaModal,
+      html: suspectDomainsSettingsModal,
       icon: 'info',
-      showCancelButton: false,
-      confirmButtonColor: '#3085d6',
-      confirmButtonText: 'OK',
-      width: "80%"
+      // eslint-disable-next-line
+      iconHtml: '<svg style="fill:currentColor;width:2rem;height: auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M14 0h4l1 6 1.707.707L26 3.293 28.707 6l-3.414 5.293L26 13l6 1v4l-6 1-.707 1.707L28.707 26 26 28.707l-5.293-3.414L19 26l-1 6h-4l-1-6-1.707-.707L6 28.707 3.293 26l3.414-5.293L6 19l-6-1v-4l6-1 .707-1.707L3.293 6 6 3.293l5.293 3.414L13 6l1-6zm2 10a6 6 0 000 12 6 6 0 000-12"/></svg>',
+      iconColor: '#fff',
+      showCancelButton: true,
+      showCloseButton: true,
+      confirmButtonColor: '#0a8658',
+      confirmButtonText: 'Zapisz',
+      cancelButtonText: 'Anuluj',
+      width: "80%",
+      willOpen: modalElement => {
+        $('#suspectDomainsLabel', modalElement).value = settings.GENERAL.SUSPECT_DOMAINS_LABEL;
+        $('#suspectDomains', modalElement).value = settings.GENERAL.SUSPECT_DOMAINS.join('\n');
+      }
+    }).then(result => {
+      if (result.isConfirmed) {
+        let list = $(`#${EL.ID.SUSPECT_DOMAINS_SETTINGS_TEXTAREA}`).value;
+        list.replace('https://', '').replace('http://', '').replace('www.', '').replace(' ', '');
+        const arrayList = list.split('\n');
+        settings.GENERAL.SUSPECT_DOMAINS = arrayList;
+
+        const label = $('#suspectDomainsLabel').value;
+        settings.GENERAL.SUSPECT_DOMAINS_LABEL = label;
+
+        localStorage.setItem(STORAGE_KEY_NAMES.WH_SETTINGS, JSON.stringify(settings));
+      }
     });
   };
   
@@ -151,7 +171,7 @@ export const handleSettings = () => {
         event.preventDefault();
         wipeAllMarkedUsers();
       }
-      if (event.target.id === EL.ID.RUSSIAN_PROPAGANDA_INFO_LINK) {
+      if (event.target.id === EL.ID.SUSPECT_DOMAINS_SETTINGS_LINK) {
         showModalWithPropagandaExplanation();
       }
       if (event.target.id === EL.ID.WARN_ON_RELOAD_INFO_LINK) {
