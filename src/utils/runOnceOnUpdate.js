@@ -10,9 +10,13 @@ export const runOnceOnUpdate = () => {
 
   // preparation
   if (localStorage.getItem(STORAGE_KEY_NAMES.WH_SETTINGS)) {
-    settings = getLocalStorage('settings')
-    settings.GENERAL.SUSPECT_DOMAINS = rawDomains;
-    settings.GENERAL.SUSPECT_DOMAINS_LABEL = 'Uważaj! Źródło tego znaleziska jest podejrzewane o szerzenie rosyjskiej propagandy.';
+    settings = getLocalStorage('settings');
+    if (!settings.GENERAL.SUSPECT_DOMAINS) {
+      settings.GENERAL.SUSPECT_DOMAINS = rawDomains;
+    }
+    if (!settings.GENERAL.SUSPECT_DOMAINS_LABEL) {
+      settings.GENERAL.SUSPECT_DOMAINS_LABEL = 'Uważaj! Źródło tego znaleziska jest podejrzewane o szerzenie rosyjskiej propagandy.';
+    }
   }
 
   localStorage.setItem(STORAGE_KEY_NAMES.WH_SETTINGS, JSON.stringify(settings));
