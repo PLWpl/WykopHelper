@@ -1429,8 +1429,12 @@
     // preparation
     if (localStorage.getItem(STORAGE_KEY_NAMES.WH_SETTINGS)) {
       settings = getLocalStorage('settings');
-      settings.GENERAL.SUSPECT_DOMAINS = rawDomains;
-      settings.GENERAL.SUSPECT_DOMAINS_LABEL = 'Uwa\u017Caj! \u0179r\xF3d\u0142o tego znaleziska jest podejrzewane o szerzenie rosyjskiej propagandy.';
+      if (!settings.GENERAL.SUSPECT_DOMAINS) {
+        settings.GENERAL.SUSPECT_DOMAINS = rawDomains;
+      }
+      if (!settings.GENERAL.SUSPECT_DOMAINS_LABEL) {
+        settings.GENERAL.SUSPECT_DOMAINS_LABEL = 'Uwa\u017Caj! \u0179r\xF3d\u0142o tego znaleziska jest podejrzewane o szerzenie rosyjskiej propagandy.';
+      }
     }
 
     localStorage.setItem(STORAGE_KEY_NAMES.WH_SETTINGS, JSON.stringify(settings));
