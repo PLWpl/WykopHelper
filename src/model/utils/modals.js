@@ -1,4 +1,7 @@
 import DOM from '../../constants/domSelectors';
+import { getLocalStorage } from '../../utils/handleLocalStorage';
+
+const settings = getLocalStorage('settings');
 
 /* eslint max-len: 0 */
 export const russianPropagandaModal = `
@@ -10,11 +13,24 @@ export const russianPropagandaModal = `
     <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}"><a class="${DOM.MODAL.CLASSNAME.LINK}" href="https://oko.press/rosyjska-propagande-szerza-polskie-portale-znalezlismy-23-takie-witryny/" target="_blank">Artykuł z OKO.Press</a></li>
   </ul>
   <p>Lista z czasem będzie uzupełniana, a jedna z aktualizacji już wkrótce przyniesie możliwość przejrzenia (najpierw) i edycji (późniejsza aktualizacja) listy witryn.
-`
+`;
+
+export const suspectDomainsSettingsModal = `
+  <label>
+    Treść komunikatu ostrzegającego, gdy znalezisko pochodzi z podejrzanego źródła:
+    <input id="suspectDomainsLabel" value="${settings.GENERAL.SUSPECT_DOMAINS_LABEL || ''}" style="display: block;width: 100%;padding: .3rem 1rem;margin: .5rem 0 1rem;background: #2c2c2c;border: 1px solid #444;" class="">
+  </label>
+  <label>
+    Lista domen uznawanych za podejrzane:
+    <textarea class="" id="suspectDomains" style="display: block; width: 100%; padding: 0.3rem 1rem; margin: 0.5rem 0px 0; height: 150px; max-height: 15rem; overflow: auto; resize: none;">${settings.GENERAL.SUSPECT_DOMAINS ? settings.GENERAL.SUSPECT_DOMAINS.join('\n') : ''}</textarea>
+  </label>
+  <small>
+    Same domeny, bez "https://" czy "www."; każda domena w osobnej linijce.
+  </small>
+`;
 
 export const warnOnReloadModal = `
-  <p>Ten ficzer jest eksperymentalny. Z nie do końca dla mnie zrozumiałych powodów (podejrzewam, że przeszkadza tu jakiś wykopowy skrypt reklamowy), na niektórych przeglądarkach (np. firefox z ublockiem) działa jak powinien, a na innych (czysty Chrome) nie działa w ogóle. Dlatego zanim zdecydujesz się mu zaufać, przeprowadź kilka testów. Ostrzeżenie powinno aktywować się, gdy w okienku pisania komentarza znajdować się będzie 6 słów i więcej.
-  <p style="margin-top:.5rem">W najbliższej przyszłości poświęcę nieco więcej czasu na debugging i, mam nadzieję, odkryję przyczynę tej niestabilności. Sorry za utrudnienia, ale to wciąż wersja beta ;)
+  <p>Ten ficzer jest eksperymentalny. Obecnie prawdopodobnie udało mi się wyeliminować błędy, które sprawiały, że w przeszłości (nie)działał jak chciał, ale mimo wszystko - proponuję najpierw przetestować, czy działa jak trzeba również u Ciebie, zanim zaczniesz na nim polegać dla ochrony przed utratą treści :) 
 `
 
 export const badgeUserModal = props => {

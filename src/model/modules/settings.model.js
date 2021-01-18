@@ -1,6 +1,6 @@
 import DOM_SELECTORS from '../../constants/domSelectors';
 
-const { SETTINGS: {CLASSNAME} } = DOM_SELECTORS;
+const { SETTINGS: {CLASSNAME, ID} } = DOM_SELECTORS;
 
 export const settingsMarkup = `
 <fieldset>
@@ -16,9 +16,9 @@ export const settingsMarkup = `
         type="checkbox"
         category="GENERAL"
         name="WARN_ON_RELOAD"
-        id="warnOnReload"
+        id="${ID.WARN_ON_RELOAD_SETTING}"
       />
-      <label class="inline" for="warnOnReload">Ostrzegaj przy próbie zamknięcia/przeładowania strony gdy wykryto pisanie komentarza </label><span id="warnOnReloadInfo" style="cursor:pointer;border:1px solid currentcolor;padding:0 .5rem;position:relative;bottom:.5rem;border-radius:5px">ℹ</span>
+      <label class="inline" for="${ID.WARN_ON_RELOAD_SETTING}">Ostrzegaj przy próbie zamknięcia/przeładowania strony gdy wykryto pisanie komentarza </label><svg  style="width: 1.5rem; stroke: currentColor; cursor: pointer;border: 1px solid currentColor;border-radius: 5px;padding: .1rem;" id="${ID.WARN_ON_RELOAD_INFO_LINK}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180"><path stroke-width="16" d="M60 67c0-13 1-19 8-26 7-9 18-10 28-8s22 12 22 26-11 19-15 22c-7 2-10 6-11 11v20m0 12v16"/></svg>
     </div>
     <div class="row">
       <input
@@ -26,9 +26,9 @@ export const settingsMarkup = `
         type="checkbox"
         category="GENERAL"
         name="WARN_ON_SUSPECTED_RUSSIAN_PROPAGANDA"
-        id="warnOnRussian"
+        id="${ID.SUSPECT_DOMAINS_SETTING}"
       />
-      <label class="inline" for="warnOnRussian">Oznaczaj znaleziska ze źródeł podejrzewanych o szerzenie Rosyjskiej propagandy </label><span id="russianPropagandaInfo" style="cursor:pointer;border:1px solid currentcolor;padding:0 .5rem;position:relative;bottom:.5rem;border-radius:5px">ℹ</span>
+      <label class="inline" for="${ID.SUSPECT_DOMAINS_SETTING}">Oznaczaj znaleziska z podejrzanych źródeł </label><svg id="${ID.SUSPECT_DOMAINS_SETTINGS_LINK}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" style="width: 1.5rem;fill: currentColor;cursor: pointer;border: 1px solid currentColor;border-radius: 5px;padding: .25rem;"><path d="M14 0h4l1 6 1.707.707L26 3.293 28.707 6l-3.414 5.293L26 13l6 1v4l-6 1-.707 1.707L28.707 26 26 28.707l-5.293-3.414L19 26l-1 6h-4l-1-6-1.707-.707L6 28.707 3.293 26l3.414-5.293L6 19l-6-1v-4l6-1 .707-1.707L3.293 6 6 3.293l5.293 3.414L13 6l1-6zm2 10a6 6 0 000 12 6 6 0 000-12"></path></svg>
     </div>
     <div class="row">
       <input

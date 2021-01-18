@@ -135,7 +135,10 @@
         SHOW_MARKED_TABLE: 'showAllMarked',
         ALLOW_WIPE_MARKED_LIST: 'allowWipeAllMarked',
         REMOVE_ALL_MARKED: 'whsettings__remove-all-marked',
-        RUSSIAN_PROPAGANDA_INFO_LINK: 'russianPropagandaInfo',
+        SUSPECT_DOMAINS_SETTING: 'warnOnSuspectDomain',
+        SUSPECT_DOMAINS_SETTINGS_LINK: 'suspectDomainsSettings',
+        SUSPECT_DOMAINS_SETTINGS_TEXTAREA: 'suspectDomains',
+        WARN_ON_RELOAD_SETTING: 'warnOnReload',
         WARN_ON_RELOAD_INFO_LINK: 'warnOnReloadInfo'
       },
       SELECTOR: {
@@ -143,37 +146,32 @@
         ACTIVE_NAV_ELEMENT: '#site .nav > ul .active',
         SETTINGS_FORM_ELEMENT: '#site .grid-main .settings',
       },
-      DYNAMIC: {}
     },
     HIGHLIGHT_OP: {
       CLASSNAME: {
         HIGHLIGHT_BUTTON: 'button--highlightOp',
         AUTHOR_COMMENTS: 'authorComment',
       },
-      ID: {},
       SELECTOR: {
         OP_THREAD: '[data-type="entry"]',
       },
-      DYNAMIC: {}
     },
     EMBED: {
       CLASSNAME: {
         EMBED_FILE: 'embedFile',
       },
-      ID: {},
-      SELECTOR: {},
-      DYNAMIC: {}
     },
     DOMAIN_CHECKER: {
       CLASSNAME: {
+        // wykop.pl elements
         WYKOP_ITEM_INTRO: 'bspace',
         WYKOP_ITEM_ANNOTATION: 'annotation',
+        // custom WH elements
       },
       ID: {},
       SELECTOR: {
         THREAD_LINK: '.article h2 a',
       },
-      DYNAMIC: {}
     },
     MODAL: {
       CLASSNAME: {
@@ -388,48 +386,47 @@
     return `Użytkownik ${action}ał podlinkowane znalezisko.`;
   };
 
-  /* eslint max-len: 0 */
-  const russianPropagandaModal = `
-  <p>Strony oznaczone jako potencjalnie szerzące rosyjską propagandę na wykopie zostały wyznaczone na podstawie następujących źródeł:
-  <ul class="${DOM.MODAL.CLASSNAME.LIST}">
-    <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}"><a class="${DOM.MODAL.CLASSNAME.LINK}" href="https://www.politicalcapital.hu/wp-content/uploads/PC_reactionary_values_CEE_20160727.pdf" target="_blank">Raport "The Weaponization of Culture: Kremlin's traditional agenda and the export of values to Central Europe" [PDF]</a></li>
-    <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}"><a class="${DOM.MODAL.CLASSNAME.LINK}" href="https://jagiellonia.org/mysl-polska-kresy-pl-geopolityka-org-etc-sa-kanalami-szerzenia-rosyjskich-wplywow-w-polsce-opublikowano-korespondencje-kremlowskich-urzednikow-rappoport-leaks/" target="_blank">Artykuł z Jagiellonia.org</a></li>
-    <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}"><a class="${DOM.MODAL.CLASSNAME.LINK}" href="https://euvsdisinfo.eu/reading-list/" target="_blank">EUvsDiSiNFO</a></li>
-    <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}"><a class="${DOM.MODAL.CLASSNAME.LINK}" href="https://oko.press/rosyjska-propagande-szerza-polskie-portale-znalezlismy-23-takie-witryny/" target="_blank">Artykuł z OKO.Press</a></li>
-  </ul>
-  <p>Lista z czasem będzie uzupełniana, a jedna z aktualizacji już wkrótce przyniesie możliwość przejrzenia (najpierw) i edycji (późniejsza aktualizacja) listy witryn.
-`;
+  const warningAnnotation = 'Uwa\u017Caj! \u0179r\xF3d\u0142o tego znaleziska jest podejrzewane o szerzenie rosyjskiej propagandy.';
 
-  const warnOnReloadModal = `
-  <p>Ten ficzer jest eksperymentalny. Z nie do końca dla mnie zrozumiałych powodów (podejrzewam, że przeszkadza tu jakiś wykopowy skrypt reklamowy), na niektórych przeglądarkach (np. firefox z ublockiem) działa jak powinien, a na innych (czysty Chrome) nie działa w ogóle. Dlatego zanim zdecydujesz się mu zaufać, przeprowadź kilka testów. Ostrzeżenie powinno aktywować się, gdy w okienku pisania komentarza znajdować się będzie 6 słów i więcej.
-  <p style="margin-top:.5rem">W najbliższej przyszłości poświęcę nieco więcej czasu na debugging i, mam nadzieję, odkryję przyczynę tej niestabilności. Sorry za utrudnienia, ale to wciąż wersja beta ;)
-`;
-
-  const badgeUserModal = props => {
-    const mediaText = link => `<p style="margin-top:5px;"><a href="${link}" target="_blank">Link do osadzonej treści multimedialnej (obrazek lub film)</a></p>`;
-
-    return {
-      title: `${props.nick}`,
-      content: `
-    <p style="text-align:left">Przyczyna oznaczenia</strong>:</p>
-    <div class="${DOM.MODAL.CLASSNAME.SCROLLABLE_TEXT}"><p>${props.content}</p>
-    ${props.media ? mediaText(props.media) : ''}</div>
-    <p style="margin-top:1rem;text-align:right"><a href="${props.link}">Link do komentarza lub znaleziska</a></p>
-    <label class="${DOM.MODAL.CLASSNAME.INPUT_LABEL}">Treść odznaki: <input autocomplete="off" value="${props.label}" class="${DOM.MODAL.CLASSNAME.INPUT_TEXT}" id="${DOM.MODAL.ID.BADGE_TEXT}"></label>
-    `,
-      button: "Usu\u0144 oznaczenie",
-      buttonClose: "Zapisz"
-    };
-  };
-
-  /**
-   * Injects styles in <style> tags at the beginning of a page
-   * @param {string} styles - parameter must be a string of CSS without any html tags
-   */
-  const injectStyles = (styles, id = '') => {
-    const styleMarkup = `<style ${id ? 'id="' + id + '"': ''}> ${styles} </style>`;
-    document.body.insertAdjacentHTML('afterbegin', styleMarkup);
-  };
+  const rawDomains = [
+    'alternews.pl',
+    'alexjones.pl',
+    'dziennik-polityczny.com',
+    'koniec-swiata.org',
+    'magnapolonia.org',
+    'narodowcy.net',
+    'nczas.com',
+    'mysl.pl',
+    'ndie.pl',
+    'neon24.pl',
+    'newsweb.pl',
+    'parezja.pl',
+    'prostozmostu24.pl',
+    'prawdaobiektywna.pl',
+    'reporters.pl',
+    'sioe.pl',
+    'wmeritum.pl',
+    'wolnosc24.pl',
+    'wolna-polska.pl',
+    'wprawo.pl',
+    'wsensie.pl',
+    'zmianynaziemi.pl',
+    'sputniknews.com',
+    'rt.com',
+    'ruptly.tv',
+    'prawica.net',
+    'xportal.pl',
+    'kresy.pl',
+    'bdp.xportal.pl',
+    'geopolityka.org',
+    'pravda.ru',
+    'voiceofrussia.com',
+    'ria.ru',
+    'ligakobietpolskich.pl',
+    'ronik.org.pl',
+    'obserwatorpolityczny.pl',
+    'mysl-polska.pl'
+  ];
 
   /**
    * Initial values for all storage objects
@@ -443,6 +440,8 @@
     GENERAL: {
       WARN_ON_RELOAD: false,
       WARN_ON_SUSPECTED_RUSSIAN_PROPAGANDA: true,
+      SUSPECT_DOMAINS_LABEL: warningAnnotation,
+      SUSPECT_DOMAINS: rawDomains,
       REMOVE_WOODLE: false,
       REMOVE_COMMENTS: '',
     },
@@ -493,6 +492,64 @@
       default:
         throw new Error(`Unknown storage type: ${name}. Pick either "unique", "marked" or "settings"`);
     }
+  };
+
+  const settings$1 = getLocalStorage('settings');
+
+  /* eslint max-len: 0 */
+  const russianPropagandaModal = `
+  <p>Strony oznaczone jako potencjalnie szerzące rosyjską propagandę na wykopie zostały wyznaczone na podstawie następujących źródeł:
+  <ul class="${DOM.MODAL.CLASSNAME.LIST}">
+    <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}"><a class="${DOM.MODAL.CLASSNAME.LINK}" href="https://www.politicalcapital.hu/wp-content/uploads/PC_reactionary_values_CEE_20160727.pdf" target="_blank">Raport "The Weaponization of Culture: Kremlin's traditional agenda and the export of values to Central Europe" [PDF]</a></li>
+    <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}"><a class="${DOM.MODAL.CLASSNAME.LINK}" href="https://jagiellonia.org/mysl-polska-kresy-pl-geopolityka-org-etc-sa-kanalami-szerzenia-rosyjskich-wplywow-w-polsce-opublikowano-korespondencje-kremlowskich-urzednikow-rappoport-leaks/" target="_blank">Artykuł z Jagiellonia.org</a></li>
+    <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}"><a class="${DOM.MODAL.CLASSNAME.LINK}" href="https://euvsdisinfo.eu/reading-list/" target="_blank">EUvsDiSiNFO</a></li>
+    <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}"><a class="${DOM.MODAL.CLASSNAME.LINK}" href="https://oko.press/rosyjska-propagande-szerza-polskie-portale-znalezlismy-23-takie-witryny/" target="_blank">Artykuł z OKO.Press</a></li>
+  </ul>
+  <p>Lista z czasem będzie uzupełniana, a jedna z aktualizacji już wkrótce przyniesie możliwość przejrzenia (najpierw) i edycji (późniejsza aktualizacja) listy witryn.
+`;
+
+  const suspectDomainsSettingsModal = `
+  <label>
+    Treść komunikatu ostrzegającego, gdy znalezisko pochodzi z podejrzanego źródła:
+    <input id="suspectDomainsLabel" value="${settings$1.GENERAL.SUSPECT_DOMAINS_LABEL || ''}" style="display: block;width: 100%;padding: .3rem 1rem;margin: .5rem 0 1rem;background: #2c2c2c;border: 1px solid #444;" class="">
+  </label>
+  <label>
+    Lista domen uznawanych za podejrzane:
+    <textarea class="" id="suspectDomains" style="display: block; width: 100%; padding: 0.3rem 1rem; margin: 0.5rem 0px 0; height: 150px; max-height: 15rem; overflow: auto; resize: none;">${settings$1.GENERAL.SUSPECT_DOMAINS ? settings$1.GENERAL.SUSPECT_DOMAINS.join('\n') : ''}</textarea>
+  </label>
+  <small>
+    Same domeny, bez "https://" czy "www."; każda domena w osobnej linijce.
+  </small>
+`;
+
+  const warnOnReloadModal = `
+  <p>Ten ficzer jest eksperymentalny. Obecnie prawdopodobnie udało mi się wyeliminować błędy, które sprawiały, że w przeszłości (nie)działał jak chciał, ale mimo wszystko - proponuję najpierw przetestować, czy działa jak trzeba również u Ciebie, zanim zaczniesz na nim polegać dla ochrony przed utratą treści :) 
+`;
+
+  const badgeUserModal = props => {
+    const mediaText = link => `<p style="margin-top:5px;"><a href="${link}" target="_blank">Link do osadzonej treści multimedialnej (obrazek lub film)</a></p>`;
+
+    return {
+      title: `${props.nick}`,
+      content: `
+    <p style="text-align:left">Przyczyna oznaczenia</strong>:</p>
+    <div class="${DOM.MODAL.CLASSNAME.SCROLLABLE_TEXT}"><p>${props.content}</p>
+    ${props.media ? mediaText(props.media) : ''}</div>
+    <p style="margin-top:1rem;text-align:right"><a href="${props.link}">Link do komentarza lub znaleziska</a></p>
+    <label class="${DOM.MODAL.CLASSNAME.INPUT_LABEL}">Treść odznaki: <input autocomplete="off" value="${props.label}" class="${DOM.MODAL.CLASSNAME.INPUT_TEXT}" id="${DOM.MODAL.ID.BADGE_TEXT}"></label>
+    `,
+      button: "Usu\u0144 oznaczenie",
+      buttonClose: "Zapisz"
+    };
+  };
+
+  /**
+   * Injects styles in <style> tags at the beginning of a page
+   * @param {string} styles - parameter must be a string of CSS without any html tags
+   */
+  const injectStyles = (styles, id = '') => {
+    const styleMarkup = `<style ${id ? 'id="' + id + '"': ''}> ${styles} </style>`;
+    document.body.insertAdjacentHTML('afterbegin', styleMarkup);
   };
 
   const { BADGE: EL } = DOM;
@@ -743,7 +800,6 @@
         title: modal.title,
         html: modal.content,
         icon: "info",
-        iconColor: '#a5dc86',
         allowEnterKey: false,
         showCancelButton: false,
         showCloseButton: true,
@@ -856,7 +912,7 @@
   const isNotAwarded = element => !$(`.${EL$1.CLASSNAME.BADGE}`, element);
 
   let markedUsers = getLocalStorage("marked");
-  let settings$1 = getLocalStorage("settings");
+  let settings$2 = getLocalStorage("settings");
 
   /**
    * gets user data from objects inside marked users array.
@@ -884,7 +940,7 @@
   /**
    * @returns {String} default name for badge set in settings by user.
    */
-  const getDefaultBadgeLabelFromSettings = () => settings$1.BADGE.DEFAULT_NAME;
+  const getDefaultBadgeLabelFromSettings = () => settings$2.BADGE.DEFAULT_NAME;
 
   const { BADGE: EL$2 } = DOM;
 
@@ -902,61 +958,6 @@
     }
   };
 
-  /** An array of all domains suspected of spreading russian propaganda.
-   * When adding new domains, remember to add them without http(s) or www. Just name.domain.
-   */
-  const rawDomains = [
-    'alternews.pl',
-    'alexjones.pl',
-    'dziennik-polityczny.com',
-    'koniec-swiata.org',
-    'magnapolonia.org',
-    'narodowcy.net',
-    'nczas.com',
-    'mysl.pl',
-    'ndie.pl',
-    'neon24.pl',
-    'newsweb.pl',
-    'parezja.pl',
-    'prostozmostu24.pl',
-    'prawdaobiektywna.pl',
-    'reporters.pl',
-    'sioe.pl',
-    'wmeritum.pl',
-    'wolnosc24.pl',
-    'wolna-polska.pl',
-    'wprawo.pl',
-    'wsensie.pl',
-    'zmianynaziemi.pl',
-    'sputniknews.com',
-    'rt.com',
-    'ruptly.tv',
-    'prawica.net',
-    'xportal.pl',
-    'kresy.pl',
-    'bdp.xportal.pl',
-    'geopolityka.org',
-    'pravda.ru',
-    'voiceofrussia.com',
-    'ria.ru',
-    'ligakobietpolskich.pl',
-    'ronik.org.pl',
-    'obserwatorpolityczny.pl',
-    'mysl-polska.pl'
-  ];
-
-  const processedDomains = rawDomains.map(domain => {
-    const https = 'https://' + domain;
-    const www = 'https://www.' + domain;
-    const http = 'http://' + domain;
-    const hwww = 'http://www.' + domain;
-
-    return [https, www, http, hwww];
-  });
-
-  /** @returns array of strings (domains) */
-  const russianPropagandaDomains = processedDomains.flat();
-
   /**
    * @param {string} content - what shall be included in the <p> tag.
    * @param {string} [type=alert] - type of annotation. Available types are: 'success', 'alert' (default), 'error', 'light-info'.
@@ -968,7 +969,7 @@
 	</div>
 `;
 
-  const warningAnnotation = 'Uwa\u017Caj! \u0179r\xF3d\u0142o tego znaleziska jest podejrzewane o szerzenie rosyjskiej propagandy.';
+  const settings$3 = getLocalStorage('settings');
 
   const handleDomainCheck = () => {
     /**
@@ -976,13 +977,26 @@
      * @return {boolean} True if yes, false otherwise
      */
     const isSettingActive = () => {
-      const settings = getLocalStorage('settings');
-
-      if (settings.GENERAL.WARN_ON_SUSPECTED_RUSSIAN_PROPAGANDA) {
+      if (settings$3.GENERAL.WARN_ON_SUSPECTED_RUSSIAN_PROPAGANDA) {
         return true;
       }
 
       return false;
+    };
+
+    const processDomains = () => {
+      const domains = settings$3.GENERAL.SUSPECT_DOMAINS || [];
+
+      const processedDomains = domains.map(domain => {
+        const https = 'https://' + domain;
+        const www = 'https://www.' + domain;
+        const http = 'http://' + domain;
+        const hwww = 'http://www.' + domain;
+      
+        return [https, www, http, hwww];
+      });
+
+      return processedDomains.flat();
     };
 
     /**
@@ -992,12 +1006,14 @@
       if (!$(DOM.DOMAIN_CHECKER.SELECTOR.THREAD_LINK).href) {
         return;
       }
+
+      const suspectDomains = processDomains();
       const threadLink = $(DOM.DOMAIN_CHECKER.SELECTOR.THREAD_LINK).href;
       const url = new URL(threadLink);
       const threadLinkHostname = url.protocol + '//' + url.hostname;
-      const annotationMarkup = annotation(warningAnnotation);
+      const annotationMarkup = annotation(settings$3.GENERAL.SUSPECT_DOMAINS_LABEL);
 
-      if (russianPropagandaDomains.includes(threadLinkHostname)) {
+      if (suspectDomains.includes(threadLinkHostname)) {
         $(`.${DOM.DOMAIN_CHECKER.CLASSNAME.WYKOP_ITEM_INTRO}`).insertAdjacentHTML('beforebegin', annotationMarkup);
       }
     };
@@ -1038,7 +1054,7 @@
     }
   };
 
-  const { SETTINGS: {CLASSNAME} } = DOM;
+  const { SETTINGS: {CLASSNAME, ID} } = DOM;
 
   const settingsMarkup = `
 <fieldset>
@@ -1054,9 +1070,9 @@
         type="checkbox"
         category="GENERAL"
         name="WARN_ON_RELOAD"
-        id="warnOnReload"
+        id="${ID.WARN_ON_RELOAD_SETTING}"
       />
-      <label class="inline" for="warnOnReload">Ostrzegaj przy próbie zamknięcia/przeładowania strony gdy wykryto pisanie komentarza </label><span id="warnOnReloadInfo" style="cursor:pointer;border:1px solid currentcolor;padding:0 .5rem;position:relative;bottom:.5rem;border-radius:5px">ℹ</span>
+      <label class="inline" for="${ID.WARN_ON_RELOAD_SETTING}">Ostrzegaj przy próbie zamknięcia/przeładowania strony gdy wykryto pisanie komentarza </label><svg  style="width: 1.5rem; stroke: currentColor; cursor: pointer;border: 1px solid currentColor;border-radius: 5px;padding: .1rem;" id="${ID.WARN_ON_RELOAD_INFO_LINK}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180"><path stroke-width="16" d="M60 67c0-13 1-19 8-26 7-9 18-10 28-8s22 12 22 26-11 19-15 22c-7 2-10 6-11 11v20m0 12v16"/></svg>
     </div>
     <div class="row">
       <input
@@ -1064,9 +1080,9 @@
         type="checkbox"
         category="GENERAL"
         name="WARN_ON_SUSPECTED_RUSSIAN_PROPAGANDA"
-        id="warnOnRussian"
+        id="${ID.SUSPECT_DOMAINS_SETTING}"
       />
-      <label class="inline" for="warnOnRussian">Oznaczaj znaleziska ze źródeł podejrzewanych o szerzenie Rosyjskiej propagandy </label><span id="russianPropagandaInfo" style="cursor:pointer;border:1px solid currentcolor;padding:0 .5rem;position:relative;bottom:.5rem;border-radius:5px">ℹ</span>
+      <label class="inline" for="${ID.SUSPECT_DOMAINS_SETTING}">Oznaczaj znaleziska z podejrzanych źródeł </label><svg id="${ID.SUSPECT_DOMAINS_SETTINGS_LINK}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" style="width: 1.5rem;fill: currentColor;cursor: pointer;border: 1px solid currentColor;border-radius: 5px;padding: .25rem;"><path d="M14 0h4l1 6 1.707.707L26 3.293 28.707 6l-3.414 5.293L26 13l6 1v4l-6 1-.707 1.707L28.707 26 26 28.707l-5.293-3.414L19 26l-1 6h-4l-1-6-1.707-.707L6 28.707 3.293 26l3.414-5.293L6 19l-6-1v-4l6-1 .707-1.707L3.293 6 6 3.293l5.293 3.414L13 6l1-6zm2 10a6 6 0 000 12 6 6 0 000-12"></path></svg>
     </div>
     <div class="row">
       <input
@@ -1191,7 +1207,7 @@
    * To add new setting option:
    *  - add it as a default in /utils/handleLocalStorage
    *  - add HTML for it in /model/modules/settings.model
-   *  - add check in appropriate module. If you want it to be ON by default, you will need to make it so using /utils/rynOnceOnUpdate
+   *  - add check in appropriate module. If you want it to be ON by default, you will need to make it so using /utils/runOnceOnUpdate
    */
 
   const { SETTINGS: EL$3 } = DOM;
@@ -1204,7 +1220,7 @@
   };
 
   const handleSettings = () => {
-    const settings = getLocalStorage('settings');
+    let settings = getLocalStorage('settings');
     const markedUsers = getLocalStorage();
     const uniqueNicksSet = getLocalStorage('unique');
 
@@ -1249,13 +1265,33 @@
     const showModalWithPropagandaExplanation = () => {
       // eslint-disable-next-line
       Swal.fire({
-        title: settingsModel.textContent.RUSSIAN_PROPAGANDA_MODAL_TITLE,
-        html: russianPropagandaModal,
+        html: suspectDomainsSettingsModal,
         icon: 'info',
-        showCancelButton: false,
-        confirmButtonColor: '#3085d6',
-        confirmButtonText: 'OK',
-        width: "80%"
+        // eslint-disable-next-line
+        iconHtml: '<svg style="fill:currentColor;width:2rem;height: auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M14 0h4l1 6 1.707.707L26 3.293 28.707 6l-3.414 5.293L26 13l6 1v4l-6 1-.707 1.707L28.707 26 26 28.707l-5.293-3.414L19 26l-1 6h-4l-1-6-1.707-.707L6 28.707 3.293 26l3.414-5.293L6 19l-6-1v-4l6-1 .707-1.707L3.293 6 6 3.293l5.293 3.414L13 6l1-6zm2 10a6 6 0 000 12 6 6 0 000-12"/></svg>',
+        iconColor: '#fff',
+        showCancelButton: true,
+        showCloseButton: true,
+        confirmButtonColor: '#0a8658',
+        confirmButtonText: 'Zapisz',
+        cancelButtonText: 'Anuluj',
+        width: "80%",
+        willOpen: modalElement => {
+          $('#suspectDomainsLabel', modalElement).value = settings.GENERAL.SUSPECT_DOMAINS_LABEL;
+          $('#suspectDomains', modalElement).value = settings.GENERAL.SUSPECT_DOMAINS.join('\n');
+        }
+      }).then(result => {
+        if (result.isConfirmed) {
+          let list = $(`#${EL$3.ID.SUSPECT_DOMAINS_SETTINGS_TEXTAREA}`).value;
+          list.replace('https://', '').replace('http://', '').replace('www.', '').replace(' ', '');
+          const arrayList = list.split('\n');
+          settings.GENERAL.SUSPECT_DOMAINS = arrayList;
+
+          const label = $('#suspectDomainsLabel').value;
+          settings.GENERAL.SUSPECT_DOMAINS_LABEL = label;
+
+          localStorage.setItem(STORAGE_KEY_NAMES.WH_SETTINGS, JSON.stringify(settings));
+        }
       });
     };
     
@@ -1331,7 +1367,7 @@
           event.preventDefault();
           wipeAllMarkedUsers();
         }
-        if (event.target.id === EL$3.ID.RUSSIAN_PROPAGANDA_INFO_LINK) {
+        if (event.target.id === EL$3.ID.SUSPECT_DOMAINS_SETTINGS_LINK) {
           showModalWithPropagandaExplanation();
         }
         if (event.target.id === EL$3.ID.WARN_ON_RELOAD_INFO_LINK) {
@@ -1388,31 +1424,21 @@
    * Util function that is supposed to run only once, immediately after script update.
    */
   const runOnceOnUpdate = () => {
-    let marked;
+    let settings;
 
     // preparation
-    if (localStorage.getItem(STORAGE_KEY_NAMES.MARKED_USERS)) {
-      marked = getLocalStorage('marked');
-    } else {
-      marked = [];
+    if (localStorage.getItem(STORAGE_KEY_NAMES.WH_SETTINGS)) {
+      settings = getLocalStorage('settings');
+      settings.GENERAL.SUSPECT_DOMAINS = rawDomains;
+      settings.GENERAL.SUSPECT_DOMAINS_LABEL = 'Uwa\u017Caj! \u0179r\xF3d\u0142o tego znaleziska jest podejrzewane o szerzenie rosyjskiej propagandy.';
     }
 
-    // actual desired action
-    marked.forEach(el => {
-      if (!el.label) {
-        el.label = '';
-      }
-      if (!el.content) {
-        el.content = 'Niestety, u\u017Cytkownik zosta\u0142 oznaczony PRZED uaktywnieniem funkcji zapisywania tre\u015Bci komentarzy. Je\u015Bli chcesz by pojawi\u0142a si\u0119 tu jego tre\u015B\u0107, przejd\u017A do podlinkowanego ni\u017Cej komentarza, a nast\u0119pnie usu\u0144 oznaczenie i dodaj je ponownie.';
-      }
-    });
-
-    localStorage.setItem(STORAGE_KEY_NAMES.MARKED_USERS, JSON.stringify(marked));
+    localStorage.setItem(STORAGE_KEY_NAMES.WH_SETTINGS, JSON.stringify(settings));
   };
 
   /* eslint max-len: 0 */
 
-  const version = `0.61`;
+  const version = `0.62`;
 
   const welcomeText = {
     title: "WykopHelper zainstalowany!",
@@ -1426,6 +1452,9 @@
     content: `
 Dodatek WykopHelper został właśnie zaktualizowany do wersji ${version}. Wprowadzone zmiany to: <br>
 <ul class="${DOM.MODAL.CLASSNAME.LIST}">
+  <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
+    Funkcja ostrzegania przed znaleziskami podejrzanymi o szerzenie propagandy rosyjskiej została zmodyfikowana. Od teraz możesz samodzielnie ustalić, czy takie ostrzeżenie ma w ogóle być pokazywane, a także jaka ma być jego treść i dla jakich domen ma się aktywować. Zdecydować o tym możesz oczywiście w ustawieniach (ikona zębatki przy odpowiednim checkboxie).
+  </li>
   <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
     Funkcja ostrzegająca przed zamknięciem strony gdy wykryte zostanie pisanie komentarza <em>powinna</em> już działać poprawnie.
   </li>
