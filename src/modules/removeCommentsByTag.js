@@ -40,7 +40,7 @@ export const removeCommentsByTag = () => {
   const checkIfTagsPresent = () => Object.values(wykopTags).some(test);
 
   const handleRemoval = () => {
-    if (checkIfTagsPresent()) {
+    if (checkIfTagsPresent() && $(`#${DOM.COMMON.ID.COMMENTS_STREAM}`)) {
       $(`#${DOM.COMMON.ID.COMMENTS_STREAM}`).remove();
     }
   }

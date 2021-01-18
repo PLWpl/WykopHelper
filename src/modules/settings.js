@@ -144,7 +144,7 @@ export const handleSettings = () => {
   };
 
   /**
-   * Basically, sets up several event listeners and handles saving input to storage. onChange for checkboxes, onClick for buttons and onKeyUp for text inputs.
+   * Basically, sets up several event listeners and handles saving input to storage. onChange for checkboxes, onClick for buttons and onKeyUp for text inputs. For standard inputs, mentioned earlier, does not require any extra changes when adding new features.
    */
   const handleSettingsForm = () => {
     settingsFormElement.addEventListener('change', event => {
