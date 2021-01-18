@@ -444,6 +444,7 @@
       SUSPECT_DOMAINS: rawDomains,
       REMOVE_WOODLE: false,
       REMOVE_COMMENTS: '',
+      REMOVE_ALL_COMMENTS: false,
     },
   };
   const initialUnique = [];
@@ -1094,8 +1095,18 @@
       />
       <label class="inline" for="removeWoodle">Usuwaj woodle (okolicznościowy obrazek na belce)</label>
     </div>
+    <div class="row">
+      <input
+        class="checkbox"
+        type="checkbox"
+        category="GENERAL"
+        name="REMOVE_ALL_COMMENTS"
+        id="removeAllComments"
+      />
+      <label class="inline" for="removeAllComments">Usuń komentarze we <strong>wszystkich</strong> znaleziskach</label>
+    </div>
     <div class="row space">
-      <label class="inline" for="removeByTag" style="margin-left:0;display:block;">Usuń komentarze w znaleziskach z następującymi tagami:</label>
+      <label class="inline" for="removeByTag" style="margin-left:0;display:block;">Usuń komentarze tylko w znaleziskach z następującymi tagami:</label>
       <input 
         value="" 
         type="text" 
@@ -1340,7 +1351,7 @@
     };
 
     /**
-     * Basically, sets up several event listeners and handles saving input to storage. onChange for checkboxes, onClick for buttons and onKeyUp for text inputs.
+     * Basically, sets up several event listeners and handles saving input to storage. onChange for checkboxes, onClick for buttons and onKeyUp for text inputs. For standard inputs, mentioned earlier, does not require any extra changes when adding new features.
      */
     const handleSettingsForm = () => {
       settingsFormElement.addEventListener('change', event => {
@@ -1631,7 +1642,34 @@ Dodatek WykopHelper został właśnie zaktualizowany do wersji ${version}. Wprow
     const checkIfTagsPresent = () => Object.values(wykopTags).some(test);
 
     const handleRemoval = () => {
-      if (checkIfTagsPresent()) {
+      if (checkIfTagsPresent() && $(`#${DOM.COMMON.ID.COMMENTS_STREAM}`)) {
+        $(`#${DOM.COMMON.ID.COMMENTS_STREAM}`).remove();
+      }
+    };
+
+    if (isSettingActive()) {
+      handleRemoval();
+    }
+  };
+
+  const removeAllComments = () => {
+    const settings = getLocalStorage('settings');
+    
+
+    /**
+     * Check if user turned off in settings removing comments.
+     * @return {boolean} True if yes, false otherwise
+     */
+    const isSettingActive = () => {
+      if (settings.GENERAL.REMOVE_ALL_COMMENTS) {
+        return true;
+      }
+
+      return false;
+    };
+
+    const handleRemoval = () => {
+      if ($(`#${DOM.COMMON.ID.COMMENTS_STREAM}`)) {
         $(`#${DOM.COMMON.ID.COMMENTS_STREAM}`).remove();
       }
     };
@@ -1675,6 +1713,7 @@ Dodatek WykopHelper został właśnie zaktualizowany do wersji ${version}. Wprow
   if (isPath.thread()) {
     handleDomainCheck();
     removeCommentsByTag();
+    removeAllComments();
   }
   if (isPath.mirkoThread()) {
     highlightOp();

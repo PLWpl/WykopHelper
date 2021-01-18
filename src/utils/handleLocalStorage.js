@@ -17,6 +17,7 @@ const initialSettings = {
     SUSPECT_DOMAINS: rawDomains,
     REMOVE_WOODLE: false,
     REMOVE_COMMENTS: '',
+    REMOVE_ALL_COMMENTS: false,
   },
 };
 const initialUnique = [];

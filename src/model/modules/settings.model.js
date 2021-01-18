@@ -40,8 +40,18 @@ export const settingsMarkup = `
       />
       <label class="inline" for="removeWoodle">Usuwaj woodle (okolicznościowy obrazek na belce)</label>
     </div>
+    <div class="row">
+      <input
+        class="checkbox"
+        type="checkbox"
+        category="GENERAL"
+        name="REMOVE_ALL_COMMENTS"
+        id="removeAllComments"
+      />
+      <label class="inline" for="removeAllComments">Usuń komentarze we <strong>wszystkich</strong> znaleziskach</label>
+    </div>
     <div class="row space">
-      <label class="inline" for="removeByTag" style="margin-left:0;display:block;">Usuń komentarze w znaleziskach z następującymi tagami:</label>
+      <label class="inline" for="removeByTag" style="margin-left:0;display:block;">Usuń komentarze tylko w znaleziskach z następującymi tagami:</label>
       <input 
         value="" 
         type="text" 
