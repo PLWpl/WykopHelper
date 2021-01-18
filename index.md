@@ -30,6 +30,12 @@ Odznaka będzie widoczna przy nicku użytkownika w każdym jego komentarzu w dow
 
 W widocznej na screenie ramce znajdzie się treść komentarza (na wypadek, gdyby user zdecydował się go usunąć, lub gdyby moderator zrobił to za niego), a pod ramką - link do miejsca, gdzie został zamieszczony. Jeśli w treści komentarza znajduje się osadzony obrazek lub film, link do niego znajdzie się również tutaj.
 
+> ⭐𝑈𝑃𝐶𝑂𝑀𝐼𝑁𝐺⭐ - od następnej aktualizacji:⭐
+> 
+> Odznaka będzie wyświetlana również w profilu użytkownika, między avatarem a nickiem.
+> 
+> ⭐⭐⭐
+
 Ostatnia opcja to możliwość zmiany tekstu odznaki. Domyślnie nadawana jest taka, jaką zdefiniowano w ustawieniach (czytaj dalej). Jednak każdego użytkownika z osobna możemy oznaczyć osobno właśnie tutaj. Zmiana następuje po potwierdzeniu przyciskiem "Zapisz".
 
 > Docelowo będzie tu znacznie więcej opcji - po szczegóły zapraszam do sekcji trzeciej, "Plany".
@@ -60,13 +66,22 @@ Czasem jest tak, że jakiś wątek na mikroblogu rozwinie się w setki komentarz
 
 ![highlighted](/op-highlighted.png)
 
-### Ostrzeżenie przed potencjalną propagandą rosyjską 🔧
+### Ostrzeżenie przed podejrzanym źródłem znaleziska 🔧 
 
 Aktywność "ruskich trolli" to od dość dawna nie legenda, a fakt. Uaktywniają się szczególnie w czasie pewnych wydarzeń międzynarodowych, by głosić propagandę swoich mocodawców, jednak propaganda nie przestaje się sączyć właściwie nigdy, czasem tylko jej natężenie jest nieco niższe. Kilka portali podjęło swego czasu próbę skomponowania listy stron, które najczęściej posługują się informacjami przygotowanymi wprost na Kremlu. WykopHelper może pomóc w rozpoznawaniu znalezisk z takich podejrzanych źródeł:
 
 ![propaganda](/warning-propaganda.png)
 
-Ten ficzer możesz wyłączyć (domyślnie jest włączony) w ustawieniach.
+Ten ficzer możesz wyłączyć (domyślnie jest włączony) w ustawieniach. 
+Lista źródeł, na podstawie których została stworzona lista _podejrzanych_ znalezisk znajduje się [tutaj](./propaganda.md).
+
+> ⭐𝑈𝑃𝐶𝑂𝑀𝐼𝑁𝐺⭐ - od następnej aktualizacji:⭐
+> 
+> Możesz tam również - jeśli chcesz - zrezygnować z domyślnego zachowania tego ficzera, i zmienić zarówno tekst ostrzeżenia jak i podejrzeć/edytować listę stron, przy których ostrzeżenie ma się pojawiać.
+> 
+> ![propaganda](/warning-propaganda-settings.png)
+> 
+> ⭐⭐⭐
 
 ### Upload obrazka prosto ze schowka, zamiast z dysku
 
@@ -86,7 +101,11 @@ Czasem może być tak, że chcesz widzieć znaleziska z jakiejś kategorii (np. 
 
 Gdy zostanie wykryte pisanie komentarza (w polu tekstowym znajdzie się co najmniej 6 słów), przed przeładowaniem/zamknięciem strony zostanie wyświetlony monit z pytaniem, czy użytkownik jest pewien swoich działań.
 
-**Uwaga - ficzer aktualnie czasami działa, czasami nie (wygląda na to, że jest to zależne od przeglądarki), pracuję nad naprawą - tymczasem zalecam opcji nie włączać lub, alternatywnie, nie do końca ufać, że zawsze to powiadomienie będzie :)**
+> ⭐𝑈𝑃𝐶𝑂𝑀𝐼𝑁𝐺⭐ - od następnej aktualizacji:⭐
+> 
+> **Uwaga - ficzer przez dłuższy czas miał jakieś kłopoty z działaniem na niektórych przeglądarkach; wydaje mi się, że najnowsza aktualizacja problem naprawia, zalecam jednak mimo wszystko przeprowadzić własne testy :)**
+> 
+> ⭐⭐⭐
 
 ### Ustawienia 🔧🔧🔧
 
