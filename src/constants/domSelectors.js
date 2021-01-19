@@ -21,8 +21,11 @@ export const DOM = {
       NICK_VERIFIED_BADGE: 'verified',
       NICK: 'showProfileSummary',
       VOTES_USERCARD: 'usercard',
+      USER_PROFILE: 'user-profile',
       // custom WH elements
       BADGE: 'badgeWH',
+      BADGE_UNCLICKABLE: 'badgeWH--unclickable',
+      BADGE_CLICKABLE: 'badgeWH--clickable',
       MARK_BUTTON: 'buttonWH',
       MARK_BUTTON_CLICKED: 'buttonWH--clicked',
       MARK_ALL_BUTTON_ELEMENT: 'buttonWH--markAllContainer',
@@ -41,6 +44,8 @@ export const DOM = {
       NICK_DELETED: '.author > .color-1002',
       REPLY_FORM: '.replyForm textarea',
       COMMENT_FORM: '#commentFormContainer textarea',
+      USER_PROFILE_NICK_ELEMENT: '.user-profile h2',
+      USER_PROFILE_NICK: '.user-profile h2 span',
     },
     DYNAMIC: {
       DATASET: {
@@ -70,7 +75,10 @@ export const DOM = {
       SHOW_MARKED_TABLE: 'showAllMarked',
       ALLOW_WIPE_MARKED_LIST: 'allowWipeAllMarked',
       REMOVE_ALL_MARKED: 'whsettings__remove-all-marked',
-      RUSSIAN_PROPAGANDA_INFO_LINK: 'russianPropagandaInfo',
+      SUSPECT_DOMAINS_SETTING: 'warnOnSuspectDomain',
+      SUSPECT_DOMAINS_SETTINGS_LINK: 'suspectDomainsSettings',
+      SUSPECT_DOMAINS_SETTINGS_TEXTAREA: 'suspectDomains',
+      WARN_ON_RELOAD_SETTING: 'warnOnReload',
       WARN_ON_RELOAD_INFO_LINK: 'warnOnReloadInfo'
     },
     SELECTOR: {
@@ -78,37 +86,32 @@ export const DOM = {
       ACTIVE_NAV_ELEMENT: '#site .nav > ul .active',
       SETTINGS_FORM_ELEMENT: '#site .grid-main .settings',
     },
-    DYNAMIC: {}
   },
   HIGHLIGHT_OP: {
     CLASSNAME: {
       HIGHLIGHT_BUTTON: 'button--highlightOp',
       AUTHOR_COMMENTS: 'authorComment',
     },
-    ID: {},
     SELECTOR: {
       OP_THREAD: '[data-type="entry"]',
     },
-    DYNAMIC: {}
   },
   EMBED: {
     CLASSNAME: {
       EMBED_FILE: 'embedFile',
     },
-    ID: {},
-    SELECTOR: {},
-    DYNAMIC: {}
   },
   DOMAIN_CHECKER: {
     CLASSNAME: {
+      // wykop.pl elements
       WYKOP_ITEM_INTRO: 'bspace',
       WYKOP_ITEM_ANNOTATION: 'annotation',
+      // custom WH elements
     },
     ID: {},
     SELECTOR: {
       THREAD_LINK: '.article h2 a',
     },
-    DYNAMIC: {}
   },
   MODAL: {
     CLASSNAME: {

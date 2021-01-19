@@ -1,5 +1,6 @@
 import isPath from './utils/checkPath';
 import { handleBadges } from './modules/badges';
+import { displayBadgeInUserProfile } from './modules/badges/displayInUserProfile';
 import { handleDomainCheck } from './modules/domainChecker'
 import { hideMarkedUsers } from './modules/hideMarkedUsers'
 import { createSettingsPage, handleSettings } from './modules/settings';
@@ -10,6 +11,7 @@ import { warnOnReload } from './modules/warnOnReload';
 import { embedOnPaste } from './modules/embedOnPaste';
 import { removeWoodle } from './modules/removeWoodle';
 import { removeCommentsByTag } from './modules/removeCommentsByTag';
+import { removeAllComments } from './modules/removeAllComments';
 
 /**
 * Capitalize first letter
@@ -33,6 +35,9 @@ if (isPath.main()) {
   embedOnPaste();
   hideMarkedUsers();
 }
+if (isPath.userProfile()) {
+  displayBadgeInUserProfile();
+}
 if (isPath.settings()) {
   createSettingsPage();
 }
@@ -42,6 +47,7 @@ if (isPath.whSettings()) {
 if (isPath.thread()) {
   handleDomainCheck();
   removeCommentsByTag();
+  removeAllComments();
 }
 if (isPath.mirkoThread()) {
   highlightOp();

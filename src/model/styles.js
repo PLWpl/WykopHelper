@@ -26,9 +26,14 @@ export const badge = `
   margin-right: .3rem;
   border: 1px solid currentColor;
   padding: .1rem .2rem;
-  cursor: pointer;
   position: relative;
   top: .1rem;
+}
+.${DOM.BADGE.CLASSNAME.BADGE_CLICKABLE} {
+  cursor: pointer;
+}
+.${DOM.BADGE.CLASSNAME.BADGE_UNCLICKABLE} {
+  cursor: default;
 }
 .${DOM.BADGE.CLASSNAME.MODAL_BUTTON} {
   display: block;

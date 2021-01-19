@@ -256,10 +256,13 @@ export const handleBadges = () => {
       title: modal.title,
       html: modal.content,
       icon: "info",
+      allowEnterKey: false,
       showCancelButton: false,
+      showCloseButton: true,
       showDenyButton: true,
       confirmButtonText: modal.button,
-      denyButtonText: 'Zapisz',
+      denyButtonText: modal.buttonClose,
+      denyButtonColor: '#0a8658',
       width: "80%",
     }).then(result => {
       if (result.isConfirmed) {
@@ -303,23 +306,7 @@ export const handleBadges = () => {
   }
 
   /**
-   * Setting custom label value for user with given nick
-   */
-  // const setCustomLabelValue = nick => {
-  //   const userData = getNickData(nick);
-  //   const value = document.getElementById(EL.MODAL.ID.BADGE_TEXT).value;
-  //   const marked = getLocalStorage('marked');
-  //   const changedMarked = marked.map(el => el.nick === userData.nick ? { ...el, label: value } : el);
-
-  //   localStorage.setItem(
-      
-  //     STORAGE_KEY_NAMES.MARKED_USERS,
-  //     JSON.stringify(changedMarked)
-  //   );
-  // }
-
-  /**
-   * Above is setup. Actual job gets done below
+   * Above is setup.
    */
 
   injectStyles(styles.badge);

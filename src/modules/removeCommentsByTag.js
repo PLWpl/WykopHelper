@@ -5,7 +5,7 @@ import { DOM } from '../constants/domSelectors';
 export const removeCommentsByTag = () => {
   const settings = getLocalStorage('settings');
   const tagsSubmitted = settings.GENERAL.REMOVE_BY_TAG;
-  const offendingTags = tagsSubmitted.replace(' ', '').replace('#', '').split(',');
+  const offendingTags = tagsSubmitted ? tagsSubmitted.replace(' ', '').replace('#', '').split(',') : '';
   let wykopTags;
   
   if (window.dataLayer2[1]) {
@@ -40,7 +40,7 @@ export const removeCommentsByTag = () => {
   const checkIfTagsPresent = () => Object.values(wykopTags).some(test);
 
   const handleRemoval = () => {
-    if (checkIfTagsPresent()) {
+    if (checkIfTagsPresent() && $(`#${DOM.COMMON.ID.COMMENTS_STREAM}`)) {
       $(`#${DOM.COMMON.ID.COMMENTS_STREAM}`).remove();
     }
   }

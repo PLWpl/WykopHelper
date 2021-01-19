@@ -1,4 +1,5 @@
 import STORAGE_KEY_NAMES from '../constants/localStorageKeyNames';
+import { rawDomains, warningAnnotation } from '../model/modules/domainChecker.model';
 
 /**
  * Initial values for all storage objects
@@ -12,8 +13,11 @@ const initialSettings = {
   GENERAL: {
     WARN_ON_RELOAD: false,
     WARN_ON_SUSPECTED_RUSSIAN_PROPAGANDA: true,
+    SUSPECT_DOMAINS_LABEL: warningAnnotation,
+    SUSPECT_DOMAINS: rawDomains,
     REMOVE_WOODLE: false,
     REMOVE_COMMENTS: '',
+    REMOVE_ALL_COMMENTS: false,
   },
 };
 const initialUnique = [];

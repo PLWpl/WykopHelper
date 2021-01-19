@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         WykopHelper - DEV
-// @version      0.60
+// @version      0.65
 // @updateURL    https://cdn.jsdelivr.net/gh/plwpl/WykopHelper/dist/whhelper-dev.user.js
 // @downloadURL  https://cdn.jsdelivr.net/gh/plwpl/WykopHelper/dist/whhelper-dev.user.js
 // @description  Zestaw narzędzi pomocnych na wykopie.
@@ -42,6 +42,8 @@
     thread: () => !!(path.indexOf("wykop.pl/link/") > -1),
 
     mirkoThread: () => !!(path.indexOf("wykop.pl/wpis/") > -1),
+
+    userProfile: () => !!(path.indexOf("wykop.pl/ludzie/") > -1),
   };
 
   /** document.querySelector() */
@@ -79,8 +81,11 @@
         NICK_VERIFIED_BADGE: 'verified',
         NICK: 'showProfileSummary',
         VOTES_USERCARD: 'usercard',
+        USER_PROFILE: 'user-profile',
         // custom WH elements
         BADGE: 'badgeWH',
+        BADGE_UNCLICKABLE: 'badgeWH--unclickable',
+        BADGE_CLICKABLE: 'badgeWH--clickable',
         MARK_BUTTON: 'buttonWH',
         MARK_BUTTON_CLICKED: 'buttonWH--clicked',
         MARK_ALL_BUTTON_ELEMENT: 'buttonWH--markAllContainer',
@@ -99,6 +104,8 @@
         NICK_DELETED: '.author > .color-1002',
         REPLY_FORM: '.replyForm textarea',
         COMMENT_FORM: '#commentFormContainer textarea',
+        USER_PROFILE_NICK_ELEMENT: '.user-profile h2',
+        USER_PROFILE_NICK: '.user-profile h2 span',
       },
       DYNAMIC: {
         DATASET: {
@@ -128,7 +135,10 @@
         SHOW_MARKED_TABLE: 'showAllMarked',
         ALLOW_WIPE_MARKED_LIST: 'allowWipeAllMarked',
         REMOVE_ALL_MARKED: 'whsettings__remove-all-marked',
-        RUSSIAN_PROPAGANDA_INFO_LINK: 'russianPropagandaInfo',
+        SUSPECT_DOMAINS_SETTING: 'warnOnSuspectDomain',
+        SUSPECT_DOMAINS_SETTINGS_LINK: 'suspectDomainsSettings',
+        SUSPECT_DOMAINS_SETTINGS_TEXTAREA: 'suspectDomains',
+        WARN_ON_RELOAD_SETTING: 'warnOnReload',
         WARN_ON_RELOAD_INFO_LINK: 'warnOnReloadInfo'
       },
       SELECTOR: {
@@ -136,37 +146,32 @@
         ACTIVE_NAV_ELEMENT: '#site .nav > ul .active',
         SETTINGS_FORM_ELEMENT: '#site .grid-main .settings',
       },
-      DYNAMIC: {}
     },
     HIGHLIGHT_OP: {
       CLASSNAME: {
         HIGHLIGHT_BUTTON: 'button--highlightOp',
         AUTHOR_COMMENTS: 'authorComment',
       },
-      ID: {},
       SELECTOR: {
         OP_THREAD: '[data-type="entry"]',
       },
-      DYNAMIC: {}
     },
     EMBED: {
       CLASSNAME: {
         EMBED_FILE: 'embedFile',
       },
-      ID: {},
-      SELECTOR: {},
-      DYNAMIC: {}
     },
     DOMAIN_CHECKER: {
       CLASSNAME: {
+        // wykop.pl elements
         WYKOP_ITEM_INTRO: 'bspace',
         WYKOP_ITEM_ANNOTATION: 'annotation',
+        // custom WH elements
       },
       ID: {},
       SELECTOR: {
         THREAD_LINK: '.article h2 a',
       },
-      DYNAMIC: {}
     },
     MODAL: {
       CLASSNAME: {
@@ -209,9 +214,14 @@
   margin-right: .3rem;
   border: 1px solid currentColor;
   padding: .1rem .2rem;
-  cursor: pointer;
   position: relative;
   top: .1rem;
+}
+.${DOM.BADGE.CLASSNAME.BADGE_CLICKABLE} {
+  cursor: pointer;
+}
+.${DOM.BADGE.CLASSNAME.BADGE_UNCLICKABLE} {
+  cursor: default;
 }
 .${DOM.BADGE.CLASSNAME.MODAL_BUTTON} {
   display: block;
@@ -364,8 +374,9 @@
    * 
    * @param {string} nick - nickname of user
    * @param {string} [label=debil] - what will be displayed as a badge
+   * @param {boolean} [clickable=true] - if badge should be styled with cursor:pointer
    */
-  const badge$1 = (nick, label = 'debil') => `<span class="${DOM.BADGE.CLASSNAME.BADGE} ${DOM.BADGE.CLASSNAME.BADGE}--${label.toLowerCase()}" data-whusername="${nick}">${label.toLowerCase().capitalize()}</span>`;
+  const badge$1 = (nick, label = 'debil', clickable = true) => `<span class="${DOM.BADGE.CLASSNAME.BADGE} ${clickable ? DOM.BADGE.CLASSNAME.BADGE_CLICKABLE : DOM.BADGE.CLASSNAME.BADGE_UNCLICKABLE}" data-whusername="${nick}">${label.toLowerCase().capitalize()}</span>`;
 
   /**
    * 
@@ -375,48 +386,47 @@
     return `Użytkownik ${action}ał podlinkowane znalezisko.`;
   };
 
-  /* eslint max-len: 0 */
-  const russianPropagandaModal = `
-  <p>Strony oznaczone jako potencjalnie szerzące rosyjską propagandę na wykopie zostały wyznaczone na podstawie następujących źródeł:
-  <ul class="${DOM.MODAL.CLASSNAME.LIST}">
-    <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}"><a class="${DOM.MODAL.CLASSNAME.LINK}" href="https://www.politicalcapital.hu/wp-content/uploads/PC_reactionary_values_CEE_20160727.pdf" target="_blank">Raport "The Weaponization of Culture: Kremlin's traditional agenda and the export of values to Central Europe" [PDF]</a></li>
-    <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}"><a class="${DOM.MODAL.CLASSNAME.LINK}" href="https://jagiellonia.org/mysl-polska-kresy-pl-geopolityka-org-etc-sa-kanalami-szerzenia-rosyjskich-wplywow-w-polsce-opublikowano-korespondencje-kremlowskich-urzednikow-rappoport-leaks/" target="_blank">Artykuł z Jagiellonia.org</a></li>
-    <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}"><a class="${DOM.MODAL.CLASSNAME.LINK}" href="https://euvsdisinfo.eu/reading-list/" target="_blank">EUvsDiSiNFO</a></li>
-    <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}"><a class="${DOM.MODAL.CLASSNAME.LINK}" href="https://oko.press/rosyjska-propagande-szerza-polskie-portale-znalezlismy-23-takie-witryny/" target="_blank">Artykuł z OKO.Press</a></li>
-  </ul>
-  <p>Lista z czasem będzie uzupełniana, a jedna z aktualizacji już wkrótce przyniesie możliwość przejrzenia (najpierw) i edycji (późniejsza aktualizacja) listy witryn.
-`;
+  const warningAnnotation = 'Uwa\u017Caj! \u0179r\xF3d\u0142o tego znaleziska jest podejrzewane o szerzenie rosyjskiej propagandy.';
 
-  const warnOnReloadModal = `
-  <p>Ten ficzer jest eksperymentalny. Z nie do końca dla mnie zrozumiałych powodów (podejrzewam, że przeszkadza tu jakiś wykopowy skrypt reklamowy), na niektórych przeglądarkach (np. firefox z ublockiem) działa jak powinien, a na innych (czysty Chrome) nie działa w ogóle. Dlatego zanim zdecydujesz się mu zaufać, przeprowadź kilka testów. Ostrzeżenie powinno aktywować się, gdy w okienku pisania komentarza znajdować się będzie 6 słów i więcej.
-  <p style="margin-top:.5rem">W najbliższej przyszłości poświęcę nieco więcej czasu na debugging i, mam nadzieję, odkryję przyczynę tej niestabilności. Sorry za utrudnienia, ale to wciąż wersja beta ;)
-`;
-
-  const badgeUserModal = props => {
-    const mediaText = link => `<p style="margin-top:5px;"><a href="${link}" target="_blank">Link do osadzonej treści multimedialnej (obrazek lub film)</a></p>`;
-
-    return {
-      title: `${props.nick}`,
-      content: `
-    <p style="text-align:left">Przyczyna oznaczenia</strong>:</p>
-    <div class="${DOM.MODAL.CLASSNAME.SCROLLABLE_TEXT}"><p>${props.content}</p>
-    ${props.media ? mediaText(props.media) : ''}</div>
-    <p style="margin-top:1rem;text-align:right"><a href="${props.link}">Link do komentarza lub znaleziska</a></p>
-    <label class="${DOM.MODAL.CLASSNAME.INPUT_LABEL}">Treść odznaki: <input autocomplete="off" value="${props.label}" class="${DOM.MODAL.CLASSNAME.INPUT_TEXT}" id="${DOM.MODAL.ID.BADGE_TEXT}"></label>
-    `,
-      button: "Usu\u0144 oznaczenie",
-      buttonClose: "Zapisz"
-    };
-  };
-
-  /**
-   * Injects styles in <style> tags at the beginning of a page
-   * @param {string} styles - parameter must be a string of CSS without any html tags
-   */
-  const injectStyles = (styles, id = '') => {
-    const styleMarkup = `<style ${id ? 'id="' + id + '"': ''}> ${styles} </style>`;
-    document.body.insertAdjacentHTML('afterbegin', styleMarkup);
-  };
+  const rawDomains = [
+    'alternews.pl',
+    'alexjones.pl',
+    'dziennik-polityczny.com',
+    'koniec-swiata.org',
+    'magnapolonia.org',
+    'narodowcy.net',
+    'nczas.com',
+    'mysl.pl',
+    'ndie.pl',
+    'neon24.pl',
+    'newsweb.pl',
+    'parezja.pl',
+    'prostozmostu24.pl',
+    'prawdaobiektywna.pl',
+    'reporters.pl',
+    'sioe.pl',
+    'wmeritum.pl',
+    'wolnosc24.pl',
+    'wolna-polska.pl',
+    'wprawo.pl',
+    'wsensie.pl',
+    'zmianynaziemi.pl',
+    'sputniknews.com',
+    'rt.com',
+    'ruptly.tv',
+    'prawica.net',
+    'xportal.pl',
+    'kresy.pl',
+    'bdp.xportal.pl',
+    'geopolityka.org',
+    'pravda.ru',
+    'voiceofrussia.com',
+    'ria.ru',
+    'ligakobietpolskich.pl',
+    'ronik.org.pl',
+    'obserwatorpolityczny.pl',
+    'mysl-polska.pl'
+  ];
 
   /**
    * Initial values for all storage objects
@@ -430,8 +440,11 @@
     GENERAL: {
       WARN_ON_RELOAD: false,
       WARN_ON_SUSPECTED_RUSSIAN_PROPAGANDA: true,
+      SUSPECT_DOMAINS_LABEL: warningAnnotation,
+      SUSPECT_DOMAINS: rawDomains,
       REMOVE_WOODLE: false,
       REMOVE_COMMENTS: '',
+      REMOVE_ALL_COMMENTS: false,
     },
   };
   const initialUnique = [];
@@ -480,6 +493,64 @@
       default:
         throw new Error(`Unknown storage type: ${name}. Pick either "unique", "marked" or "settings"`);
     }
+  };
+
+  const settings$1 = getLocalStorage('settings');
+
+  /* eslint max-len: 0 */
+  const russianPropagandaModal = `
+  <p>Strony oznaczone jako potencjalnie szerzące rosyjską propagandę na wykopie zostały wyznaczone na podstawie następujących źródeł:
+  <ul class="${DOM.MODAL.CLASSNAME.LIST}">
+    <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}"><a class="${DOM.MODAL.CLASSNAME.LINK}" href="https://www.politicalcapital.hu/wp-content/uploads/PC_reactionary_values_CEE_20160727.pdf" target="_blank">Raport "The Weaponization of Culture: Kremlin's traditional agenda and the export of values to Central Europe" [PDF]</a></li>
+    <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}"><a class="${DOM.MODAL.CLASSNAME.LINK}" href="https://jagiellonia.org/mysl-polska-kresy-pl-geopolityka-org-etc-sa-kanalami-szerzenia-rosyjskich-wplywow-w-polsce-opublikowano-korespondencje-kremlowskich-urzednikow-rappoport-leaks/" target="_blank">Artykuł z Jagiellonia.org</a></li>
+    <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}"><a class="${DOM.MODAL.CLASSNAME.LINK}" href="https://euvsdisinfo.eu/reading-list/" target="_blank">EUvsDiSiNFO</a></li>
+    <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}"><a class="${DOM.MODAL.CLASSNAME.LINK}" href="https://oko.press/rosyjska-propagande-szerza-polskie-portale-znalezlismy-23-takie-witryny/" target="_blank">Artykuł z OKO.Press</a></li>
+  </ul>
+  <p>Lista z czasem będzie uzupełniana, a jedna z aktualizacji już wkrótce przyniesie możliwość przejrzenia (najpierw) i edycji (późniejsza aktualizacja) listy witryn.
+`;
+
+  const suspectDomainsSettingsModal = `
+  <label>
+    Treść komunikatu ostrzegającego, gdy znalezisko pochodzi z podejrzanego źródła:
+    <input id="suspectDomainsLabel" value="${settings$1.GENERAL.SUSPECT_DOMAINS_LABEL || ''}" style="display: block;width: 100%;padding: .3rem 1rem;margin: .5rem 0 1rem;background: #2c2c2c;border: 1px solid #444;" class="">
+  </label>
+  <label>
+    Lista domen uznawanych za podejrzane:
+    <textarea class="" id="suspectDomains" style="display: block; width: 100%; padding: 0.3rem 1rem; margin: 0.5rem 0px 0; height: 150px; max-height: 15rem; overflow: auto; resize: none;">${settings$1.GENERAL.SUSPECT_DOMAINS ? settings$1.GENERAL.SUSPECT_DOMAINS.join('\n') : ''}</textarea>
+  </label>
+  <small>
+    Same domeny, bez "https://" czy "www."; każda domena w osobnej linijce.
+  </small>
+`;
+
+  const warnOnReloadModal = `
+  <p>Ten ficzer jest eksperymentalny. Obecnie prawdopodobnie udało mi się wyeliminować błędy, które sprawiały, że w przeszłości (nie)działał jak chciał, ale mimo wszystko - proponuję najpierw przetestować, czy działa jak trzeba również u Ciebie, zanim zaczniesz na nim polegać dla ochrony przed utratą treści :) 
+`;
+
+  const badgeUserModal = props => {
+    const mediaText = link => `<p style="margin-top:5px;"><a href="${link}" target="_blank">Link do osadzonej treści multimedialnej (obrazek lub film)</a></p>`;
+
+    return {
+      title: `${props.nick}`,
+      content: `
+    <p style="text-align:left">Przyczyna oznaczenia</strong>:</p>
+    <div class="${DOM.MODAL.CLASSNAME.SCROLLABLE_TEXT}"><p>${props.content}</p>
+    ${props.media ? mediaText(props.media) : ''}</div>
+    <p style="margin-top:1rem;text-align:right"><a href="${props.link}">Link do komentarza lub znaleziska</a></p>
+    <label class="${DOM.MODAL.CLASSNAME.INPUT_LABEL}">Treść odznaki: <input autocomplete="off" value="${props.label}" class="${DOM.MODAL.CLASSNAME.INPUT_TEXT}" id="${DOM.MODAL.ID.BADGE_TEXT}"></label>
+    `,
+      button: "Usu\u0144 oznaczenie",
+      buttonClose: "Zapisz"
+    };
+  };
+
+  /**
+   * Injects styles in <style> tags at the beginning of a page
+   * @param {string} styles - parameter must be a string of CSS without any html tags
+   */
+  const injectStyles = (styles, id = '') => {
+    const styleMarkup = `<style ${id ? 'id="' + id + '"': ''}> ${styles} </style>`;
+    document.body.insertAdjacentHTML('afterbegin', styleMarkup);
   };
 
   const { BADGE: EL } = DOM;
@@ -730,10 +801,13 @@
         title: modal.title,
         html: modal.content,
         icon: "info",
+        allowEnterKey: false,
         showCancelButton: false,
+        showCloseButton: true,
         showDenyButton: true,
         confirmButtonText: modal.button,
-        denyButtonText: 'Zapisz',
+        denyButtonText: modal.buttonClose,
+        denyButtonColor: '#0a8658',
         width: "80%",
       }).then(result => {
         if (result.isConfirmed) {
@@ -775,23 +849,7 @@
     };
 
     /**
-     * Setting custom label value for user with given nick
-     */
-    // const setCustomLabelValue = nick => {
-    //   const userData = getNickData(nick);
-    //   const value = document.getElementById(EL.MODAL.ID.BADGE_TEXT).value;
-    //   const marked = getLocalStorage('marked');
-    //   const changedMarked = marked.map(el => el.nick === userData.nick ? { ...el, label: value } : el);
-
-    //   localStorage.setItem(
-        
-    //     STORAGE_KEY_NAMES.MARKED_USERS,
-    //     JSON.stringify(changedMarked)
-    //   );
-    // }
-
-    /**
-     * Above is setup. Actual job gets done below
+     * Above is setup.
      */
 
     injectStyles(styles.badge);
@@ -835,60 +893,71 @@
     }
   };
 
-  /** An array of all domains suspected of spreading russian propaganda.
-   * When adding new domains, remember to add them without http(s) or www. Just name.domain.
+  const { BADGE: EL$1 } = DOM;
+
+  let uniqueNicksSet = getLocalStorage("unique");
+
+  /**
+   * Checks if user of provided nick is already in uniqueNicksSet array
+   * @param {String} nick - nick to check
    */
-  const rawDomains = [
-    'alternews.pl',
-    'alexjones.pl',
-    'dziennik-polityczny.com',
-    'koniec-swiata.org',
-    'magnapolonia.org',
-    'narodowcy.net',
-    'nczas.com',
-    'mysl.pl',
-    'ndie.pl',
-    'neon24.pl',
-    'newsweb.pl',
-    'parezja.pl',
-    'prostozmostu24.pl',
-    'prawdaobiektywna.pl',
-    'reporters.pl',
-    'sioe.pl',
-    'wmeritum.pl',
-    'wolnosc24.pl',
-    'wolna-polska.pl',
-    'wprawo.pl',
-    'wsensie.pl',
-    'zmianynaziemi.pl',
-    'sputniknews.com',
-    'rt.com',
-    'ruptly.tv',
-    'prawica.net',
-    'xportal.pl',
-    'kresy.pl',
-    'bdp.xportal.pl',
-    'geopolityka.org',
-    'pravda.ru',
-    'voiceofrussia.com',
-    'ria.ru',
-    'ligakobietpolskich.pl',
-    'ronik.org.pl',
-    'obserwatorpolityczny.pl',
-    'mysl-polska.pl'
-  ];
+  const isMarked = nick => {
+    uniqueNicksSet = getLocalStorage("unique");
+    return !!uniqueNicksSet.includes(nick);
+  };
 
-  const processedDomains = rawDomains.map(domain => {
-    const https = 'https://' + domain;
-    const www = 'https://www.' + domain;
-    const http = 'http://' + domain;
-    const hwww = 'http://www.' + domain;
+  /**
+   * used on author element, returned from getAllNickElements(), checks if person has already been marked with a badge
+   * @param {HTMLElement} element - element to check
+   */
+  const isNotAwarded = element => !$(`.${EL$1.CLASSNAME.BADGE}`, element);
 
-    return [https, www, http, hwww];
-  });
+  let markedUsers = getLocalStorage("marked");
+  let settings$2 = getLocalStorage("settings");
 
-  /** @returns array of strings (domains) */
-  const russianPropagandaDomains = processedDomains.flat();
+  /**
+   * gets user data from objects inside marked users array.
+   * @param {String} nick 
+   */
+  const getNickData = nick => {
+    if (!nick) {
+      throw new Error("getNickData requires nick to be provided.");
+    }
+    for (let i = 0; i < markedUsers.length; i++) {
+      if (markedUsers[i].nick === nick) {
+        return {
+          link: markedUsers[i].link,
+          nick: markedUsers[i].nick,
+          label: markedUsers[i].label,
+          content: markedUsers[i].content,
+          media: markedUsers[i].media,
+        };
+      } else if (markedUsers[i] === undefined || markedUsers[i] === null) {
+        continue;
+      }
+    }
+  };
+
+  /**
+   * @returns {String} default name for badge set in settings by user.
+   */
+  const getDefaultBadgeLabelFromSettings = () => settings$2.BADGE.DEFAULT_NAME;
+
+  const { BADGE: EL$2 } = DOM;
+
+  /**
+   * This is responsible for displaying mark badge next to user's nickname in user's profile (wykop.pl/ludzie/XXXX).
+   */
+  const displayBadgeInUserProfile = () => {
+    const nickElement = $(EL$2.SELECTOR.USER_PROFILE_NICK_ELEMENT);
+    const nick = $(EL$2.SELECTOR.USER_PROFILE_NICK).textContent;
+    const userData = getNickData(nick) ? getNickData(nick) : null;
+    const label = userData ? userData.label : getDefaultBadgeLabelFromSettings();
+
+    if (isMarked(nick) && isNotAwarded(nickElement)) {
+      nickElement.insertAdjacentHTML("afterbegin", badge$1(nick, label, false));
+    }
+  };
 
   /**
    * @param {string} content - what shall be included in the <p> tag.
@@ -901,7 +970,7 @@
 	</div>
 `;
 
-  const warningAnnotation = 'Uwa\u017Caj! \u0179r\xF3d\u0142o tego znaleziska jest podejrzewane o szerzenie rosyjskiej propagandy.';
+  const settings$3 = getLocalStorage('settings');
 
   const handleDomainCheck = () => {
     /**
@@ -909,13 +978,26 @@
      * @return {boolean} True if yes, false otherwise
      */
     const isSettingActive = () => {
-      const settings = getLocalStorage('settings');
-
-      if (settings.GENERAL.WARN_ON_SUSPECTED_RUSSIAN_PROPAGANDA) {
+      if (settings$3.GENERAL.WARN_ON_SUSPECTED_RUSSIAN_PROPAGANDA) {
         return true;
       }
 
       return false;
+    };
+
+    const processDomains = () => {
+      const domains = settings$3.GENERAL.SUSPECT_DOMAINS || [];
+
+      const processedDomains = domains.map(domain => {
+        const https = 'https://' + domain;
+        const www = 'https://www.' + domain;
+        const http = 'http://' + domain;
+        const hwww = 'http://www.' + domain;
+      
+        return [https, www, http, hwww];
+      });
+
+      return processedDomains.flat();
     };
 
     /**
@@ -925,12 +1007,14 @@
       if (!$(DOM.DOMAIN_CHECKER.SELECTOR.THREAD_LINK).href) {
         return;
       }
+
+      const suspectDomains = processDomains();
       const threadLink = $(DOM.DOMAIN_CHECKER.SELECTOR.THREAD_LINK).href;
       const url = new URL(threadLink);
       const threadLinkHostname = url.protocol + '//' + url.hostname;
-      const annotationMarkup = annotation(warningAnnotation);
+      const annotationMarkup = annotation(settings$3.GENERAL.SUSPECT_DOMAINS_LABEL);
 
-      if (russianPropagandaDomains.includes(threadLinkHostname)) {
+      if (suspectDomains.includes(threadLinkHostname)) {
         $(`.${DOM.DOMAIN_CHECKER.CLASSNAME.WYKOP_ITEM_INTRO}`).insertAdjacentHTML('beforebegin', annotationMarkup);
       }
     };
@@ -971,7 +1055,7 @@
     }
   };
 
-  const { SETTINGS: {CLASSNAME} } = DOM;
+  const { SETTINGS: {CLASSNAME, ID} } = DOM;
 
   const settingsMarkup = `
 <fieldset>
@@ -987,9 +1071,9 @@
         type="checkbox"
         category="GENERAL"
         name="WARN_ON_RELOAD"
-        id="warnOnReload"
+        id="${ID.WARN_ON_RELOAD_SETTING}"
       />
-      <label class="inline" for="warnOnReload">Ostrzegaj przy próbie zamknięcia/przeładowania strony gdy wykryto pisanie komentarza </label><span id="warnOnReloadInfo" style="cursor:pointer;border:1px solid currentcolor;padding:0 .5rem">ℹ</span>
+      <label class="inline" for="${ID.WARN_ON_RELOAD_SETTING}">Ostrzegaj przy próbie zamknięcia/przeładowania strony gdy wykryto pisanie komentarza </label><svg  style="width: 1.5rem; stroke: currentColor; cursor: pointer;border: 1px solid currentColor;border-radius: 5px;padding: .1rem;" id="${ID.WARN_ON_RELOAD_INFO_LINK}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180"><path stroke-width="16" d="M60 67c0-13 1-19 8-26 7-9 18-10 28-8s22 12 22 26-11 19-15 22c-7 2-10 6-11 11v20m0 12v16"/></svg>
     </div>
     <div class="row">
       <input
@@ -997,9 +1081,9 @@
         type="checkbox"
         category="GENERAL"
         name="WARN_ON_SUSPECTED_RUSSIAN_PROPAGANDA"
-        id="warnOnRussian"
+        id="${ID.SUSPECT_DOMAINS_SETTING}"
       />
-      <label class="inline" for="warnOnRussian">Oznaczaj znaleziska ze źródeł podejrzewanych o szerzenie Rosyjskiej propagandy </label><span id="russianPropagandaInfo" style="cursor:pointer;border:1px solid currentcolor;padding:0 .5rem">ℹ</span>
+      <label class="inline" for="${ID.SUSPECT_DOMAINS_SETTING}">Oznaczaj znaleziska z podejrzanych źródeł </label><svg id="${ID.SUSPECT_DOMAINS_SETTINGS_LINK}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" style="width: 1.5rem;fill: currentColor;cursor: pointer;border: 1px solid currentColor;border-radius: 5px;padding: .25rem;"><path d="M14 0h4l1 6 1.707.707L26 3.293 28.707 6l-3.414 5.293L26 13l6 1v4l-6 1-.707 1.707L28.707 26 26 28.707l-5.293-3.414L19 26l-1 6h-4l-1-6-1.707-.707L6 28.707 3.293 26l3.414-5.293L6 19l-6-1v-4l6-1 .707-1.707L3.293 6 6 3.293l5.293 3.414L13 6l1-6zm2 10a6 6 0 000 12 6 6 0 000-12"></path></svg>
     </div>
     <div class="row">
       <input
@@ -1011,8 +1095,18 @@
       />
       <label class="inline" for="removeWoodle">Usuwaj woodle (okolicznościowy obrazek na belce)</label>
     </div>
+    <div class="row">
+      <input
+        class="checkbox"
+        type="checkbox"
+        category="GENERAL"
+        name="REMOVE_ALL_COMMENTS"
+        id="removeAllComments"
+      />
+      <label class="inline" for="removeAllComments">Usuń komentarze we <strong>wszystkich</strong> znaleziskach</label>
+    </div>
     <div class="row space">
-      <label class="inline" for="removeByTag" style="margin-left:0;display:block;">Usuń komentarze w znaleziskach z następującymi tagami:</label>
+      <label class="inline" for="removeByTag" style="margin-left:0;display:block;">Usuń komentarze tylko w znaleziskach z następującymi tagami:</label>
       <input 
         value="" 
         type="text" 
@@ -1124,24 +1218,24 @@
    * To add new setting option:
    *  - add it as a default in /utils/handleLocalStorage
    *  - add HTML for it in /model/modules/settings.model
-   *  - add check in appropriate module. If you want it to be ON by default, you will need to make it so using /utils/rynOnceOnUpdate
+   *  - add check in appropriate module. If you want it to be ON by default, you will need to make it so using /utils/runOnceOnUpdate
    */
 
-  const { SETTINGS: EL$1 } = DOM;
+  const { SETTINGS: EL$3 } = DOM;
 
   /**
    * Inserts navigation item on a /ustawienia/ page with link to WykopHelper settings
    */
   const createSettingsPage = () => {
-    $(EL$1.SELECTOR.LAST_NAV_ELEMENT).insertAdjacentHTML('beforeend', settingsModel.settingsNav);
+    $(EL$3.SELECTOR.LAST_NAV_ELEMENT).insertAdjacentHTML('beforeend', settingsModel.settingsNav);
   };
 
   const handleSettings = () => {
-    const settings = getLocalStorage('settings');
+    let settings = getLocalStorage('settings');
     const markedUsers = getLocalStorage();
     const uniqueNicksSet = getLocalStorage('unique');
 
-    const settingsFormElement = $(EL$1.SELECTOR.SETTINGS_FORM_ELEMENT);
+    const settingsFormElement = $(EL$3.SELECTOR.SETTINGS_FORM_ELEMENT);
 
     /**
      * clears localstorage. Doesn't remove items, but sets them to empty array
@@ -1156,7 +1250,7 @@
      * Creates table with marked users.
      */
     const generateUserTables = () => {
-      const tableBody = $(`.${EL$1.CLASSNAME.WH_USER_TABLE_BODY}`);
+      const tableBody = $(`.${EL$3.CLASSNAME.WH_USER_TABLE_BODY}`);
 
       markedUsers.forEach(el => {
         tableBody.insertAdjacentHTML(
@@ -1169,26 +1263,46 @@
     };
 
     const toggleUserTableVisibility = () => {
-      $(`.${EL$1.CLASSNAME.WH_USER_TABLE_CONTAINER}`)
-        .classList.toggle(`${EL$1.CLASSNAME.WH_USER_TABLE_CONTAINER}--hidden`);
+      $(`.${EL$3.CLASSNAME.WH_USER_TABLE_CONTAINER}`)
+        .classList.toggle(`${EL$3.CLASSNAME.WH_USER_TABLE_CONTAINER}--hidden`);
 
-      if ($(`.${EL$1.CLASSNAME.WH_USER_TABLE_CONTAINER}--hidden`)) {
-        document.getElementById(EL$1.ID.SHOW_MARKED_TABLE).textContent = settingsModel.textContent.SHOW_ALL_MARKED;
+      if ($(`.${EL$3.CLASSNAME.WH_USER_TABLE_CONTAINER}--hidden`)) {
+        document.getElementById(EL$3.ID.SHOW_MARKED_TABLE).textContent = settingsModel.textContent.SHOW_ALL_MARKED;
       } else {
-        document.getElementById(EL$1.ID.SHOW_MARKED_TABLE).textContent = settingsModel.textContent.HIDE_TABLE;
+        document.getElementById(EL$3.ID.SHOW_MARKED_TABLE).textContent = settingsModel.textContent.HIDE_TABLE;
       }
     };
 
     const showModalWithPropagandaExplanation = () => {
       // eslint-disable-next-line
       Swal.fire({
-        title: settingsModel.textContent.RUSSIAN_PROPAGANDA_MODAL_TITLE,
-        html: russianPropagandaModal,
+        html: suspectDomainsSettingsModal,
         icon: 'info',
-        showCancelButton: false,
-        confirmButtonColor: '#3085d6',
-        confirmButtonText: 'OK',
-        width: "80%"
+        // eslint-disable-next-line
+        iconHtml: '<svg style="fill:currentColor;width:2rem;height: auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M14 0h4l1 6 1.707.707L26 3.293 28.707 6l-3.414 5.293L26 13l6 1v4l-6 1-.707 1.707L28.707 26 26 28.707l-5.293-3.414L19 26l-1 6h-4l-1-6-1.707-.707L6 28.707 3.293 26l3.414-5.293L6 19l-6-1v-4l6-1 .707-1.707L3.293 6 6 3.293l5.293 3.414L13 6l1-6zm2 10a6 6 0 000 12 6 6 0 000-12"/></svg>',
+        iconColor: '#fff',
+        showCancelButton: true,
+        showCloseButton: true,
+        confirmButtonColor: '#0a8658',
+        confirmButtonText: 'Zapisz',
+        cancelButtonText: 'Anuluj',
+        width: "80%",
+        willOpen: modalElement => {
+          $('#suspectDomainsLabel', modalElement).value = settings.GENERAL.SUSPECT_DOMAINS_LABEL;
+          $('#suspectDomains', modalElement).value = settings.GENERAL.SUSPECT_DOMAINS.join('\n');
+        }
+      }).then(result => {
+        if (result.isConfirmed) {
+          let list = $(`#${EL$3.ID.SUSPECT_DOMAINS_SETTINGS_TEXTAREA}`).value;
+          list.replace('https://', '').replace('http://', '').replace('www.', '').replace(' ', '');
+          const arrayList = list.split('\n');
+          settings.GENERAL.SUSPECT_DOMAINS = arrayList;
+
+          const label = $('#suspectDomainsLabel').value;
+          settings.GENERAL.SUSPECT_DOMAINS_LABEL = label;
+
+          localStorage.setItem(STORAGE_KEY_NAMES.WH_SETTINGS, JSON.stringify(settings));
+        }
       });
     };
     
@@ -1213,7 +1327,7 @@
 
       inputs.forEach(el => {
         const category = el.getAttribute('category');
-        if (el.id !== EL$1.ID.ALLOW_WIPE_MARKED_LIST && el.type === 'checkbox') {
+        if (el.id !== EL$3.ID.ALLOW_WIPE_MARKED_LIST && el.type === 'checkbox') {
           el.checked = settings[category][el.name];
         } else if (el.type === 'text' && el.name !== 'nsQ') {
           el.value = settings[category][el.name] || '';
@@ -1222,8 +1336,8 @@
     };
 
     const renderSettings = () => {
-      $(EL$1.SELECTOR.ACTIVE_NAV_ELEMENT).classList.remove('active');
-      $(`.${EL$1.CLASSNAME.WH_NAV_SETTINGS_LINK}`).classList.add('active');
+      $(EL$3.SELECTOR.ACTIVE_NAV_ELEMENT).classList.remove('active');
+      $(`.${EL$3.CLASSNAME.WH_NAV_SETTINGS_LINK}`).classList.add('active');
     
       settingsFormElement.innerHTML = '';
       settingsFormElement.innerHTML = settingsModel.settingsMarkup;
@@ -1237,37 +1351,37 @@
     };
 
     /**
-     * Basically, sets up several event listeners and handles saving input to storage. onChange for checkboxes, onClick for buttons and onKeyUp for text inputs.
+     * Basically, sets up several event listeners and handles saving input to storage. onChange for checkboxes, onClick for buttons and onKeyUp for text inputs. For standard inputs, mentioned earlier, does not require any extra changes when adding new features.
      */
     const handleSettingsForm = () => {
       settingsFormElement.addEventListener('change', event => {
         const category = event.target.getAttribute('category');
         const name = event.target.name;
 
-        if (event.target.type === 'checkbox' && event.target.id !==  EL$1.ID.ALLOW_WIPE_MARKED_LIST) {
+        if (event.target.type === 'checkbox' && event.target.id !==  EL$3.ID.ALLOW_WIPE_MARKED_LIST) {
           settings[category][name] = !settings[category][name];
           localStorage.setItem(STORAGE_KEY_NAMES.WH_SETTINGS, JSON.stringify(settings));
         }
       }, {passive: true});
 
       settingsFormElement.addEventListener('click', event => {
-        if (event.target.id === EL$1.ID.SHOW_MARKED_TABLE) {
+        if (event.target.id === EL$3.ID.SHOW_MARKED_TABLE) {
           event.preventDefault();
           toggleUserTableVisibility();
         }
-        if (event.target.id ===  EL$1.ID.ALLOW_WIPE_MARKED_LIST) {
+        if (event.target.id ===  EL$3.ID.ALLOW_WIPE_MARKED_LIST) {
           event.target.disabled = true;
-          document.getElementById(EL$1.ID.REMOVE_ALL_MARKED).disabled = false;
-          document.getElementById(EL$1.ID.REMOVE_ALL_MARKED).style.opacity = 1;
+          document.getElementById(EL$3.ID.REMOVE_ALL_MARKED).disabled = false;
+          document.getElementById(EL$3.ID.REMOVE_ALL_MARKED).style.opacity = 1;
         }
-        if (event.target.id === EL$1.ID.REMOVE_ALL_MARKED) {
+        if (event.target.id === EL$3.ID.REMOVE_ALL_MARKED) {
           event.preventDefault();
           wipeAllMarkedUsers();
         }
-        if (event.target.id === EL$1.ID.RUSSIAN_PROPAGANDA_INFO_LINK) {
+        if (event.target.id === EL$3.ID.SUSPECT_DOMAINS_SETTINGS_LINK) {
           showModalWithPropagandaExplanation();
         }
-        if (event.target.id === EL$1.ID.WARN_ON_RELOAD_INFO_LINK) {
+        if (event.target.id === EL$3.ID.WARN_ON_RELOAD_INFO_LINK) {
           showModalWithWarnOnReloadExplanation();
         }
       }, {passive: false});
@@ -1321,31 +1435,25 @@
    * Util function that is supposed to run only once, immediately after script update.
    */
   const runOnceOnUpdate = () => {
-    let marked;
+    let settings;
 
     // preparation
-    if (localStorage.getItem(STORAGE_KEY_NAMES.MARKED_USERS)) {
-      marked = getLocalStorage('marked');
-    } else {
-      marked = [];
+    if (localStorage.getItem(STORAGE_KEY_NAMES.WH_SETTINGS)) {
+      settings = getLocalStorage('settings');
+      if (!settings.GENERAL.SUSPECT_DOMAINS) {
+        settings.GENERAL.SUSPECT_DOMAINS = rawDomains;
+      }
+      if (!settings.GENERAL.SUSPECT_DOMAINS_LABEL) {
+        settings.GENERAL.SUSPECT_DOMAINS_LABEL = 'Uwa\u017Caj! \u0179r\xF3d\u0142o tego znaleziska jest podejrzewane o szerzenie rosyjskiej propagandy.';
+      }
     }
 
-    // actual desired action
-    marked.forEach(el => {
-      if (!el.label) {
-        el.label = '';
-      }
-      if (!el.content) {
-        el.content = 'Niestety, u\u017Cytkownik zosta\u0142 oznaczony PRZED uaktywnieniem funkcji zapisywania tre\u015Bci komentarzy. Je\u015Bli chcesz by pojawi\u0142a si\u0119 tu jego tre\u015B\u0107, przejd\u017A do podlinkowanego ni\u017Cej komentarza, a nast\u0119pnie usu\u0144 oznaczenie i dodaj je ponownie.';
-      }
-    });
-
-    localStorage.setItem(STORAGE_KEY_NAMES.MARKED_USERS, JSON.stringify(marked));
+    localStorage.setItem(STORAGE_KEY_NAMES.WH_SETTINGS, JSON.stringify(settings));
   };
 
   /* eslint max-len: 0 */
 
-  const version = `0.6`;
+  const version = `0.65`;
 
   const welcomeText = {
     title: "WykopHelper zainstalowany!",
@@ -1360,25 +1468,21 @@
 Dodatek WykopHelper został właśnie zaktualizowany do wersji ${version}. Wprowadzone zmiany to: <br>
 <ul class="${DOM.MODAL.CLASSNAME.LIST}">
   <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
-    Dodano możliwość zmiany tekstu na odznace każdego użytkownika z osobna. By zmienić tekst wystarczy kliknąć na odznace przy danym userze, odszukać nowe pole tekstowe i wpisać tam, co dusza zapragnie :)
+    Funkcja ostrzegania przed znaleziskami podejrzanymi o szerzenie propagandy rosyjskiej została zmodyfikowana. Od teraz możesz samodzielnie ustalić, czy takie ostrzeżenie ma w ogóle być pokazywane, a także jaka ma być jego treść i dla jakich domen ma się aktywować. Zdecydować o tym możesz oczywiście w ustawieniach (ikona zębatki przy odpowiednim checkboxie).
   </li>
   <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
-    Pole tekstowe wyświetlające tekst komentarza w popupie odznaki uzyskało możliwość przewijania. To oznacza, że teraz bardzo długie komentarze nie będą rozciągać okna popupu nawet poza monitor.
+    Funkcja ostrzegająca przed zamknięciem strony gdy wykryte zostanie pisanie komentarza <em>powinna</em> już działać poprawnie.
   </li>
   <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
-    W ustawieniach można teraz zadecydować o ukrywaniu woodle (czyli wykopowej wersji doodle - okolicznościowy obrazek umieszczany na belce menu).
+    Pojawiła się opcja wyłączenia komentarzy we <strong>wszystkich</strong> znaleziskach. Teraz możesz zdecydować, czy komentarze wyłączasz globalnie, tylko w wybranych (poprzez tagi) znaleziskach, czy nigdzie. Domyślnie opcja oczywiście nie jest włączona.
   </li>
   <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
-    Chcesz widzieć znaleziska z określonych kategorii (np. #polityka), ale dla własnego komfortu psychicznego preferujesz nie widzieć komentarzy pod nim? Od teraz możesz zdefiniować w ustawieniach listę tagów, dla których komentarze pod znaleziskiem będą usuwane.
+    Od teraz odznaka widoczna będzie również w profilu użytkownika, między avatarem a nickiem.
   </li>
   <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
-    Na stronie ustawień pojawiły się linki do historii zmian oraz do strony opisującej ficzery dodatku.
-  </li>
-  <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
-    Kilka pomniejszych fixów i ulepszeń.
+    Drobne poprawki stylistyczne tu i ówdzie (np. nowy kolor przycisku "zapisz" w popupie odznaki; redesign całego popupu wkrótce)
   </li>
 </ul>
-🎉🎉 <strong>Szczęśliwego Nowego Roku!</strong> 🎉🎉
 `,
     button: "Okej!",
   };
@@ -1392,6 +1496,7 @@ Dodatek WykopHelper został właśnie zaktualizowany do wersji ${version}. Wprow
       Swal.fire({
         title: updateText.title,
         html: updateText.content,
+        showCloseButton: true,
         icon: 'info',
         width: '80%',
         confirmButtonText: updateText.button
@@ -1429,14 +1534,22 @@ Dodatek WykopHelper został właśnie zaktualizowany do wersji ${version}. Wprow
     });
   };
 
-  const { BADGE: EL$2 } = DOM;
+  const { BADGE: EL$4 } = DOM;
 
   const isTextareaEmpty = () => {
-    const replyForm = $(EL$2.SELECTOR.REPLY_FORM);
-    const commentForm = $(EL$2.SELECTOR.COMMENT_FORM);
+    const replyForm = $(EL$4.SELECTOR.REPLY_FORM);
+    const commentForm = $(EL$4.SELECTOR.COMMENT_FORM);
 
-    const isReplyNotEmpty = replyForm && replyForm.value.split(" ").length > 5;
-    const isCommentNotEmpty = commentForm && commentForm.value.split(" ").length > 5;
+    // for whatever reason, chrome just can't handle belows checks the way they should work (so simply assigning the check to const); instead of simple boolean false if it encounters something like undef or null, it throws all sorts of different errors. Hence, it's done like that. Took about an hour experimenting.
+    let isCommentNotEmpty = false;
+    let isReplyNotEmpty = false;
+
+    if (replyForm && replyForm.value.length > 0) {
+      isReplyNotEmpty = replyForm && replyForm.value.split(" ").length > 5;
+    }
+    if (commentForm && commentForm.value.length > 0) {
+      isCommentNotEmpty = commentForm && commentForm.value.split(" ").length > 5;
+    }
 
     if (isReplyNotEmpty || isCommentNotEmpty) {
       return false;
@@ -1448,9 +1561,10 @@ Dodatek WykopHelper został właśnie zaktualizowany do wersji ${version}. Wprow
   const warnOnReload = () => {
     const settings = getLocalStorage('settings');
     if (settings.GENERAL.WARN_ON_RELOAD) {
-      window.addEventListener('unload', e => {
+      window.addEventListener('beforeunload', e => {
         if (!isTextareaEmpty()) {
           e.preventDefault();
+          e.returnValue = 'Wygl\u0105da na to, \u017Ce jeste\u015B w trakcie pisania komentarza. Czy na pewno chcesz opu\u015Bci\u0107 stron\u0119?';
         }
       });
     }
@@ -1496,7 +1610,7 @@ Dodatek WykopHelper został właśnie zaktualizowany do wersji ${version}. Wprow
   const removeCommentsByTag = () => {
     const settings = getLocalStorage('settings');
     const tagsSubmitted = settings.GENERAL.REMOVE_BY_TAG;
-    const offendingTags = tagsSubmitted.replace(' ', '').replace('#', '').split(',');
+    const offendingTags = tagsSubmitted ? tagsSubmitted.replace(' ', '').replace('#', '').split(',') : '';
     let wykopTags;
     
     if (window.dataLayer2[1]) {
@@ -1531,7 +1645,34 @@ Dodatek WykopHelper został właśnie zaktualizowany do wersji ${version}. Wprow
     const checkIfTagsPresent = () => Object.values(wykopTags).some(test);
 
     const handleRemoval = () => {
-      if (checkIfTagsPresent()) {
+      if (checkIfTagsPresent() && $(`#${DOM.COMMON.ID.COMMENTS_STREAM}`)) {
+        $(`#${DOM.COMMON.ID.COMMENTS_STREAM}`).remove();
+      }
+    };
+
+    if (isSettingActive()) {
+      handleRemoval();
+    }
+  };
+
+  const removeAllComments = () => {
+    const settings = getLocalStorage('settings');
+    
+
+    /**
+     * Check if user turned off in settings removing comments.
+     * @return {boolean} True if yes, false otherwise
+     */
+    const isSettingActive = () => {
+      if (settings.GENERAL.REMOVE_ALL_COMMENTS) {
+        return true;
+      }
+
+      return false;
+    };
+
+    const handleRemoval = () => {
+      if ($(`#${DOM.COMMON.ID.COMMENTS_STREAM}`)) {
         $(`#${DOM.COMMON.ID.COMMENTS_STREAM}`).remove();
       }
     };
@@ -1563,6 +1704,9 @@ Dodatek WykopHelper został właśnie zaktualizowany do wersji ${version}. Wprow
     embedOnPaste();
     hideMarkedUsers();
   }
+  if (isPath.userProfile()) {
+    displayBadgeInUserProfile();
+  }
   if (isPath.settings()) {
     createSettingsPage();
   }
@@ -1572,6 +1716,7 @@ Dodatek WykopHelper został właśnie zaktualizowany do wersji ${version}. Wprow
   if (isPath.thread()) {
     handleDomainCheck();
     removeCommentsByTag();
+    removeAllComments();
   }
   if (isPath.mirkoThread()) {
     highlightOp();
