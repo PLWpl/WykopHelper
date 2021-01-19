@@ -9,11 +9,9 @@ let uniqueNicksSet = getLocalStorage("unique");
 /**
  * Checks if user of provided nick is already in uniqueNicksSet array
  * @param {String} nick - nick to check
+ * @returns {Boolean}
  */
-export const isMarked = nick => {
-  uniqueNicksSet = getLocalStorage("unique");
-  return !!uniqueNicksSet.includes(nick);
-};
+export const isMarked = nick => !!uniqueNicksSet.includes(nick);
 
 /**
  * used on author element, returned from getAllNickElements(), checks if person has already been marked with a badge

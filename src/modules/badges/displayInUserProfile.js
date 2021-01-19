@@ -3,7 +3,7 @@ import { DOM } from "../../constants/domSelectors";
 
 import { badge } from "../../model/modules/badges.model";
 
-import { isMarked, isNotAwarded } from "./checks";
+import { isMarked, isNotAwarded } from "./check";
 import { getNickData, getDefaultBadgeLabelFromSettings } from "./getters";
 
 const { BADGE: EL } = DOM;

@@ -1,5 +1,5 @@
 import isPath from './utils/checkPath';
-import { handleBadges } from './modules/badges';
+import { handleBadges } from './modules/badges/index';
 import { displayBadgeInUserProfile } from './modules/badges/displayInUserProfile';
 import { handleDomainCheck } from './modules/domainChecker'
 import { hideMarkedUsers } from './modules/hideMarkedUsers'

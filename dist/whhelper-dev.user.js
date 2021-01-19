@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         WykopHelper - DEV
-// @version      0.60
+// @version      0.65
 // @updateURL    https://cdn.jsdelivr.net/gh/plwpl/WykopHelper/dist/whhelper-dev.user.js
 // @downloadURL  https://cdn.jsdelivr.net/gh/plwpl/WykopHelper/dist/whhelper-dev.user.js
 // @description  Zestaw narzędzi pomocnych na wykopie.
@@ -555,6 +555,85 @@
 
   const { BADGE: EL } = DOM;
 
+  let uniqueNicksSet = getLocalStorage("unique");
+
+  /**
+   * Checks if user of provided nick is already in uniqueNicksSet array
+   * @param {String} nick - nick to check
+   * @returns {Boolean}
+   */
+  const isMarked = nick => !!uniqueNicksSet.includes(nick);
+
+  /**
+   * used on author element, returned from getAllNickElements(), checks if person has already been marked with a badge
+   * @param {HTMLElement} element - element to check
+   */
+  const isNotAwarded = element => !$(`.${EL.CLASSNAME.BADGE}`, element);
+
+  /**
+   * used on author element, returned from getAllNickElements(), checks if person has already been given a button
+   * @param {HTMLElement} element - element to check
+   */
+  const hasButtonAppended = element => !!$(`.${EL.CLASSNAME.MARK_BUTTON}`, element);
+
+  const { BADGE: EL$1 } = DOM;
+
+  let markedUsers = getLocalStorage("marked");
+  let settings$2 = getLocalStorage("settings");
+
+  /**
+   * gets user data from objects inside marked users array.
+   * @param {String} nick 
+   */
+  const getNickData = nick => {
+    if (!nick) {
+      throw new Error("getNickData requires nick to be provided.");
+    }
+    for (let i = 0; i < markedUsers.length; i++) {
+      if (markedUsers[i].nick === nick) {
+        return {
+          link: markedUsers[i].link,
+          nick: markedUsers[i].nick,
+          label: markedUsers[i].label,
+          content: markedUsers[i].content,
+          media: markedUsers[i].media,
+        };
+      } else if (markedUsers[i] === undefined || markedUsers[i] === null) {
+        continue;
+      }
+    }
+  };
+
+  /**
+   * used on element - preferably one returned from getAllNickElements() - returns string with nick name.
+   * @returns {String} with nickname
+   */
+  const getNick = el => {
+    if (
+      (!$(EL$1.SELECTOR.NICK, el) || $(EL$1.SELECTOR.NICK, el) === null) && 
+      (!$(EL$1.SELECTOR.NICK_DELETED, el) || $(EL$1.SELECTOR.NICK_DELETED, el) === null)) {
+      throw new Error(`getNick didn't work for ${el}`);
+    }
+    if ($(EL$1.SELECTOR.NICK, el) !== null) {
+      return $(EL$1.SELECTOR.NICK, el).innerText;
+    } else if ($(EL$1.SELECTOR.NICK_DELETED, el) !== null) {
+      return $(EL$1.SELECTOR.NICK_DELETED, el).innerText;
+    }
+    // @TODO: add something to handle nicks on the right panel, apparently there is different DOM structure there which causes this above to throw error as nullish
+  };
+
+  /**
+   * @returns {NodeList} with all <div> elements containing line with nick, time since comment made, [+][-]
+   */
+  const getAllNickElements = () => $$(EL$1.SELECTOR.NICK_ELEMENTS);
+
+  /**
+   * @returns {String} default name for badge set in settings by user.
+   */
+  const getDefaultBadgeLabelFromSettings = () => settings$2.BADGE.DEFAULT_NAME;
+
+  const { BADGE: EL$2 } = DOM;
+
   const handleBadges = () => {
     /**
      * uniqueNicksSet - an array keeping nicks of all users added to the troll list. It exists so that before adding any user on a list we can easily check if they haven't already been added, using simple includes() method.
@@ -564,11 +643,6 @@
     let markedUsers = getLocalStorage("marked");
     let settings = getLocalStorage("settings");
 
-    //checks if user of provided nick is already in uniqueNicksSet array
-    const isMarked = nick => {
-      uniqueNicksSet = getLocalStorage("unique");
-      return !!uniqueNicksSet.includes(nick);
-    };
 
     // Adds new nick to uniqueNicksSet array.
     const addNickToUniqueNicksArray = nick => {
@@ -596,35 +670,6 @@
       }
     };
 
-    // function returns a nodeList with all <div> elements containing line with nick, time since comment made, [+][-]
-    const getAllNickElements = () => $$(EL.SELECTOR.NICK_ELEMENTS);
-
-    //used on element - preferably one returned from getAllNickElements() - returns string with nick name.
-    const getNick = el => {
-      if (
-        (!$(EL.SELECTOR.NICK, el) || $(EL.SELECTOR.NICK, el) === null) && 
-        (!$(EL.SELECTOR.NICK_DELETED, el) || $(EL.SELECTOR.NICK_DELETED, el) === null)) {
-        throw new Error(`getNick didn't work for ${el}`);
-      }
-      if ($(EL.SELECTOR.NICK, el) !== null) {
-        return $(EL.SELECTOR.NICK, el).innerText;
-      } else if ($(EL.SELECTOR.NICK_DELETED, el) !== null) {
-        return $(EL.SELECTOR.NICK_DELETED, el).innerText;
-      }
-      // @TODO: add something to handle nicks on the right panel, apparently there is different DOM structure there which causes this above to throw error as nullish
-    };
-
-    // const getAllElementsWithNick = nick => $$(`.${EL.CLASSNAME.NICK}[class*="color"][href*="ludzie/${nick}"]`);
-
-    // used on author element, returned from getAllNickElements(), checks if person has already been marked with a badge
-    const isNotAwarded = element => !$(`.${EL.CLASSNAME.BADGE}`, element);
-
-    // used on author element, returned from getAllNickElements(), checks if person has already been given a button
-    const hasButtonAppended = element =>
-      !!$(`.${EL.CLASSNAME.MARK_BUTTON}`, element);
-
-    const getDefaultBadgeLabelFromSettings = () => settings.BADGE.DEFAULT_NAME;
-
     // goes through all user elements on a page and checks, if user nicks are present in uniqueNicksSet array. If they are, AND they haven't yet been awarded a badge, it injects the badge.
     const markUsers = () => {
       try {
@@ -646,8 +691,8 @@
     };
 
     const addMarkAllButton = () => {
-      if (document.getElementById(EL.ID.VOTES_CONTAINER)) {
-        const nav = document.getElementById(EL.ID.VOTES_CONTAINER).closest('.rbl-block').querySelector('.nav ul + ul');
+      if (document.getElementById(EL$2.ID.VOTES_CONTAINER)) {
+        const nav = document.getElementById(EL$2.ID.VOTES_CONTAINER).closest('.rbl-block').querySelector('.nav ul + ul');
         nav ? nav.insertAdjacentHTML("beforeend", buttonBulkMarkup) : '';
       }
     };
@@ -670,21 +715,21 @@
         }
         // if user is marked and there already is a badge next to him - update text on the badge
         if (dataChange && isMarked(nick) && !isNotAwarded(element)) {
-          $(`.${EL.CLASSNAME.BADGE}`, element).remove();
+          $(`.${EL$2.CLASSNAME.BADGE}`, element).remove();
           const nickData = getNickData(nick);
           element.insertAdjacentHTML("afterbegin", badge$1(nick, nickData.label));
         }
         // if user is marked - remove button to mark him as it's not needed anymore
         if (
           isMarked(nick) &&
-          $(`.${EL.CLASSNAME.MARK_BUTTON}`, element) &&
-          !$(`.${EL.CLASSNAME.MARK_BUTTON_CLICKED}`, element)
+          $(`.${EL$2.CLASSNAME.MARK_BUTTON}`, element) &&
+          !$(`.${EL$2.CLASSNAME.MARK_BUTTON_CLICKED}`, element)
         ) {
-          $(`.${EL.CLASSNAME.MARK_BUTTON}`, element).remove();
+          $(`.${EL$2.CLASSNAME.MARK_BUTTON}`, element).remove();
         }
         // if user isn't marked and there is badge next to him (double negation here, might think on renaming it later on) - remove it
         if (!isMarked(nick) && !isNotAwarded(element)) {
-          $(`.${EL.CLASSNAME.BADGE}`, element).remove();
+          $(`.${EL$2.CLASSNAME.BADGE}`, element).remove();
         }
       });
     };
@@ -693,19 +738,19 @@
     // First, get nick of the author. Then, get link of the offending comment.
     const addNewMarked = event => {
       const nick = getNick(
-        event.target.closest(`.${EL.CLASSNAME.NICK_ELEMENT}`)
+        event.target.closest(`.${EL$2.CLASSNAME.NICK_ELEMENT}`)
       );
 
       // verified accounts need be handled slightly differently
       // event.target = .buttonWH
       const link = event.target
-        .closest(`.${EL.CLASSNAME.NICK_ELEMENT}`)
+        .closest(`.${EL$2.CLASSNAME.NICK_ELEMENT}`)
         .querySelector(`.verified`)
         ? event.target
-          .closest(`.${EL.CLASSNAME.NICK_ELEMENT}`)
-          .querySelector(`.${EL.CLASSNAME.NICK_VERIFIED_BADGE} + a`).href
+          .closest(`.${EL$2.CLASSNAME.NICK_ELEMENT}`)
+          .querySelector(`.${EL$2.CLASSNAME.NICK_VERIFIED_BADGE} + a`).href
         : event.target
-          .closest(`.${EL.CLASSNAME.NICK_ELEMENT}`)
+          .closest(`.${EL$2.CLASSNAME.NICK_ELEMENT}`)
           .querySelector("a + a").href;
 
       const content = event.target
@@ -719,7 +764,7 @@
           .closest('.wblock')
           .querySelector('.text .media-content a').href : null;
 
-      event.target.classList.add(EL.CLASSNAME.MARK_BUTTON_CLICKED);
+      event.target.classList.add(EL$2.CLASSNAME.MARK_BUTTON_CLICKED);
       event.target.innerText = "\u2714";
       addNickToArrays(nick, link, content, media);
 
@@ -770,26 +815,6 @@
       updateView(true);
     };
 
-    // gets user data from objects inside marked users array. For now the only useful data returned is link to the offending post
-    const getNickData = nick => {
-      if (!nick) {
-        throw new Error("getNickData requires nick to be provided.");
-      }
-      for (let i = 0; i < markedUsers.length; i++) {
-        if (markedUsers[i].nick === nick) {
-          return {
-            link: markedUsers[i].link,
-            nick: markedUsers[i].nick,
-            label: markedUsers[i].label,
-            content: markedUsers[i].content,
-            media: markedUsers[i].media,
-          };
-        } else if (markedUsers[i] === undefined || markedUsers[i] === null) {
-          continue;
-        }
-      }
-    };
-
     // shows modal with marked user info/options
     const showUserModal = element => {
       const nick = $(element).dataset.whusername;
@@ -829,7 +854,7 @@
     //Add all users that up/down-voted a thread
     const markAllWhoVoted = () => {
       const link = window.location.href;
-      const userCards = $$(`#${EL.ID.VOTES_CONTAINER} .${EL.CLASSNAME.VOTES_USERCARD}`);
+      const userCards = $$(`#${EL$2.ID.VOTES_CONTAINER} .${EL$2.CLASSNAME.VOTES_USERCARD}`);
       
       let action;
       if ($('#voters').closest('li').classList.contains('active')) {
@@ -860,7 +885,7 @@
     // on button click, add new marked user
     document.getElementById("itemsStream").addEventListener("click", event => {
       const target = event.target;
-      if (target.classList.contains(EL.CLASSNAME.MARK_BUTTON)) {
+      if (target.classList.contains(EL$2.CLASSNAME.MARK_BUTTON)) {
         addNewMarked(event);
       }
       if (target.classList.contains("affect") && target.closest(".more")) {
@@ -868,89 +893,39 @@
           markUsers();
         }, 500);
       }
-      if (target.classList.contains(EL.CLASSNAME.BADGE)) {
+      if (target.classList.contains(EL$2.CLASSNAME.BADGE)) {
         const nick = target.dataset.whusername;
-        showUserModal(EL.DYNAMIC.DATASET.USERNAME(nick));
+        showUserModal(EL$2.DYNAMIC.DATASET.USERNAME(nick));
       }
     });
 
-    if (document.getElementById(EL.ID.VOTES_CONTAINER)) {
-      document.getElementById(EL.ID.VOTES_CONTAINER)
+    if (document.getElementById(EL$2.ID.VOTES_CONTAINER)) {
+      document.getElementById(EL$2.ID.VOTES_CONTAINER)
         .closest('.rbl-block').querySelector('.nav').addEventListener("click", event => {
           const target = event.target;
-          if (target.classList.contains(EL.CLASSNAME.MARK_ALL_BUTTON)) {
+          if (target.classList.contains(EL$2.CLASSNAME.MARK_ALL_BUTTON)) {
             markAllWhoVoted();
-            $(`.${EL.CLASSNAME.MARK_ALL_BUTTON}`).innerText = 'Zrobione :)';
+            $(`.${EL$2.CLASSNAME.MARK_ALL_BUTTON}`).innerText = 'Zrobione :)';
             setTimeout(() => {
-              $(`.${EL.CLASSNAME.MARK_ALL_BUTTON_ELEMENT}`).style.display = 'none';
-              $(`.${EL.CLASSNAME.MARK_ALL_BUTTON}`).innerText = 'Oznacz wszystkich poni\u017Cej';
+              $(`.${EL$2.CLASSNAME.MARK_ALL_BUTTON_ELEMENT}`).style.display = 'none';
+              $(`.${EL$2.CLASSNAME.MARK_ALL_BUTTON}`).innerText = 'Oznacz wszystkich poni\u017Cej';
             }, 500);
           }
           if (target.closest('#voters') || target.closest('#votersBury')) {
-            $(`.${EL.CLASSNAME.MARK_ALL_BUTTON_ELEMENT}`).style.display = 'block';
+            $(`.${EL$2.CLASSNAME.MARK_ALL_BUTTON_ELEMENT}`).style.display = 'block';
           }
         });
     }
   };
 
-  const { BADGE: EL$1 } = DOM;
-
-  let uniqueNicksSet = getLocalStorage("unique");
-
-  /**
-   * Checks if user of provided nick is already in uniqueNicksSet array
-   * @param {String} nick - nick to check
-   */
-  const isMarked = nick => {
-    uniqueNicksSet = getLocalStorage("unique");
-    return !!uniqueNicksSet.includes(nick);
-  };
-
-  /**
-   * used on author element, returned from getAllNickElements(), checks if person has already been marked with a badge
-   * @param {HTMLElement} element - element to check
-   */
-  const isNotAwarded = element => !$(`.${EL$1.CLASSNAME.BADGE}`, element);
-
-  let markedUsers = getLocalStorage("marked");
-  let settings$2 = getLocalStorage("settings");
-
-  /**
-   * gets user data from objects inside marked users array.
-   * @param {String} nick 
-   */
-  const getNickData = nick => {
-    if (!nick) {
-      throw new Error("getNickData requires nick to be provided.");
-    }
-    for (let i = 0; i < markedUsers.length; i++) {
-      if (markedUsers[i].nick === nick) {
-        return {
-          link: markedUsers[i].link,
-          nick: markedUsers[i].nick,
-          label: markedUsers[i].label,
-          content: markedUsers[i].content,
-          media: markedUsers[i].media,
-        };
-      } else if (markedUsers[i] === undefined || markedUsers[i] === null) {
-        continue;
-      }
-    }
-  };
-
-  /**
-   * @returns {String} default name for badge set in settings by user.
-   */
-  const getDefaultBadgeLabelFromSettings = () => settings$2.BADGE.DEFAULT_NAME;
-
-  const { BADGE: EL$2 } = DOM;
+  const { BADGE: EL$3 } = DOM;
 
   /**
    * This is responsible for displaying mark badge next to user's nickname in user's profile (wykop.pl/ludzie/XXXX).
    */
   const displayBadgeInUserProfile = () => {
-    const nickElement = $(EL$2.SELECTOR.USER_PROFILE_NICK_ELEMENT);
-    const nick = $(EL$2.SELECTOR.USER_PROFILE_NICK).textContent;
+    const nickElement = $(EL$3.SELECTOR.USER_PROFILE_NICK_ELEMENT);
+    const nick = $(EL$3.SELECTOR.USER_PROFILE_NICK).textContent;
     const userData = getNickData(nick) ? getNickData(nick) : null;
     const label = userData ? userData.label : getDefaultBadgeLabelFromSettings();
 
@@ -1221,13 +1196,13 @@
    *  - add check in appropriate module. If you want it to be ON by default, you will need to make it so using /utils/runOnceOnUpdate
    */
 
-  const { SETTINGS: EL$3 } = DOM;
+  const { SETTINGS: EL$4 } = DOM;
 
   /**
    * Inserts navigation item on a /ustawienia/ page with link to WykopHelper settings
    */
   const createSettingsPage = () => {
-    $(EL$3.SELECTOR.LAST_NAV_ELEMENT).insertAdjacentHTML('beforeend', settingsModel.settingsNav);
+    $(EL$4.SELECTOR.LAST_NAV_ELEMENT).insertAdjacentHTML('beforeend', settingsModel.settingsNav);
   };
 
   const handleSettings = () => {
@@ -1235,7 +1210,7 @@
     const markedUsers = getLocalStorage();
     const uniqueNicksSet = getLocalStorage('unique');
 
-    const settingsFormElement = $(EL$3.SELECTOR.SETTINGS_FORM_ELEMENT);
+    const settingsFormElement = $(EL$4.SELECTOR.SETTINGS_FORM_ELEMENT);
 
     /**
      * clears localstorage. Doesn't remove items, but sets them to empty array
@@ -1250,7 +1225,7 @@
      * Creates table with marked users.
      */
     const generateUserTables = () => {
-      const tableBody = $(`.${EL$3.CLASSNAME.WH_USER_TABLE_BODY}`);
+      const tableBody = $(`.${EL$4.CLASSNAME.WH_USER_TABLE_BODY}`);
 
       markedUsers.forEach(el => {
         tableBody.insertAdjacentHTML(
@@ -1263,13 +1238,13 @@
     };
 
     const toggleUserTableVisibility = () => {
-      $(`.${EL$3.CLASSNAME.WH_USER_TABLE_CONTAINER}`)
-        .classList.toggle(`${EL$3.CLASSNAME.WH_USER_TABLE_CONTAINER}--hidden`);
+      $(`.${EL$4.CLASSNAME.WH_USER_TABLE_CONTAINER}`)
+        .classList.toggle(`${EL$4.CLASSNAME.WH_USER_TABLE_CONTAINER}--hidden`);
 
-      if ($(`.${EL$3.CLASSNAME.WH_USER_TABLE_CONTAINER}--hidden`)) {
-        document.getElementById(EL$3.ID.SHOW_MARKED_TABLE).textContent = settingsModel.textContent.SHOW_ALL_MARKED;
+      if ($(`.${EL$4.CLASSNAME.WH_USER_TABLE_CONTAINER}--hidden`)) {
+        document.getElementById(EL$4.ID.SHOW_MARKED_TABLE).textContent = settingsModel.textContent.SHOW_ALL_MARKED;
       } else {
-        document.getElementById(EL$3.ID.SHOW_MARKED_TABLE).textContent = settingsModel.textContent.HIDE_TABLE;
+        document.getElementById(EL$4.ID.SHOW_MARKED_TABLE).textContent = settingsModel.textContent.HIDE_TABLE;
       }
     };
 
@@ -1293,7 +1268,7 @@
         }
       }).then(result => {
         if (result.isConfirmed) {
-          let list = $(`#${EL$3.ID.SUSPECT_DOMAINS_SETTINGS_TEXTAREA}`).value;
+          let list = $(`#${EL$4.ID.SUSPECT_DOMAINS_SETTINGS_TEXTAREA}`).value;
           list.replace('https://', '').replace('http://', '').replace('www.', '').replace(' ', '');
           const arrayList = list.split('\n');
           settings.GENERAL.SUSPECT_DOMAINS = arrayList;
@@ -1327,7 +1302,7 @@
 
       inputs.forEach(el => {
         const category = el.getAttribute('category');
-        if (el.id !== EL$3.ID.ALLOW_WIPE_MARKED_LIST && el.type === 'checkbox') {
+        if (el.id !== EL$4.ID.ALLOW_WIPE_MARKED_LIST && el.type === 'checkbox') {
           el.checked = settings[category][el.name];
         } else if (el.type === 'text' && el.name !== 'nsQ') {
           el.value = settings[category][el.name] || '';
@@ -1336,8 +1311,8 @@
     };
 
     const renderSettings = () => {
-      $(EL$3.SELECTOR.ACTIVE_NAV_ELEMENT).classList.remove('active');
-      $(`.${EL$3.CLASSNAME.WH_NAV_SETTINGS_LINK}`).classList.add('active');
+      $(EL$4.SELECTOR.ACTIVE_NAV_ELEMENT).classList.remove('active');
+      $(`.${EL$4.CLASSNAME.WH_NAV_SETTINGS_LINK}`).classList.add('active');
     
       settingsFormElement.innerHTML = '';
       settingsFormElement.innerHTML = settingsModel.settingsMarkup;
@@ -1358,30 +1333,30 @@
         const category = event.target.getAttribute('category');
         const name = event.target.name;
 
-        if (event.target.type === 'checkbox' && event.target.id !==  EL$3.ID.ALLOW_WIPE_MARKED_LIST) {
+        if (event.target.type === 'checkbox' && event.target.id !==  EL$4.ID.ALLOW_WIPE_MARKED_LIST) {
           settings[category][name] = !settings[category][name];
           localStorage.setItem(STORAGE_KEY_NAMES.WH_SETTINGS, JSON.stringify(settings));
         }
       }, {passive: true});
 
       settingsFormElement.addEventListener('click', event => {
-        if (event.target.id === EL$3.ID.SHOW_MARKED_TABLE) {
+        if (event.target.id === EL$4.ID.SHOW_MARKED_TABLE) {
           event.preventDefault();
           toggleUserTableVisibility();
         }
-        if (event.target.id ===  EL$3.ID.ALLOW_WIPE_MARKED_LIST) {
+        if (event.target.id ===  EL$4.ID.ALLOW_WIPE_MARKED_LIST) {
           event.target.disabled = true;
-          document.getElementById(EL$3.ID.REMOVE_ALL_MARKED).disabled = false;
-          document.getElementById(EL$3.ID.REMOVE_ALL_MARKED).style.opacity = 1;
+          document.getElementById(EL$4.ID.REMOVE_ALL_MARKED).disabled = false;
+          document.getElementById(EL$4.ID.REMOVE_ALL_MARKED).style.opacity = 1;
         }
-        if (event.target.id === EL$3.ID.REMOVE_ALL_MARKED) {
+        if (event.target.id === EL$4.ID.REMOVE_ALL_MARKED) {
           event.preventDefault();
           wipeAllMarkedUsers();
         }
-        if (event.target.id === EL$3.ID.SUSPECT_DOMAINS_SETTINGS_LINK) {
+        if (event.target.id === EL$4.ID.SUSPECT_DOMAINS_SETTINGS_LINK) {
           showModalWithPropagandaExplanation();
         }
-        if (event.target.id === EL$3.ID.WARN_ON_RELOAD_INFO_LINK) {
+        if (event.target.id === EL$4.ID.WARN_ON_RELOAD_INFO_LINK) {
           showModalWithWarnOnReloadExplanation();
         }
       }, {passive: false});
@@ -1453,7 +1428,7 @@
 
   /* eslint max-len: 0 */
 
-  const version = `0.62`;
+  const version = `0.65`;
 
   const welcomeText = {
     title: "WykopHelper zainstalowany!",
@@ -1472,6 +1447,9 @@ Dodatek WykopHelper został właśnie zaktualizowany do wersji ${version}. Wprow
   </li>
   <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
     Funkcja ostrzegająca przed zamknięciem strony gdy wykryte zostanie pisanie komentarza <em>powinna</em> już działać poprawnie.
+  </li>
+  <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
+    Pojawiła się opcja wyłączenia komentarzy we <strong>wszystkich</strong> znaleziskach. Teraz możesz zdecydować, czy komentarze wyłączasz globalnie, tylko w wybranych (poprzez tagi) znaleziskach, czy nigdzie. Domyślnie opcja oczywiście nie jest włączona.
   </li>
   <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
     Od teraz odznaka widoczna będzie również w profilu użytkownika, między avatarem a nickiem.
@@ -1531,11 +1509,11 @@ Dodatek WykopHelper został właśnie zaktualizowany do wersji ${version}. Wprow
     });
   };
 
-  const { BADGE: EL$4 } = DOM;
+  const { BADGE: EL$5 } = DOM;
 
   const isTextareaEmpty = () => {
-    const replyForm = $(EL$4.SELECTOR.REPLY_FORM);
-    const commentForm = $(EL$4.SELECTOR.COMMENT_FORM);
+    const replyForm = $(EL$5.SELECTOR.REPLY_FORM);
+    const commentForm = $(EL$5.SELECTOR.COMMENT_FORM);
 
     // for whatever reason, chrome just can't handle belows checks the way they should work (so simply assigning the check to const); instead of simple boolean false if it encounters something like undef or null, it throws all sorts of different errors. Hence, it's done like that. Took about an hour experimenting.
     let isCommentNotEmpty = false;
