@@ -30,11 +30,7 @@ Odznaka będzie widoczna przy nicku użytkownika w każdym jego komentarzu w dow
 
 W widocznej na screenie ramce znajdzie się treść komentarza (na wypadek, gdyby user zdecydował się go usunąć, lub gdyby moderator zrobił to za niego), a pod ramką - link do miejsca, gdzie został zamieszczony. Jeśli w treści komentarza znajduje się osadzony obrazek lub film, link do niego znajdzie się również tutaj.
 
-> ⭐𝑈𝑃𝐶𝑂𝑀𝐼𝑁𝐺⭐ - od następnej aktualizacji:⭐
-> 
-> Odznaka będzie wyświetlana również w profilu użytkownika, między avatarem a nickiem.
-> 
-> ⭐⭐⭐
+Odznaka będzie wyświetlana również w profilu użytkownika, między avatarem a nickiem.
 
 Ostatnia opcja to możliwość zmiany tekstu odznaki. Domyślnie nadawana jest taka, jaką zdefiniowano w ustawieniach (czytaj dalej). Jednak każdego użytkownika z osobna możemy oznaczyć osobno właśnie tutaj. Zmiana następuje po potwierdzeniu przyciskiem "Zapisz".
 
@@ -75,13 +71,10 @@ Aktywność "ruskich trolli" to od dość dawna nie legenda, a fakt. Uaktywniaj�
 Ten ficzer możesz wyłączyć (domyślnie jest włączony) w ustawieniach. 
 Lista źródeł, na podstawie których została stworzona lista _podejrzanych_ znalezisk znajduje się [tutaj](./propaganda.md).
 
-> ⭐𝑈𝑃𝐶𝑂𝑀𝐼𝑁𝐺⭐ - od następnej aktualizacji:⭐
-> 
-> Możesz tam również - jeśli chcesz - zrezygnować z domyślnego zachowania tego ficzera, i zmienić zarówno tekst ostrzeżenia jak i podejrzeć/edytować listę stron, przy których ostrzeżenie ma się pojawiać.
-> 
-> ![propaganda](/warning-propaganda-settings.png)
-> 
-> ⭐⭐⭐
+Możesz tam również - jeśli chcesz - zrezygnować z domyślnego zachowania tego ficzera, i zmienić zarówno tekst ostrzeżenia jak i podejrzeć/edytować listę stron, przy których ostrzeżenie ma się pojawiać.
+ 
+![propaganda](/warning-propaganda-settings.png)
+
 
 ### Upload obrazka prosto ze schowka, zamiast z dysku
 
@@ -89,7 +82,7 @@ Korzystając z funkcji "Dodaj zdjęcie lub film", jeśli masz w schowku skopiowa
 
 ![embed](/embed.png)
 
-Ficzer inspirowany, żeby nie rzec zerżnięty, od https://www.wykop.pl/dodatki/pokaz/1107/
+Ficzer inspirowany, żeby nie rzec zerżnięty, od [https://www.wykop.pl/dodatki/pokaz/1107/](https://www.wykop.pl/dodatki/pokaz/1107/)
 
 ### Usuwanie komentarzy w znaleziskach z tagami zdefiniowanymi w ustawieniach 🔧
 
@@ -101,11 +94,7 @@ Czasem może być tak, że chcesz widzieć znaleziska z jakiejś kategorii (np. 
 
 Gdy zostanie wykryte pisanie komentarza (w polu tekstowym znajdzie się co najmniej 6 słów), przed przeładowaniem/zamknięciem strony zostanie wyświetlony monit z pytaniem, czy użytkownik jest pewien swoich działań.
 
-> ⭐𝑈𝑃𝐶𝑂𝑀𝐼𝑁𝐺⭐ - od następnej aktualizacji:⭐
-> 
-> **Uwaga - ficzer przez dłuższy czas miał jakieś kłopoty z działaniem na niektórych przeglądarkach; wydaje mi się, że najnowsza aktualizacja problem naprawia, zalecam jednak mimo wszystko przeprowadzić własne testy :)**
-> 
-> ⭐⭐⭐
+**Uwaga - ficzer przez dłuższy czas miał jakieś kłopoty z działaniem na niektórych przeglądarkach; wydaje mi się, że najnowsza aktualizacja problem naprawia, zalecam jednak mimo wszystko przeprowadzić własne testy :)**
 
 ### Ustawienia 🔧🔧🔧
 
@@ -133,21 +122,17 @@ Po zainstalowaniu dodatek będzie aktualizował się automatycznie. Po każdej i
 
 Czego można się spodziewać? (🐾 - oznacza, że nad tym aktualnie pracuję, i zapewne znajdzie się to w najbliższej aktualizacji)
 
- * Naprawa ficzera z ostrzeganiem przed zamknięciem strony 🐾 
- * Rozszerzenie funkcjonalności ostrzeżeń przed propagandą 🐾
-   - możliwość podejrzenia listy domen podejrzanych 
-   - możliwość edycji tej listy
-   - możliwość edycji treści komunikatu
- * Rozwinięcie funkcjonalności odznak:
-   - Możliwość ustawienia domyślnego, jak również customowego koloru dla każdego oznaczonego użytkownika z osobna
-   - możliwość zadecydowania, że treści od danego użytkownika nie chcemy już widzieć w ogóle (taka super-czarna lista, całkowicie usuwająca treści danego usera)
-   - odznaka widoczna również w profilu użytkownika, a nie tylko przy jego komentarzach 🐾
-   - możliwość eksportu i importu listy oznaczonych userów - tak, by móc je migrować między przeglądarkami, czy komputerami
-   - redesign popupu odznaki
+ * Rozwinięcie funkcjonalności odznak: 🐾
+   - Możliwość ustawienia domyślnego, jak również customowego koloru dla każdego oznaczonego użytkownika z osobna 🐾
+   - możliwość zadecydowania, że treści od danego użytkownika nie chcemy już widzieć w ogóle (taka super-czarna lista, całkowicie usuwająca treści danego usera) 🐾
+   - możliwość eksportu i importu listy oznaczonych userów - tak, by móc je migrować między przeglądarkami, czy komputerami 🐾
+   - redesign popupu odznaki 🐾
  * Zintegrowanie funkcjonalności podobnych do tych, jakie można odnaleźć w tych dodatkach: https://www.wykop.pl/dodatki/pokaz/1021/ , https://www.wykop.pl/dodatki/pokaz/1013/ , https://www.wykop.pl/dodatki/pokaz/231/
  * Opcja ograniczania dostępu do wypoku - przy walce z uzależnieniem ;)
- * Możliwość usuwania komentarzy ze **wszystkich** znalezisk. 🐾
  * możliwość włączenia podglądu na żywo, jak wyglądać będzie post po opublikowaniu
+ * Redesign całości
+   - ujednolicenie wyglądu poszczególnych elementów
+   - wsparcie dla trybu dziennego
  * rating wiarygodności źródła - wymaga prac koncepcyjnych, ale ficzer chyba byłby fajny? :)
 
 ...i co tam jeszcze się nasunie, lista jest niepełna :)
@@ -155,7 +140,7 @@ Czego można się spodziewać? (🐾 - oznacza, że nad tym aktualnie pracuję, 
  Docelowo dodatek będzie zwykłym rozszerzeniem do przeglądarki, co wyeliminuje konieczność instalacji menadżera skryptów, jednak to dopiero w okolicach wersji 1.0.
  
 ## 4. Support
-> WykopHelper jest w wersji 0.60 co oznacza, że nie jest to jeszcze wersja całkiem stabilna. Do 1.0 jeszcze trochę brakuje :) W konsekwencji, niektóre ficzery mogą nie działać całkiem poprawnie, zmieniać swoje zachowanie wraz z kolejnymi aktualizacjami lub nawet całkiem znikać. Dlatego zachęcam do korzystania z linku niżej, by zgłaszać wszystkie niedogodności.
+> WykopHelper jest w wersji 0.65 co oznacza, że nie jest to jeszcze wersja całkiem stabilna. Do 1.0 jeszcze trochę brakuje :) W konsekwencji, niektóre ficzery mogą nie działać całkiem poprawnie, zmieniać swoje zachowanie wraz z kolejnymi aktualizacjami lub nawet całkiem znikać. Dlatego zachęcam do korzystania z linku niżej, by zgłaszać wszystkie niedogodności.
 
 Jeśli masz jakiekolwiek skargi (coś nie działa lub Ci się nie podoba), sugestie, pytania czy spostrzeżenia, możesz się nimi podzielić tutaj: [https://github.com/PLWpl/WykopHelper/discussions](https://github.com/PLWpl/WykopHelper/discussions), obiecuję, że (o ile będą poważne) nie pozostaną bez odpowiedzi.
 
@@ -199,6 +184,13 @@ Bez komentarza.
 
 
 ## 6. Changelog
+
+**0.65**
+* Funkcja ostrzegania przed znaleziskami podejrzanymi o szerzenie propagandy rosyjskiej została zmodyfikowana. Od teraz możesz samodzielnie ustalić, czy takie ostrzeżenie ma w ogóle być pokazywane, a także jaka ma być jego treść i dla jakich domen ma się aktywować. Zdecydować o tym możesz oczywiście w ustawieniach (ikona zębatki przy odpowiednim checkboxie).
+* Funkcja ostrzegająca przed zamknięciem strony gdy wykryte zostanie pisanie komentarza powinna już działać poprawnie.
+* Pojawiła się opcja wyłączenia komentarzy we wszystkich znaleziskach. Teraz możesz zdecydować, czy komentarze wyłączasz globalnie, tylko w wybranych (poprzez tagi) znaleziskach, czy nigdzie. Domyślnie opcja oczywiście nie jest włączona.
+* Od teraz odznaka widoczna będzie również w profilu użytkownika, między avatarem a nickiem.
+* Drobne poprawki stylistyczne tu i ówdzie (np. nowy kolor przycisku "zapisz" w popupie odznaki; redesign całego popupu wkrótce)
 
 **0.60** 
 * Dodano możliwość zmiany tekstu na odznace każdego użytkownika z osobna. By zmienić tekst wystarczy kliknąć na odznace przy danym userze, odszukać nowe pole tekstowe i wpisać tam, co dusza zapragnie :)
