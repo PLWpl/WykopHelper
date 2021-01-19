@@ -13,10 +13,10 @@ export const welcomeText = {
 export const updateText = {
   title: "WykopHelper zaktualizowany!",
   content: `
-Dodatek WykopHelper został właśnie zaktualizowany do wersji ${version}. Wprowadzone zmiany to: <br>
+Dodatek WykopHelper został właśnie zaktualizowany do wersji <strong>${version}</strong>. Wprowadzone zmiany to: <br>
 <ul class="${DOM.MODAL.CLASSNAME.LIST}">
   <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
-    Funkcja ostrzegania przed znaleziskami podejrzanymi o szerzenie propagandy rosyjskiej została zmodyfikowana. Od teraz możesz samodzielnie ustalić, czy takie ostrzeżenie ma w ogóle być pokazywane, a także jaka ma być jego treść i dla jakich domen ma się aktywować. Zdecydować o tym możesz oczywiście w ustawieniach (ikona zębatki przy odpowiednim checkboxie).
+    Funkcja ostrzegania przed znaleziskami podejrzanymi o szerzenie propagandy rosyjskiej została zmodyfikowana. Od teraz możesz samodzielnie ustalić, czy takie ostrzeżenie ma w ogóle być pokazywane, a także jaka ma być jego treść i dla jakich domen ma się aktywować. Zdecydować o tym możesz oczywiście w ustawieniach (ikona zębatki przy odpowiednim checkboxie). Domyślnie dodane są tam domeny podejrzane o szerzenie rosyjskiej propagandy; źródła, które posłużyły do jej skomponowania znajdują się <a href="https://plwpl.github.io/WykopHelper/propaganda.html" target="_blank">tutaj</a>.
   </li>
   <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
     Funkcja ostrzegająca przed zamknięciem strony gdy wykryte zostanie pisanie komentarza <em>powinna</em> już działać poprawnie.
@@ -28,7 +28,7 @@ Dodatek WykopHelper został właśnie zaktualizowany do wersji ${version}. Wprow
     Od teraz odznaka widoczna będzie również w profilu użytkownika, między avatarem a nickiem.
   </li>
   <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
-    Drobne poprawki stylistyczne tu i ówdzie (np. nowy kolor przycisku "zapisz" w popupie odznaki; redesign całego popupu wkrótce)
+    Drobne poprawki stylistyczne tu i ówdzie (np. nowy kolor przycisku "zapisz" w popupie odznaki). Redesign całego popupu wkrótce, a nieco później - ujednolicenie UI tak, żeby nie wyglądało jak naprędce sklejone kawałki wszystkiego ;)
   </li>
 </ul>
 `,

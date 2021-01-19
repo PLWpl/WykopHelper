@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         WykopHelper - DEV
-// @version      0.60
+// @version      0.65
 // @updateURL    https://cdn.jsdelivr.net/gh/plwpl/WykopHelper/dist/whhelper-dev.user.js
 // @downloadURL  https://cdn.jsdelivr.net/gh/plwpl/WykopHelper/dist/whhelper-dev.user.js
 // @description  Zestaw narzędzi pomocnych na wykopie.
@@ -1453,7 +1453,7 @@
 
   /* eslint max-len: 0 */
 
-  const version = `0.62`;
+  const version = `0.65`;
 
   const welcomeText = {
     title: "WykopHelper zainstalowany!",
@@ -1472,6 +1472,9 @@ Dodatek WykopHelper został właśnie zaktualizowany do wersji ${version}. Wprow
   </li>
   <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
     Funkcja ostrzegająca przed zamknięciem strony gdy wykryte zostanie pisanie komentarza <em>powinna</em> już działać poprawnie.
+  </li>
+  <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
+    Pojawiła się opcja wyłączenia komentarzy we <strong>wszystkich</strong> znaleziskach. Teraz możesz zdecydować, czy komentarze wyłączasz globalnie, tylko w wybranych (poprzez tagi) znaleziskach, czy nigdzie. Domyślnie opcja oczywiście nie jest włączona.
   </li>
   <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
     Od teraz odznaka widoczna będzie również w profilu użytkownika, między avatarem a nickiem.
