@@ -1,6 +1,12 @@
 import DOM from "../../constants/domSelectors";
 /* eslint max-len: 0 */
 
+const changesArray = [
+  'Od teraz w ustawieniach można wybrać domyślny kolor odznaki. Wkrótce pojawi się możliwość ustawiania osobnego koloru dla każdego oznaczonego użytkownika.',
+];
+
+const listItem = text => `<li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">${text}</li>`;
+
 export const version = `0.65`;
 
 export const welcomeText = {
@@ -15,21 +21,7 @@ export const updateText = {
   content: `
 Dodatek WykopHelper został właśnie zaktualizowany do wersji <strong>${version}</strong>. Wprowadzone zmiany to: <br>
 <ul class="${DOM.MODAL.CLASSNAME.LIST}">
-  <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
-    Funkcja ostrzegania przed znaleziskami podejrzanymi o szerzenie propagandy rosyjskiej została zmodyfikowana. Od teraz możesz samodzielnie ustalić, czy takie ostrzeżenie ma w ogóle być pokazywane, a także jaka ma być jego treść i dla jakich domen ma się aktywować. Zdecydować o tym możesz oczywiście w ustawieniach (ikona zębatki przy odpowiednim checkboxie). Domyślnie dodane są tam domeny podejrzane o szerzenie rosyjskiej propagandy; źródła, które posłużyły do jej skomponowania znajdują się <a href="https://plwpl.github.io/WykopHelper/propaganda.html" target="_blank">tutaj</a>.
-  </li>
-  <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
-    Funkcja ostrzegająca przed zamknięciem strony gdy wykryte zostanie pisanie komentarza <em>powinna</em> już działać poprawnie.
-  </li>
-  <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
-    Pojawiła się opcja wyłączenia komentarzy we <strong>wszystkich</strong> znaleziskach. Teraz możesz zdecydować, czy komentarze wyłączasz globalnie, tylko w wybranych (poprzez tagi) znaleziskach, czy nigdzie. Domyślnie opcja oczywiście nie jest włączona.
-  </li>
-  <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
-    Od teraz odznaka widoczna będzie również w profilu użytkownika, między avatarem a nickiem.
-  </li>
-  <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
-    Drobne poprawki stylistyczne tu i ówdzie (np. nowy kolor przycisku "zapisz" w popupie odznaki). Redesign całego popupu wkrótce, a nieco później - ujednolicenie UI tak, żeby nie wyglądało jak naprędce sklejone kawałki wszystkiego ;)
-  </li>
+  ${changesArray.map(el => listItem(el))}
 </ul>
 `,
   button: "Okej!",
