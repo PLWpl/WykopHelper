@@ -124,6 +124,8 @@ export const handleSettings = () => {
         el.checked = settings[category][el.name];
       } else if (el.type === 'text' && el.name !== 'nsQ') {
         el.value = settings[category][el.name] || '';
+      } else if (el.type === 'color') {
+        el.value = settings[category][el.name];
       }
     })    
   }
@@ -153,6 +155,10 @@ export const handleSettings = () => {
 
       if (event.target.type === 'checkbox' && event.target.id !==  EL.ID.ALLOW_WIPE_MARKED_LIST) {
         settings[category][name] = !settings[category][name];
+        localStorage.setItem(STORAGE_KEY_NAMES.WH_SETTINGS, JSON.stringify(settings));
+      }
+      if (event.target.type === 'color') {
+        settings[category][name] = event.target.value;
         localStorage.setItem(STORAGE_KEY_NAMES.WH_SETTINGS, JSON.stringify(settings));
       }
     }, {passive: true});

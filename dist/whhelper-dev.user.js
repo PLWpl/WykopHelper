@@ -209,7 +209,7 @@
   opacity: 0;
 }
 .${DOM.BADGE.CLASSNAME.BADGE} {
-  color: red;
+  color: var(--badgeColor);
   font-weight: bold;
   margin-right: .3rem;
   border: 1px solid currentColor;
@@ -367,25 +367,6 @@
     modal
   };
 
-  const buttonMarkup = `<span class="${DOM.BADGE.CLASSNAME.MARK_BUTTON}">Oznacz</span>`;
-  const buttonBulkMarkup = `<li class="${DOM.BADGE.CLASSNAME.MARK_ALL_BUTTON_ELEMENT}" style="display:none"><span class="${DOM.BADGE.CLASSNAME.MARK_BUTTON} ${DOM.BADGE.CLASSNAME.MARK_ALL_BUTTON}">Oznacz wszystkich poniżej</span></li>`;
-
-  /**
-   * 
-   * @param {string} nick - nickname of user
-   * @param {string} [label=debil] - what will be displayed as a badge
-   * @param {boolean} [clickable=true] - if badge should be styled with cursor:pointer
-   */
-  const badge$1 = (nick, label = 'debil', clickable = true) => `<span class="${DOM.BADGE.CLASSNAME.BADGE} ${clickable ? DOM.BADGE.CLASSNAME.BADGE_CLICKABLE : DOM.BADGE.CLASSNAME.BADGE_UNCLICKABLE}" data-whusername="${nick}">${label.toLowerCase().capitalize()}</span>`;
-
-  /**
-   * 
-   * @param {string} action - either "wykop" or "zakop". 
-   */
-  const markedInBulk = action => {
-    return `Użytkownik ${action}ał podlinkowane znalezisko.`;
-  };
-
   const warningAnnotation = 'Uwa\u017Caj! \u0179r\xF3d\u0142o tego znaleziska jest podejrzewane o szerzenie rosyjskiej propagandy.';
 
   const rawDomains = [
@@ -497,6 +478,29 @@
 
   const settings$1 = getLocalStorage('settings');
 
+  const defaultColor = settings$1.BADGE.DEFAULT_COLOR;
+
+  const buttonMarkup = `<span class="${DOM.BADGE.CLASSNAME.MARK_BUTTON}">Oznacz</span>`;
+  const buttonBulkMarkup = `<li class="${DOM.BADGE.CLASSNAME.MARK_ALL_BUTTON_ELEMENT}" style="display:none"><span class="${DOM.BADGE.CLASSNAME.MARK_BUTTON} ${DOM.BADGE.CLASSNAME.MARK_ALL_BUTTON}">Oznacz wszystkich poniżej</span></li>`;
+
+  /**
+   * 
+   * @param {string} nick - nickname of user
+   * @param {string} [label=debil] - what will be displayed as a badge
+   * @param {boolean} [clickable=true] - if badge should be styled with cursor:pointer
+   */
+  const badge$1 = (nick, label = 'debil', clickable = true, color = defaultColor) => `<span style="--badgeColor: ${color}" class="${DOM.BADGE.CLASSNAME.BADGE} ${clickable ? DOM.BADGE.CLASSNAME.BADGE_CLICKABLE : DOM.BADGE.CLASSNAME.BADGE_UNCLICKABLE}" data-whusername="${nick}">${label.toLowerCase().capitalize()}</span>`;
+
+  /**
+   * 
+   * @param {string} action - either "wykop" or "zakop". 
+   */
+  const markedInBulk = action => {
+    return `Użytkownik ${action}ał podlinkowane znalezisko.`;
+  };
+
+  const settings$2 = getLocalStorage('settings');
+
   /* eslint max-len: 0 */
   const russianPropagandaModal = `
   <p>Strony oznaczone jako potencjalnie szerzące rosyjską propagandę na wykopie zostały wyznaczone na podstawie następujących źródeł:
@@ -512,11 +516,11 @@
   const suspectDomainsSettingsModal = `
   <label>
     Treść komunikatu ostrzegającego, gdy znalezisko pochodzi z podejrzanego źródła:
-    <input id="suspectDomainsLabel" value="${settings$1.GENERAL.SUSPECT_DOMAINS_LABEL || ''}" style="display: block;width: 100%;padding: .3rem 1rem;margin: .5rem 0 1rem;background: #2c2c2c;border: 1px solid #444;" class="">
+    <input id="suspectDomainsLabel" value="${settings$2.GENERAL.SUSPECT_DOMAINS_LABEL || ''}" style="display: block;width: 100%;padding: .3rem 1rem;margin: .5rem 0 1rem;background: #2c2c2c;border: 1px solid #444;" class="">
   </label>
   <label>
     Lista domen uznawanych za podejrzane:
-    <textarea class="" id="suspectDomains" style="display: block; width: 100%; padding: 0.3rem 1rem; margin: 0.5rem 0px 0; height: 150px; max-height: 15rem; overflow: auto; resize: none;">${settings$1.GENERAL.SUSPECT_DOMAINS ? settings$1.GENERAL.SUSPECT_DOMAINS.join('\n') : ''}</textarea>
+    <textarea class="" id="suspectDomains" style="display: block; width: 100%; padding: 0.3rem 1rem; margin: 0.5rem 0px 0; height: 150px; max-height: 15rem; overflow: auto; resize: none;">${settings$2.GENERAL.SUSPECT_DOMAINS ? settings$2.GENERAL.SUSPECT_DOMAINS.join('\n') : ''}</textarea>
   </label>
   <small>
     Same domeny, bez "https://" czy "www."; każda domena w osobnej linijce.
@@ -913,7 +917,7 @@
   const isNotAwarded = element => !$(`.${EL$1.CLASSNAME.BADGE}`, element);
 
   let markedUsers = getLocalStorage("marked");
-  let settings$2 = getLocalStorage("settings");
+  let settings$3 = getLocalStorage("settings");
 
   /**
    * gets user data from objects inside marked users array.
@@ -941,7 +945,7 @@
   /**
    * @returns {String} default name for badge set in settings by user.
    */
-  const getDefaultBadgeLabelFromSettings = () => settings$2.BADGE.DEFAULT_NAME;
+  const getDefaultBadgeLabelFromSettings = () => settings$3.BADGE.DEFAULT_NAME;
 
   const { BADGE: EL$2 } = DOM;
 
@@ -970,7 +974,7 @@
 	</div>
 `;
 
-  const settings$3 = getLocalStorage('settings');
+  const settings$4 = getLocalStorage('settings');
 
   const handleDomainCheck = () => {
     /**
@@ -978,7 +982,7 @@
      * @return {boolean} True if yes, false otherwise
      */
     const isSettingActive = () => {
-      if (settings$3.GENERAL.WARN_ON_SUSPECTED_RUSSIAN_PROPAGANDA) {
+      if (settings$4.GENERAL.WARN_ON_SUSPECTED_RUSSIAN_PROPAGANDA) {
         return true;
       }
 
@@ -986,7 +990,7 @@
     };
 
     const processDomains = () => {
-      const domains = settings$3.GENERAL.SUSPECT_DOMAINS || [];
+      const domains = settings$4.GENERAL.SUSPECT_DOMAINS || [];
 
       const processedDomains = domains.map(domain => {
         const https = 'https://' + domain;
@@ -1012,7 +1016,7 @@
       const threadLink = $(DOM.DOMAIN_CHECKER.SELECTOR.THREAD_LINK).href;
       const url = new URL(threadLink);
       const threadLinkHostname = url.protocol + '//' + url.hostname;
-      const annotationMarkup = annotation(settings$3.GENERAL.SUSPECT_DOMAINS_LABEL);
+      const annotationMarkup = annotation(settings$4.GENERAL.SUSPECT_DOMAINS_LABEL);
 
       if (suspectDomains.includes(threadLinkHostname)) {
         $(`.${DOM.DOMAIN_CHECKER.CLASSNAME.WYKOP_ITEM_INTRO}`).insertAdjacentHTML('beforebegin', annotationMarkup);
@@ -1119,16 +1123,9 @@
   </div>
 <!--  BADGE -->
   <div class="space ${CLASSNAME.SETTINGS_BOX} ${CLASSNAME.SETTINGS_BADGE}">
-    <div class="row">
-      <input
-        class="checkbox"
-        type="checkbox"
-        category="BADGE"
-        name="HIDE_MARKED_USERS"
-        id="hideMarkedUser"
-        disabled
-      />
-      <label title="Ficzer w trakcie prac koncepcyjnych :)" class="inline settings__crossed" for="hideMarkedUser">Ukrywaj treści oznakowanych użytkowników</label>
+    <div class="row" style="display:flex;align-items:center;">
+      <input type="color" id="badgeDefaultColor" name="DEFAULT_COLOR" category="BADGE" style="margin-left:.5rem">
+      <label class="inline" for="badgeDefaultColor">Domyślny kolor odznaki</label> 
     </div>
     <div class="row space">
       <label class="inline" for="badgeDefaultValue" style="margin-left:0;display:block;">Domyślny tekst odznaki:</label>
@@ -1331,6 +1328,8 @@
           el.checked = settings[category][el.name];
         } else if (el.type === 'text' && el.name !== 'nsQ') {
           el.value = settings[category][el.name] || '';
+        } else if (el.type === 'color') {
+          el.value = settings[category][el.name];
         }
       });    
     };
@@ -1360,6 +1359,10 @@
 
         if (event.target.type === 'checkbox' && event.target.id !==  EL$3.ID.ALLOW_WIPE_MARKED_LIST) {
           settings[category][name] = !settings[category][name];
+          localStorage.setItem(STORAGE_KEY_NAMES.WH_SETTINGS, JSON.stringify(settings));
+        }
+        if (event.target.type === 'color') {
+          settings[category][name] = event.target.value;
           localStorage.setItem(STORAGE_KEY_NAMES.WH_SETTINGS, JSON.stringify(settings));
         }
       }, {passive: true});
@@ -1453,6 +1456,14 @@
 
   /* eslint max-len: 0 */
 
+  const changesArray = [
+    'Od teraz w ustawieniach mo\u017Cna wybra\u0107 domy\u015Blny kolor odznaki. Wkr\xF3tce pojawi si\u0119 mo\u017Cliwo\u015B\u0107 ustawiania osobnego koloru dla ka\u017Cdego oznaczonego u\u017Cytkownika.',
+    'Znikn\u0119\u0142o sporo pomniejszych bug\xF3w.',
+    'Z pewno\u015Bci\u0105 pojawi\u0142o si\u0119 sporo nowych bug\xF3w :)'
+  ];
+
+  const listItem = text => `<li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">${text}</li>`;
+
   const version = `0.65`;
 
   const welcomeText = {
@@ -1467,21 +1478,7 @@
     content: `
 Dodatek WykopHelper został właśnie zaktualizowany do wersji <strong>${version}</strong>. Wprowadzone zmiany to: <br>
 <ul class="${DOM.MODAL.CLASSNAME.LIST}">
-  <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
-    Funkcja ostrzegania przed znaleziskami podejrzanymi o szerzenie propagandy rosyjskiej została zmodyfikowana. Od teraz możesz samodzielnie ustalić, czy takie ostrzeżenie ma w ogóle być pokazywane, a także jaka ma być jego treść i dla jakich domen ma się aktywować. Zdecydować o tym możesz oczywiście w ustawieniach (ikona zębatki przy odpowiednim checkboxie). Domyślnie dodane są tam domeny podejrzane o szerzenie rosyjskiej propagandy; źródła, które posłużyły do jej skomponowania znajdują się <a href="https://plwpl.github.io/WykopHelper/propaganda.html" target="_blank">tutaj</a>.
-  </li>
-  <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
-    Funkcja ostrzegająca przed zamknięciem strony gdy wykryte zostanie pisanie komentarza <em>powinna</em> już działać poprawnie.
-  </li>
-  <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
-    Pojawiła się opcja wyłączenia komentarzy we <strong>wszystkich</strong> znaleziskach. Teraz możesz zdecydować, czy komentarze wyłączasz globalnie, tylko w wybranych (poprzez tagi) znaleziskach, czy nigdzie. Domyślnie opcja oczywiście nie jest włączona.
-  </li>
-  <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
-    Od teraz odznaka widoczna będzie również w profilu użytkownika, między avatarem a nickiem.
-  </li>
-  <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
-    Drobne poprawki stylistyczne tu i ówdzie (np. nowy kolor przycisku "zapisz" w popupie odznaki). Redesign całego popupu wkrótce, a nieco później - ujednolicenie UI tak, żeby nie wyglądało jak naprędce sklejone kawałki wszystkiego ;)
-  </li>
+  ${changesArray.map(el => listItem(el))}
 </ul>
 `,
     button: "Okej!",

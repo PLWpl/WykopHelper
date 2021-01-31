@@ -64,16 +64,16 @@ export const settingsMarkup = `
   </div>
 <!--  BADGE -->
   <div class="space ${CLASSNAME.SETTINGS_BOX} ${CLASSNAME.SETTINGS_BADGE}">
-    <div class="row">
-      <input
-        class="checkbox"
-        type="checkbox"
-        category="BADGE"
-        name="HIDE_MARKED_USERS"
-        id="hideMarkedUser"
-        disabled
+    <div class="row" style="display:flex;align-items:center;">
+      <input 
+        type="color" 
+        id="badgeDefaultColor" 
+        name="DEFAULT_COLOR" 
+        category="BADGE" 
+        style="margin-left:.5rem" 
+        value="#ff0000"
       />
-      <label title="Ficzer w trakcie prac koncepcyjnych :)" class="inline settings__crossed" for="hideMarkedUser">Ukrywaj treści oznakowanych użytkowników</label>
+      <label class="inline" for="badgeDefaultColor">Domyślny kolor odznaki</label> 
     </div>
     <div class="row space">
       <label class="inline" for="badgeDefaultValue" style="margin-left:0;display:block;">Domyślny tekst odznaki:</label>

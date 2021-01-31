@@ -3,6 +3,8 @@ import DOM from "../../constants/domSelectors";
 
 const changesArray = [
   'Od teraz w ustawieniach można wybrać domyślny kolor odznaki. Wkrótce pojawi się możliwość ustawiania osobnego koloru dla każdego oznaczonego użytkownika.',
+  'Zniknęło sporo pomniejszych bugów.',
+  'Z pewnością pojawiło się sporo nowych bugów :)'
 ];
 
 const listItem = text => `<li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">${text}</li>`;
@@ -21,7 +23,7 @@ export const updateText = {
   content: `
 Dodatek WykopHelper został właśnie zaktualizowany do wersji <strong>${version}</strong>. Wprowadzone zmiany to: <br>
 <ul class="${DOM.MODAL.CLASSNAME.LIST}">
-  ${changesArray.map(el => listItem(el))}
+  ${changesArray.map(el => listItem(el)).join('')}
 </ul>
 `,
   button: "Okej!",

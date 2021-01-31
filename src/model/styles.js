@@ -21,7 +21,7 @@ export const badge = `
   opacity: 0;
 }
 .${DOM.BADGE.CLASSNAME.BADGE} {
-  color: red;
+  color: var(--badgeColor);
   font-weight: bold;
   margin-right: .3rem;
   border: 1px solid currentColor;
