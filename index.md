@@ -130,6 +130,7 @@ Czego można się spodziewać? (🐾 - oznacza, że nad tym aktualnie pracuję, 
  * Zintegrowanie funkcjonalności podobnych do tych, jakie można odnaleźć w tych dodatkach: https://www.wykop.pl/dodatki/pokaz/1021/ , https://www.wykop.pl/dodatki/pokaz/1013/ , https://www.wykop.pl/dodatki/pokaz/231/
  * Opcja ograniczania dostępu do wypoku - przy walce z uzależnieniem ;)
  * możliwość włączenia podglądu na żywo, jak wyglądać będzie post po opublikowaniu
+ * ostrzeżenie "paywall" przy znaleziskach ze źródłem z paywallem; wyświetlane analogicznie do ostrzeżenia 18+.
  * Redesign całości
    - ujednolicenie wyglądu poszczególnych elementów
    - wsparcie dla trybu dziennego
@@ -154,6 +155,10 @@ Nic.
 
 Nic.
 
+**Podejrzane.**
+
+No. ( ͡° ͜ʖ ͡°)
+
 **Czy gwarantujesz, że...**
 
 Nie.
@@ -172,7 +177,7 @@ To zrób na to ticket na githubie.
 
 **Mojego pytania tu nie ma.**
 
-To napisz je w tickecie na githubie.
+To napisz je w tickecie lub forum na githubie.
 
 **Ja bym to zrobił lepiej.**
 
