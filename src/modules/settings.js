@@ -49,7 +49,7 @@ export const handleSettings = () => {
       tableBody.insertAdjacentHTML(
         'beforeend', 
         settingsModel.settingsUserTableRow(
-          el.nick, el.label || settings.BADGE.DEFAULT_NAME, el.link
+          el.nick, el.label || settings.BADGE.DEFAULT_NAME, el.link, el.color || settings.BADGE.DEFAULT_COLOR
         )
       );
     });
@@ -124,6 +124,8 @@ export const handleSettings = () => {
         el.checked = settings[category][el.name];
       } else if (el.type === 'text' && el.name !== 'nsQ') {
         el.value = settings[category][el.name] || '';
+      } else if (el.type === 'color') {
+        el.value = settings[category][el.name];
       }
     })    
   }
@@ -155,6 +157,10 @@ export const handleSettings = () => {
         settings[category][name] = !settings[category][name];
         localStorage.setItem(STORAGE_KEY_NAMES.WH_SETTINGS, JSON.stringify(settings));
       }
+      if (event.target.type === 'color') {
+        settings[category][name] = event.target.value;
+        localStorage.setItem(STORAGE_KEY_NAMES.WH_SETTINGS, JSON.stringify(settings));
+      }
     }, {passive: true});
 
     settingsFormElement.addEventListener('click', event => {
@@ -184,7 +190,7 @@ export const handleSettings = () => {
       const name = event.target.name;
 
       if (event.target.type === 'text') {
-        settings[category][name] = event.target.value.toLowerCase();
+        settings[category][name] = event.target.value;
         localStorage.setItem(STORAGE_KEY_NAMES.WH_SETTINGS, JSON.stringify(settings));
       }
     }, {passive: true})

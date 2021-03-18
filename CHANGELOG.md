@@ -1,3 +1,9 @@
+0.66
+* W ustawieniach można wybrać domyślny kolor odznaki, który będzie nadawany każdemu nowemu oznaczonemu.
+* ...Ale kolor ten można zmienić dla każdego z osobna -  w popupie aktywowanym kliknięciem w odznakę przy danym userze.
+* Dodano funkcję, aktywowaną w ustawieniach, umożliwiającą usuwanie tekstu "via [nazwa aplikacji]" w komentarzach użytkowników. Przy dłuższych nickach, albo przy stosowaniu innych dodatków (np. pokazujących czy dany user wykopał czy zakopał znalezisko) ta mało użyteczna informacja o aplikacji jakiej ktoś używa potrafi spowodować nachodzenie na siebie różnych tekstów.
+* Od teraz odznaka będzie się wyświetlać dokładnie tak, jak to ustawisz w ustawieniach bądź konkretnemu userowi. Do tej pory wymuszana była konwencja rozpoczynania tekstu wielką literą, a reszta małymi - ale już nie jest. Jeśli chcesz, możesz nawet pisać po pOkEmOnOwEmU :)
+
 0.65
 * Funkcja ostrzegania przed znaleziskami podejrzanymi o szerzenie propagandy rosyjskiej została zmodyfikowana. Od teraz możesz samodzielnie ustalić, czy takie ostrzeżenie ma w ogóle być pokazywane, a także jaka ma być jego treść i dla jakich domen ma się aktywować. Zdecydować o tym możesz oczywiście w ustawieniach (ikona zębatki przy odpowiednim checkboxie).
 * Funkcja ostrzegająca przed zamknięciem strony gdy wykryte zostanie pisanie komentarza powinna już działać poprawnie.

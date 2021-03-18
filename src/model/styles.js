@@ -21,7 +21,7 @@ export const badge = `
   opacity: 0;
 }
 .${DOM.BADGE.CLASSNAME.BADGE} {
-  color: red;
+  color: var(--badgeColor);
   font-weight: bold;
   margin-right: .3rem;
   border: 1px solid currentColor;
@@ -102,6 +102,13 @@ export const settings = `
   font-weight: bold;
   border-bottom: 2px solid currentColor;
 }
+.${DOM.SETTINGS.CLASSNAME.WH_USER_TABLE_BADGE_COLOR} {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  background: var(--settingsBadgeColor);
+  border-radius: .5rem;
+}
 .${DOM.SETTINGS.CLASSNAME.WH_SETTINGS_CROSSED} {
   opacity: .4;
   text-decoration: line-through;
@@ -158,6 +165,8 @@ export const modal = `
 
 .${DOM.MODAL.CLASSNAME.INPUT_LABEL} {
   text-transform: none;
+  display: flex;
+  align-items: center;
 }
 
 .${DOM.MODAL.CLASSNAME.INPUT_TEXT}, .${DOM.MODAL.CLASSNAME.INPUT_TEXT}:focus {

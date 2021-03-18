@@ -129,6 +129,7 @@
         WH_USER_TABLE_CONTAINER_HIDDEN: 'tableWH__container--hidden',
         WH_USER_TABLE_BODY: 'tableWH__body',
         WH_USER_TABLE_REMOVE_BUTTON: 'tableWH__nick-remove',
+        WH_USER_TABLE_BADGE_COLOR: 'tableWH__badgeColor',
         WH_SETTINGS_CROSSED: 'settings__crossed',
       },
       ID: {
@@ -184,6 +185,7 @@
       },
       ID: {
         BADGE_TEXT: 'whModal_badgeText',
+        BADGE_COLOR: 'whModal_badgeColor'
       }
     },
   };
@@ -209,7 +211,7 @@
   opacity: 0;
 }
 .${DOM.BADGE.CLASSNAME.BADGE} {
-  color: red;
+  color: var(--badgeColor);
   font-weight: bold;
   margin-right: .3rem;
   border: 1px solid currentColor;
@@ -290,6 +292,13 @@
   font-weight: bold;
   border-bottom: 2px solid currentColor;
 }
+.${DOM.SETTINGS.CLASSNAME.WH_USER_TABLE_BADGE_COLOR} {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  background: var(--settingsBadgeColor);
+  border-radius: .5rem;
+}
 .${DOM.SETTINGS.CLASSNAME.WH_SETTINGS_CROSSED} {
   opacity: .4;
   text-decoration: line-through;
@@ -346,6 +355,8 @@
 
 .${DOM.MODAL.CLASSNAME.INPUT_LABEL} {
   text-transform: none;
+  display: flex;
+  align-items: center;
 }
 
 .${DOM.MODAL.CLASSNAME.INPUT_TEXT}, .${DOM.MODAL.CLASSNAME.INPUT_TEXT}:focus {
@@ -365,25 +376,6 @@
     badge,
     settings,
     modal
-  };
-
-  const buttonMarkup = `<span class="${DOM.BADGE.CLASSNAME.MARK_BUTTON}">Oznacz</span>`;
-  const buttonBulkMarkup = `<li class="${DOM.BADGE.CLASSNAME.MARK_ALL_BUTTON_ELEMENT}" style="display:none"><span class="${DOM.BADGE.CLASSNAME.MARK_BUTTON} ${DOM.BADGE.CLASSNAME.MARK_ALL_BUTTON}">Oznacz wszystkich poniżej</span></li>`;
-
-  /**
-   * 
-   * @param {string} nick - nickname of user
-   * @param {string} [label=debil] - what will be displayed as a badge
-   * @param {boolean} [clickable=true] - if badge should be styled with cursor:pointer
-   */
-  const badge$1 = (nick, label = 'debil', clickable = true) => `<span class="${DOM.BADGE.CLASSNAME.BADGE} ${clickable ? DOM.BADGE.CLASSNAME.BADGE_CLICKABLE : DOM.BADGE.CLASSNAME.BADGE_UNCLICKABLE}" data-whusername="${nick}">${label.toLowerCase().capitalize()}</span>`;
-
-  /**
-   * 
-   * @param {string} action - either "wykop" or "zakop". 
-   */
-  const markedInBulk = action => {
-    return `Użytkownik ${action}ał podlinkowane znalezisko.`;
   };
 
   const warningAnnotation = 'Uwa\u017Caj! \u0179r\xF3d\u0142o tego znaleziska jest podejrzewane o szerzenie rosyjskiej propagandy.';
@@ -445,6 +437,7 @@
       REMOVE_WOODLE: false,
       REMOVE_COMMENTS: '',
       REMOVE_ALL_COMMENTS: false,
+      REMOVE_POSTED_VIA_APP: false,
     },
   };
   const initialUnique = [];
@@ -497,6 +490,29 @@
 
   const settings$1 = getLocalStorage('settings');
 
+  const defaultColor = settings$1.BADGE.DEFAULT_COLOR;
+
+  const buttonMarkup = `<span class="${DOM.BADGE.CLASSNAME.MARK_BUTTON}">Oznacz</span>`;
+  const buttonBulkMarkup = `<li class="${DOM.BADGE.CLASSNAME.MARK_ALL_BUTTON_ELEMENT}" style="display:none"><span class="${DOM.BADGE.CLASSNAME.MARK_BUTTON} ${DOM.BADGE.CLASSNAME.MARK_ALL_BUTTON}">Oznacz wszystkich poniżej</span></li>`;
+
+  /**
+   * 
+   * @param {string} nick - nickname of user
+   * @param {string} [label=debil] - what will be displayed as a badge
+   * @param {boolean} [clickable=true] - if badge should be styled with cursor:pointer
+   */
+  const badge$1 = (nick, label = 'debil', clickable = true, color = defaultColor) => `<span style="--badgeColor: ${color}" class="${DOM.BADGE.CLASSNAME.BADGE} ${clickable ? DOM.BADGE.CLASSNAME.BADGE_CLICKABLE : DOM.BADGE.CLASSNAME.BADGE_UNCLICKABLE}" data-whusername="${nick}">${label}</span>`;
+
+  /**
+   * 
+   * @param {string} action - either "wykop" or "zakop". 
+   */
+  const markedInBulk = action => {
+    return `Użytkownik ${action}ał podlinkowane znalezisko.`;
+  };
+
+  const settings$2 = getLocalStorage('settings');
+
   /* eslint max-len: 0 */
   const russianPropagandaModal = `
   <p>Strony oznaczone jako potencjalnie szerzące rosyjską propagandę na wykopie zostały wyznaczone na podstawie następujących źródeł:
@@ -512,11 +528,11 @@
   const suspectDomainsSettingsModal = `
   <label>
     Treść komunikatu ostrzegającego, gdy znalezisko pochodzi z podejrzanego źródła:
-    <input id="suspectDomainsLabel" value="${settings$1.GENERAL.SUSPECT_DOMAINS_LABEL || ''}" style="display: block;width: 100%;padding: .3rem 1rem;margin: .5rem 0 1rem;background: #2c2c2c;border: 1px solid #444;" class="">
+    <input id="suspectDomainsLabel" value="${settings$2.GENERAL.SUSPECT_DOMAINS_LABEL || ''}" style="display: block;width: 100%;padding: .3rem 1rem;margin: .5rem 0 1rem;background: #2c2c2c;border: 1px solid #444;" class="">
   </label>
   <label>
     Lista domen uznawanych za podejrzane:
-    <textarea class="" id="suspectDomains" style="display: block; width: 100%; padding: 0.3rem 1rem; margin: 0.5rem 0px 0; height: 150px; max-height: 15rem; overflow: auto; resize: none;">${settings$1.GENERAL.SUSPECT_DOMAINS ? settings$1.GENERAL.SUSPECT_DOMAINS.join('\n') : ''}</textarea>
+    <textarea class="" id="suspectDomains" style="display: block; width: 100%; padding: 0.3rem 1rem; margin: 0.5rem 0px 0; height: 150px; max-height: 15rem; overflow: auto; resize: none;">${settings$2.GENERAL.SUSPECT_DOMAINS ? settings$2.GENERAL.SUSPECT_DOMAINS.join('\n') : ''}</textarea>
   </label>
   <small>
     Same domeny, bez "https://" czy "www."; każda domena w osobnej linijce.
@@ -537,7 +553,8 @@
     <div class="${DOM.MODAL.CLASSNAME.SCROLLABLE_TEXT}"><p>${props.content}</p>
     ${props.media ? mediaText(props.media) : ''}</div>
     <p style="margin-top:1rem;text-align:right"><a href="${props.link}">Link do komentarza lub znaleziska</a></p>
-    <label class="${DOM.MODAL.CLASSNAME.INPUT_LABEL}">Treść odznaki: <input autocomplete="off" value="${props.label}" class="${DOM.MODAL.CLASSNAME.INPUT_TEXT}" id="${DOM.MODAL.ID.BADGE_TEXT}"></label>
+    <label class="${DOM.MODAL.CLASSNAME.INPUT_LABEL}">Treść odznaki: <input autocomplete="off" data-label="${props.label}" value="${props.label}" class="${DOM.MODAL.CLASSNAME.INPUT_TEXT}" id="${DOM.MODAL.ID.BADGE_TEXT}"></label>
+    <label class="${DOM.MODAL.CLASSNAME.INPUT_LABEL}">Kolor odznaki: <input type="color" data-color="${props.color ? props.color : settings$2.BADGE.DEFAULT_COLOR}" id="${DOM.MODAL.ID.BADGE_COLOR}" value="${props.color ? props.color : settings$2.BADGE.DEFAULT_COLOR}" style="margin-left: 1rem;"></label>
     `,
       button: "Usu\u0144 oznaczenie",
       buttonClose: "Zapisz"
@@ -580,19 +597,26 @@
     };
 
     // adds nick to marked users array of objects along with the link and desired label
-    const addNickToMarkedUsersArray = (nick, link, label, content, media) => {
+    const addNickToMarkedUsersArray = (nick, link, label, content, media, color) => {
       markedUsers = getLocalStorage("marked");
-      const marked = [...markedUsers, { nick, link, label, content, media }];
+      const marked = [...markedUsers, { nick, link, label, content, media, color }];
       localStorage.setItem(
         STORAGE_KEY_NAMES.MARKED_USERS,
         JSON.stringify(marked)
       );
     };
 
-    const addNickToArrays = (nick, link, content = '', media = '', label = settings.BADGE.DEFAULT_NAME) => {
+    const addNickToArrays = (
+      nick, 
+      link, 
+      content = '', 
+      media = '', 
+      label = settings.BADGE.DEFAULT_NAME, 
+      color = settings.BADGE.DEFAULT_COLOR
+    ) => {
       if (!isMarked(nick)) {
         addNickToUniqueNicksArray(nick);
-        addNickToMarkedUsersArray(nick, link, label, content, media);
+        addNickToMarkedUsersArray(nick, link, label, content, media, color);
       }
     };
 
@@ -624,6 +648,7 @@
       !!$(`.${EL.CLASSNAME.MARK_BUTTON}`, element);
 
     const getDefaultBadgeLabelFromSettings = () => settings.BADGE.DEFAULT_NAME;
+    const getDefaultBadgeColorFromSettings = () => settings.BADGE.DEFAULT_COLOR;
 
     // goes through all user elements on a page and checks, if user nicks are present in uniqueNicksSet array. If they are, AND they haven't yet been awarded a badge, it injects the badge.
     const markUsers = () => {
@@ -631,11 +656,12 @@
         const elements = getAllNickElements();
         elements.forEach(element => {
           const nick = getNick(element);
-          const userData = getNickData(nick) ? getNickData(nick) : null;
-          const label = userData ? userData.label : getDefaultBadgeLabelFromSettings();
-
+          
           if (isMarked(nick) && isNotAwarded(element)) {
-            element.insertAdjacentHTML("afterbegin", badge$1(nick, label));
+            const userData = getNickData(nick) ? getNickData(nick) : null;
+            const label = userData ? userData.label : getDefaultBadgeLabelFromSettings();
+            const color = userData && userData.color ? userData.color : getDefaultBadgeColorFromSettings();
+            element.insertAdjacentHTML("afterbegin", badge$1(nick, label, true, color));
           } else if (!hasButtonAppended(element)) {
             element.insertAdjacentHTML("beforeend", buttonMarkup);
           }
@@ -654,7 +680,7 @@
 
     /**
      * Updates view - checks if badges are already present on the page for marked users, and if not - injects them.
-     * @param {boolean} dataChange - set to true if you only want to update label text 
+     * @param {boolean} dataChange - set to true if you only want to update label text or color 
      */
     const updateView = dataChange => {
       markUsers();
@@ -672,7 +698,7 @@
         if (dataChange && isMarked(nick) && !isNotAwarded(element)) {
           $(`.${EL.CLASSNAME.BADGE}`, element).remove();
           const nickData = getNickData(nick);
-          element.insertAdjacentHTML("afterbegin", badge$1(nick, nickData.label));
+          element.insertAdjacentHTML("afterbegin", badge$1(nick, nickData.label, true, nickData.color));
         }
         // if user is marked - remove button to mark him as it's not needed anymore
         if (
@@ -781,6 +807,7 @@
             link: markedUsers[i].link,
             nick: markedUsers[i].nick,
             label: markedUsers[i].label,
+            color: markedUsers[i].color,
             content: markedUsers[i].content,
             media: markedUsers[i].media,
           };
@@ -819,9 +846,17 @@
             "info"
           );
         } else if (result.isDenied) {
+          const oldLabel = $(`#${DOM.MODAL.ID.BADGE_TEXT}`).dataset.label;
           const newLabel = $(`#${DOM.MODAL.ID.BADGE_TEXT}`).value;
-          changeMarkedUser(nick, 'label', newLabel);
-          updateView();
+          const oldColor = $(`#${DOM.MODAL.ID.BADGE_COLOR}`).dataset.color;
+          const newColor = $(`#${DOM.MODAL.ID.BADGE_COLOR}`).value;
+          if (newLabel !== oldLabel) {
+            changeMarkedUser(nick, 'label', newLabel);
+          }
+          if (newColor !== oldColor) {
+            changeMarkedUser(nick, 'color', newColor);
+          }
+          updateView(true);
         }
       });
     };
@@ -913,7 +948,7 @@
   const isNotAwarded = element => !$(`.${EL$1.CLASSNAME.BADGE}`, element);
 
   let markedUsers = getLocalStorage("marked");
-  let settings$2 = getLocalStorage("settings");
+  let settings$3 = getLocalStorage("settings");
 
   /**
    * gets user data from objects inside marked users array.
@@ -941,7 +976,7 @@
   /**
    * @returns {String} default name for badge set in settings by user.
    */
-  const getDefaultBadgeLabelFromSettings = () => settings$2.BADGE.DEFAULT_NAME;
+  const getDefaultBadgeLabelFromSettings = () => settings$3.BADGE.DEFAULT_NAME;
 
   const { BADGE: EL$2 } = DOM;
 
@@ -970,7 +1005,7 @@
 	</div>
 `;
 
-  const settings$3 = getLocalStorage('settings');
+  const settings$4 = getLocalStorage('settings');
 
   const handleDomainCheck = () => {
     /**
@@ -978,7 +1013,7 @@
      * @return {boolean} True if yes, false otherwise
      */
     const isSettingActive = () => {
-      if (settings$3.GENERAL.WARN_ON_SUSPECTED_RUSSIAN_PROPAGANDA) {
+      if (settings$4.GENERAL.WARN_ON_SUSPECTED_RUSSIAN_PROPAGANDA) {
         return true;
       }
 
@@ -986,7 +1021,7 @@
     };
 
     const processDomains = () => {
-      const domains = settings$3.GENERAL.SUSPECT_DOMAINS || [];
+      const domains = settings$4.GENERAL.SUSPECT_DOMAINS || [];
 
       const processedDomains = domains.map(domain => {
         const https = 'https://' + domain;
@@ -1012,7 +1047,7 @@
       const threadLink = $(DOM.DOMAIN_CHECKER.SELECTOR.THREAD_LINK).href;
       const url = new URL(threadLink);
       const threadLinkHostname = url.protocol + '//' + url.hostname;
-      const annotationMarkup = annotation(settings$3.GENERAL.SUSPECT_DOMAINS_LABEL);
+      const annotationMarkup = annotation(settings$4.GENERAL.SUSPECT_DOMAINS_LABEL);
 
       if (suspectDomains.includes(threadLinkHostname)) {
         $(`.${DOM.DOMAIN_CHECKER.CLASSNAME.WYKOP_ITEM_INTRO}`).insertAdjacentHTML('beforebegin', annotationMarkup);
@@ -1100,6 +1135,16 @@
         class="checkbox"
         type="checkbox"
         category="GENERAL"
+        name="REMOVE_POSTED_VIA_APP"
+        id="removePostedViaApp"
+      />
+      <label class="inline" for="removePostedViaApp">Usuwaj info o tym, że dany komentarz został wysłany przez aplikację (np. "via Android")</label>
+    </div>
+    <div class="row">
+      <input
+        class="checkbox"
+        type="checkbox"
+        category="GENERAL"
         name="REMOVE_ALL_COMMENTS"
         id="removeAllComments"
       />
@@ -1119,16 +1164,16 @@
   </div>
 <!--  BADGE -->
   <div class="space ${CLASSNAME.SETTINGS_BOX} ${CLASSNAME.SETTINGS_BADGE}">
-    <div class="row">
-      <input
-        class="checkbox"
-        type="checkbox"
-        category="BADGE"
-        name="HIDE_MARKED_USERS"
-        id="hideMarkedUser"
-        disabled
+    <div class="row" style="display:flex;align-items:center;">
+      <input 
+        type="color" 
+        id="badgeDefaultColor" 
+        name="DEFAULT_COLOR" 
+        category="BADGE" 
+        style="margin-left:.5rem" 
+        value="#ff0000"
       />
-      <label title="Ficzer w trakcie prac koncepcyjnych :)" class="inline settings__crossed" for="hideMarkedUser">Ukrywaj treści oznakowanych użytkowników</label>
+      <label class="inline" for="badgeDefaultColor">Domyślny kolor odznaki</label> 
     </div>
     <div class="row space">
       <label class="inline" for="badgeDefaultValue" style="margin-left:0;display:block;">Domyślny tekst odznaki:</label>
@@ -1175,7 +1220,8 @@
       <tr>
         <td>no.</td>
         <td>Nick</td>
-        <td>Typ</td>
+        <td>Nazwa</td>
+        <td>Kolor</td>
         <td>Link</td>
         <td>Usuń</td>
       </tr>
@@ -1186,11 +1232,12 @@
 </div>
 `;
 
-  const settingsUserTableRow = (nick, badgeLabel, link) => `
+  const settingsUserTableRow = (nick, badgeLabel, link, color) => `
 <tr class="${CLASSNAME.WH_USER_TABLE_ROW}">
   <td></td>
   <td><a href="https://www.wykop.pl/ludzie/${nick}" target="_blank">${nick}</a></td>
   <td>${badgeLabel}</td>
+  <td style="text-align: center"><span style="--settingsBadgeColor: ${color}" class="${CLASSNAME.WH_USER_TABLE_BADGE_COLOR}"></span></td>
   <td><a href="${link}" target="_blank">&#128279</a></td>
   <td><span class="${CLASSNAME.WH_USER_TABLE_REMOVE_BUTTON}" data-whuserremove="${nick}">&#x02717;</a></td>
 </tr>
@@ -1256,7 +1303,7 @@
         tableBody.insertAdjacentHTML(
           'beforeend', 
           settingsModel.settingsUserTableRow(
-            el.nick, el.label || settings.BADGE.DEFAULT_NAME, el.link
+            el.nick, el.label || settings.BADGE.DEFAULT_NAME, el.link, el.color || settings.BADGE.DEFAULT_COLOR
           )
         );
       });
@@ -1331,6 +1378,8 @@
           el.checked = settings[category][el.name];
         } else if (el.type === 'text' && el.name !== 'nsQ') {
           el.value = settings[category][el.name] || '';
+        } else if (el.type === 'color') {
+          el.value = settings[category][el.name];
         }
       });    
     };
@@ -1362,6 +1411,10 @@
           settings[category][name] = !settings[category][name];
           localStorage.setItem(STORAGE_KEY_NAMES.WH_SETTINGS, JSON.stringify(settings));
         }
+        if (event.target.type === 'color') {
+          settings[category][name] = event.target.value;
+          localStorage.setItem(STORAGE_KEY_NAMES.WH_SETTINGS, JSON.stringify(settings));
+        }
       }, {passive: true});
 
       settingsFormElement.addEventListener('click', event => {
@@ -1391,7 +1444,7 @@
         const name = event.target.name;
 
         if (event.target.type === 'text') {
-          settings[category][name] = event.target.value.toLowerCase();
+          settings[category][name] = event.target.value;
           localStorage.setItem(STORAGE_KEY_NAMES.WH_SETTINGS, JSON.stringify(settings));
         }
       }, {passive: true});
@@ -1453,6 +1506,14 @@
 
   /* eslint max-len: 0 */
 
+  const changesArray = [
+    'Od teraz w ustawieniach mo\u017Cna wybra\u0107 domy\u015Blny kolor odznaki. Wkr\xF3tce pojawi si\u0119 mo\u017Cliwo\u015B\u0107 ustawiania osobnego koloru dla ka\u017Cdego oznaczonego u\u017Cytkownika.',
+    'Znikn\u0119\u0142o sporo pomniejszych bug\xF3w.',
+    'Z pewno\u015Bci\u0105 pojawi\u0142o si\u0119 sporo nowych bug\xF3w :)'
+  ];
+
+  const listItem = text => `<li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">${text}</li>`;
+
   const version = `0.65`;
 
   const welcomeText = {
@@ -1465,23 +1526,9 @@
   const updateText = {
     title: "WykopHelper zaktualizowany!",
     content: `
-Dodatek WykopHelper został właśnie zaktualizowany do wersji ${version}. Wprowadzone zmiany to: <br>
+Dodatek WykopHelper został właśnie zaktualizowany do wersji <strong>${version}</strong>. Wprowadzone zmiany to: <br>
 <ul class="${DOM.MODAL.CLASSNAME.LIST}">
-  <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
-    Funkcja ostrzegania przed znaleziskami podejrzanymi o szerzenie propagandy rosyjskiej została zmodyfikowana. Od teraz możesz samodzielnie ustalić, czy takie ostrzeżenie ma w ogóle być pokazywane, a także jaka ma być jego treść i dla jakich domen ma się aktywować. Zdecydować o tym możesz oczywiście w ustawieniach (ikona zębatki przy odpowiednim checkboxie).
-  </li>
-  <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
-    Funkcja ostrzegająca przed zamknięciem strony gdy wykryte zostanie pisanie komentarza <em>powinna</em> już działać poprawnie.
-  </li>
-  <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
-    Pojawiła się opcja wyłączenia komentarzy we <strong>wszystkich</strong> znaleziskach. Teraz możesz zdecydować, czy komentarze wyłączasz globalnie, tylko w wybranych (poprzez tagi) znaleziskach, czy nigdzie. Domyślnie opcja oczywiście nie jest włączona.
-  </li>
-  <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
-    Od teraz odznaka widoczna będzie również w profilu użytkownika, między avatarem a nickiem.
-  </li>
-  <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
-    Drobne poprawki stylistyczne tu i ówdzie (np. nowy kolor przycisku "zapisz" w popupie odznaki; redesign całego popupu wkrótce)
-  </li>
+  ${changesArray.map(el => listItem(el)).join('')}
 </ul>
 `,
     button: "Okej!",
@@ -1682,6 +1729,33 @@ Dodatek WykopHelper został właśnie zaktualizowany do wersji ${version}. Wprow
     }
   };
 
+  const removePostedViaApp = () => {
+    /**
+     * Check if user settings allow for removing this text.
+     * @return {boolean} True if yes, false otherwise
+     */
+    const isSettingActive = () => {
+      const settings = getLocalStorage('settings');
+
+      if (settings.GENERAL.REMOVE_POSTED_VIA_APP) {
+        return true;
+      }
+
+      return false;
+    };
+
+    const handleRemoval = () => {
+      $$(`.${DOM.BADGE.CLASSNAME.NICK_ELEMENT}`).forEach(el => {
+        // tests show that using style.display = 'none' is significantly (around 3 times) faster than remove().
+        el.querySelector('a + small').style.display = 'none';
+      });
+    };
+
+    if (isSettingActive()) {
+      handleRemoval();
+    }
+  };
+
   /**
   * Capitalize first letter
   */
@@ -1703,6 +1777,7 @@ Dodatek WykopHelper został właśnie zaktualizowany do wersji ${version}. Wprow
     warnOnReload();
     embedOnPaste();
     hideMarkedUsers();
+    removePostedViaApp();
   }
   if (isPath.userProfile()) {
     displayBadgeInUserProfile();
