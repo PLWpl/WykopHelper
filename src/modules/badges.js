@@ -284,10 +284,16 @@ export const handleBadges = () => {
           "info"
         );
       } else if (result.isDenied) {
+        const oldLabel = $(`#${DOM.MODAL.ID.BADGE_TEXT}`).dataset.label;
         const newLabel = $(`#${DOM.MODAL.ID.BADGE_TEXT}`).value;
+        const oldColor = $(`#${DOM.MODAL.ID.BADGE_COLOR}`).dataset.color;
         const newColor = $(`#${DOM.MODAL.ID.BADGE_COLOR}`).value;
-        changeMarkedUser(nick, 'label', newLabel);
-        changeMarkedUser(nick, 'color', newColor);
+        if (newLabel !== oldLabel) {
+          changeMarkedUser(nick, 'label', newLabel);
+        }
+        if (newColor !== oldColor) {
+          changeMarkedUser(nick, 'color', newColor);
+        }
         updateView(true);
       } else {
         // supress

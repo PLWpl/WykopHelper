@@ -545,8 +545,8 @@
     <div class="${DOM.MODAL.CLASSNAME.SCROLLABLE_TEXT}"><p>${props.content}</p>
     ${props.media ? mediaText(props.media) : ''}</div>
     <p style="margin-top:1rem;text-align:right"><a href="${props.link}">Link do komentarza lub znaleziska</a></p>
-    <label class="${DOM.MODAL.CLASSNAME.INPUT_LABEL}">Treść odznaki: <input autocomplete="off" value="${props.label}" class="${DOM.MODAL.CLASSNAME.INPUT_TEXT}" id="${DOM.MODAL.ID.BADGE_TEXT}"></label>
-    <label class="${DOM.MODAL.CLASSNAME.INPUT_LABEL}">Kolor odznaki: <input type="color" id="${DOM.MODAL.ID.BADGE_COLOR}" value="${props.color ? props.color : '#ff0000'}" style="margin-left: 1rem;"></label>
+    <label class="${DOM.MODAL.CLASSNAME.INPUT_LABEL}">Treść odznaki: <input autocomplete="off" data-label="${props.label}" value="${props.label}" class="${DOM.MODAL.CLASSNAME.INPUT_TEXT}" id="${DOM.MODAL.ID.BADGE_TEXT}"></label>
+    <label class="${DOM.MODAL.CLASSNAME.INPUT_LABEL}">Kolor odznaki: <input type="color" data-color="${props.color ? props.color : settings$2.BADGE.DEFAULT_COLOR}" id="${DOM.MODAL.ID.BADGE_COLOR}" value="${props.color ? props.color : settings$2.BADGE.DEFAULT_COLOR}" style="margin-left: 1rem;"></label>
     `,
       button: "Usu\u0144 oznaczenie",
       buttonClose: "Zapisz"
@@ -838,10 +838,16 @@
             "info"
           );
         } else if (result.isDenied) {
+          const oldLabel = $(`#${DOM.MODAL.ID.BADGE_TEXT}`).dataset.label;
           const newLabel = $(`#${DOM.MODAL.ID.BADGE_TEXT}`).value;
+          const oldColor = $(`#${DOM.MODAL.ID.BADGE_COLOR}`).dataset.color;
           const newColor = $(`#${DOM.MODAL.ID.BADGE_COLOR}`).value;
-          changeMarkedUser(nick, 'label', newLabel);
-          changeMarkedUser(nick, 'color', newColor);
+          if (newLabel !== oldLabel) {
+            changeMarkedUser(nick, 'label', newLabel);
+          }
+          if (newColor !== oldColor) {
+            changeMarkedUser(nick, 'color', newColor);
+          }
           updateView(true);
         }
       });
