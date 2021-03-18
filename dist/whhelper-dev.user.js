@@ -129,6 +129,7 @@
         WH_USER_TABLE_CONTAINER_HIDDEN: 'tableWH__container--hidden',
         WH_USER_TABLE_BODY: 'tableWH__body',
         WH_USER_TABLE_REMOVE_BUTTON: 'tableWH__nick-remove',
+        WH_USER_TABLE_BADGE_COLOR: 'tableWH__badgeColor',
         WH_SETTINGS_CROSSED: 'settings__crossed',
       },
       ID: {
@@ -290,6 +291,13 @@
 .${DOM.SETTINGS.CLASSNAME.WH_USER_TABLE_HEAD} {
   font-weight: bold;
   border-bottom: 2px solid currentColor;
+}
+.${DOM.SETTINGS.CLASSNAME.WH_USER_TABLE_BADGE_COLOR} {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  background: var(--settingsBadgeColor);
+  border-radius: .5rem;
 }
 .${DOM.SETTINGS.CLASSNAME.WH_SETTINGS_CROSSED} {
   opacity: .4;
@@ -493,7 +501,7 @@
    * @param {string} [label=debil] - what will be displayed as a badge
    * @param {boolean} [clickable=true] - if badge should be styled with cursor:pointer
    */
-  const badge$1 = (nick, label = 'debil', clickable = true, color = defaultColor) => `<span style="--badgeColor: ${color}" class="${DOM.BADGE.CLASSNAME.BADGE} ${clickable ? DOM.BADGE.CLASSNAME.BADGE_CLICKABLE : DOM.BADGE.CLASSNAME.BADGE_UNCLICKABLE}" data-whusername="${nick}">${label.toLowerCase().capitalize()}</span>`;
+  const badge$1 = (nick, label = 'debil', clickable = true, color = defaultColor) => `<span style="--badgeColor: ${color}" class="${DOM.BADGE.CLASSNAME.BADGE} ${clickable ? DOM.BADGE.CLASSNAME.BADGE_CLICKABLE : DOM.BADGE.CLASSNAME.BADGE_UNCLICKABLE}" data-whusername="${nick}">${label}</span>`;
 
   /**
    * 
@@ -1229,7 +1237,7 @@
   <td></td>
   <td><a href="https://www.wykop.pl/ludzie/${nick}" target="_blank">${nick}</a></td>
   <td>${badgeLabel}</td>
-  <td>${color}</td>
+  <td style="text-align: center"><span style="--settingsBadgeColor: ${color}" class="${CLASSNAME.WH_USER_TABLE_BADGE_COLOR}"></span></td>
   <td><a href="${link}" target="_blank">&#128279</a></td>
   <td><span class="${CLASSNAME.WH_USER_TABLE_REMOVE_BUTTON}" data-whuserremove="${nick}">&#x02717;</a></td>
 </tr>
@@ -1436,7 +1444,7 @@
         const name = event.target.name;
 
         if (event.target.type === 'text') {
-          settings[category][name] = event.target.value.toLowerCase();
+          settings[category][name] = event.target.value;
           localStorage.setItem(STORAGE_KEY_NAMES.WH_SETTINGS, JSON.stringify(settings));
         }
       }, {passive: true});

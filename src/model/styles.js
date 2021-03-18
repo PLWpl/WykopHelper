@@ -102,6 +102,13 @@ export const settings = `
   font-weight: bold;
   border-bottom: 2px solid currentColor;
 }
+.${DOM.SETTINGS.CLASSNAME.WH_USER_TABLE_BADGE_COLOR} {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  background: var(--settingsBadgeColor);
+  border-radius: .5rem;
+}
 .${DOM.SETTINGS.CLASSNAME.WH_SETTINGS_CROSSED} {
   opacity: .4;
   text-decoration: line-through;

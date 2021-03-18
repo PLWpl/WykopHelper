@@ -190,7 +190,7 @@ export const handleSettings = () => {
       const name = event.target.name;
 
       if (event.target.type === 'text') {
-        settings[category][name] = event.target.value.toLowerCase();
+        settings[category][name] = event.target.value;
         localStorage.setItem(STORAGE_KEY_NAMES.WH_SETTINGS, JSON.stringify(settings));
       }
     }, {passive: true})

@@ -69,6 +69,7 @@ export const DOM = {
       WH_USER_TABLE_CONTAINER_HIDDEN: 'tableWH__container--hidden',
       WH_USER_TABLE_BODY: 'tableWH__body',
       WH_USER_TABLE_REMOVE_BUTTON: 'tableWH__nick-remove',
+      WH_USER_TABLE_BADGE_COLOR: 'tableWH__badgeColor',
       WH_SETTINGS_CROSSED: 'settings__crossed',
     },
     ID: {

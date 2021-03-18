@@ -147,7 +147,7 @@ export const settingsUserTableRow = (nick, badgeLabel, link, color) => `
   <td></td>
   <td><a href="https://www.wykop.pl/ludzie/${nick}" target="_blank">${nick}</a></td>
   <td>${badgeLabel}</td>
-  <td>${color}</td>
+  <td style="text-align: center"><span style="--settingsBadgeColor: ${color}" class="${CLASSNAME.WH_USER_TABLE_BADGE_COLOR}"></span></td>
   <td><a href="${link}" target="_blank">&#128279</a></td>
   <td><span class="${CLASSNAME.WH_USER_TABLE_REMOVE_BUTTON}" data-whuserremove="${nick}">&#x02717;</a></td>
 </tr>
