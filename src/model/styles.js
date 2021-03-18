@@ -158,6 +158,8 @@ export const modal = `
 
 .${DOM.MODAL.CLASSNAME.INPUT_LABEL} {
   text-transform: none;
+  display: flex;
+  align-items: center;
 }
 
 .${DOM.MODAL.CLASSNAME.INPUT_TEXT}, .${DOM.MODAL.CLASSNAME.INPUT_TEXT}:focus {

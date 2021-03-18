@@ -49,7 +49,7 @@ export const handleSettings = () => {
       tableBody.insertAdjacentHTML(
         'beforeend', 
         settingsModel.settingsUserTableRow(
-          el.nick, el.label || settings.BADGE.DEFAULT_NAME, el.link
+          el.nick, el.label || settings.BADGE.DEFAULT_NAME, el.link, el.color || settings.BADGE.DEFAULT_COLOR
         )
       );
     });

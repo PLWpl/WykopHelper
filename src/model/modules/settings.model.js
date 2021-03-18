@@ -45,6 +45,16 @@ export const settingsMarkup = `
         class="checkbox"
         type="checkbox"
         category="GENERAL"
+        name="REMOVE_POSTED_VIA_APP"
+        id="removePostedViaApp"
+      />
+      <label class="inline" for="removePostedViaApp">Usuwaj info o tym, że dany komentarz został wysłany przez aplikację (np. "via Android")</label>
+    </div>
+    <div class="row">
+      <input
+        class="checkbox"
+        type="checkbox"
+        category="GENERAL"
         name="REMOVE_ALL_COMMENTS"
         id="removeAllComments"
       />
@@ -120,7 +130,8 @@ export const settingsUserTable = `
       <tr>
         <td>no.</td>
         <td>Nick</td>
-        <td>Typ</td>
+        <td>Nazwa</td>
+        <td>Kolor</td>
         <td>Link</td>
         <td>Usuń</td>
       </tr>
@@ -131,11 +142,12 @@ export const settingsUserTable = `
 </div>
 `;
 
-export const settingsUserTableRow = (nick, badgeLabel, link) => `
+export const settingsUserTableRow = (nick, badgeLabel, link, color) => `
 <tr class="${CLASSNAME.WH_USER_TABLE_ROW}">
   <td></td>
   <td><a href="https://www.wykop.pl/ludzie/${nick}" target="_blank">${nick}</a></td>
   <td>${badgeLabel}</td>
+  <td>${color}</td>
   <td><a href="${link}" target="_blank">&#128279</a></td>
   <td><span class="${CLASSNAME.WH_USER_TABLE_REMOVE_BUTTON}" data-whuserremove="${nick}">&#x02717;</a></td>
 </tr>

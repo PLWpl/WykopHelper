@@ -124,6 +124,7 @@ export const DOM = {
     },
     ID: {
       BADGE_TEXT: 'whModal_badgeText',
+      BADGE_COLOR: 'whModal_badgeColor'
     }
   },
 };

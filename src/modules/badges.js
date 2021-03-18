@@ -35,19 +35,26 @@ export const handleBadges = () => {
   };
 
   // adds nick to marked users array of objects along with the link and desired label
-  const addNickToMarkedUsersArray = (nick, link, label, content, media) => {
+  const addNickToMarkedUsersArray = (nick, link, label, content, media, color) => {
     markedUsers = getLocalStorage("marked");
-    const marked = [...markedUsers, { nick, link, label, content, media }];
+    const marked = [...markedUsers, { nick, link, label, content, media, color }];
     localStorage.setItem(
       STORAGE_KEY_NAMES.MARKED_USERS,
       JSON.stringify(marked)
     );
   };
 
-  const addNickToArrays = (nick, link, content = '', media = '', label = settings.BADGE.DEFAULT_NAME) => {
+  const addNickToArrays = (
+    nick, 
+    link, 
+    content = '', 
+    media = '', 
+    label = settings.BADGE.DEFAULT_NAME, 
+    color = settings.BADGE.DEFAULT_COLOR
+  ) => {
     if (!isMarked(nick)) {
       addNickToUniqueNicksArray(nick);
-      addNickToMarkedUsersArray(nick, link, label, content, media);
+      addNickToMarkedUsersArray(nick, link, label, content, media, color);
     }
   };
 
@@ -79,6 +86,7 @@ export const handleBadges = () => {
     !!$(`.${EL.CLASSNAME.MARK_BUTTON}`, element);
 
   const getDefaultBadgeLabelFromSettings = () => settings.BADGE.DEFAULT_NAME;
+  const getDefaultBadgeColorFromSettings = () => settings.BADGE.DEFAULT_COLOR;
 
   // goes through all user elements on a page and checks, if user nicks are present in uniqueNicksSet array. If they are, AND they haven't yet been awarded a badge, it injects the badge.
   const markUsers = () => {
@@ -86,11 +94,12 @@ export const handleBadges = () => {
       const elements = getAllNickElements();
       elements.forEach(element => {
         const nick = getNick(element);
-        const userData = getNickData(nick) ? getNickData(nick) : null;
-        const label = userData ? userData.label : getDefaultBadgeLabelFromSettings();
-
+        
         if (isMarked(nick) && isNotAwarded(element)) {
-          element.insertAdjacentHTML("afterbegin", badge(nick, label));
+          const userData = getNickData(nick) ? getNickData(nick) : null;
+          const label = userData ? userData.label : getDefaultBadgeLabelFromSettings();
+          const color = userData && userData.color ? userData.color : getDefaultBadgeColorFromSettings();
+          element.insertAdjacentHTML("afterbegin", badge(nick, label, true, color));
         } else if (!hasButtonAppended(element)) {
           element.insertAdjacentHTML("beforeend", buttonMarkup);
         }
@@ -109,7 +118,7 @@ export const handleBadges = () => {
 
   /**
    * Updates view - checks if badges are already present on the page for marked users, and if not - injects them.
-   * @param {boolean} dataChange - set to true if you only want to update label text 
+   * @param {boolean} dataChange - set to true if you only want to update label text or color 
    */
   const updateView = dataChange => {
     markUsers();
@@ -127,7 +136,7 @@ export const handleBadges = () => {
       if (dataChange && isMarked(nick) && !isNotAwarded(element)) {
         $(`.${EL.CLASSNAME.BADGE}`, element).remove();
         const nickData = getNickData(nick);
-        element.insertAdjacentHTML("afterbegin", badge(nick, nickData.label));
+        element.insertAdjacentHTML("afterbegin", badge(nick, nickData.label, true, nickData.color));
       }
       // if user is marked - remove button to mark him as it's not needed anymore
       if (
@@ -236,6 +245,7 @@ export const handleBadges = () => {
           link: markedUsers[i].link,
           nick: markedUsers[i].nick,
           label: markedUsers[i].label,
+          color: markedUsers[i].color,
           content: markedUsers[i].content,
           media: markedUsers[i].media,
         };
@@ -275,8 +285,10 @@ export const handleBadges = () => {
         );
       } else if (result.isDenied) {
         const newLabel = $(`#${DOM.MODAL.ID.BADGE_TEXT}`).value;
+        const newColor = $(`#${DOM.MODAL.ID.BADGE_COLOR}`).value;
         changeMarkedUser(nick, 'label', newLabel);
-        updateView();
+        changeMarkedUser(nick, 'color', newColor);
+        updateView(true);
       } else {
         // supress
       }

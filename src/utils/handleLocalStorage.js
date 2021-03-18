@@ -18,6 +18,7 @@ const initialSettings = {
     REMOVE_WOODLE: false,
     REMOVE_COMMENTS: '',
     REMOVE_ALL_COMMENTS: false,
+    REMOVE_POSTED_VIA_APP: false,
   },
 };
 const initialUnique = [];

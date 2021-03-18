@@ -184,6 +184,7 @@
       },
       ID: {
         BADGE_TEXT: 'whModal_badgeText',
+        BADGE_COLOR: 'whModal_badgeColor'
       }
     },
   };
@@ -346,6 +347,8 @@
 
 .${DOM.MODAL.CLASSNAME.INPUT_LABEL} {
   text-transform: none;
+  display: flex;
+  align-items: center;
 }
 
 .${DOM.MODAL.CLASSNAME.INPUT_TEXT}, .${DOM.MODAL.CLASSNAME.INPUT_TEXT}:focus {
@@ -426,6 +429,7 @@
       REMOVE_WOODLE: false,
       REMOVE_COMMENTS: '',
       REMOVE_ALL_COMMENTS: false,
+      REMOVE_POSTED_VIA_APP: false,
     },
   };
   const initialUnique = [];
@@ -542,6 +546,7 @@
     ${props.media ? mediaText(props.media) : ''}</div>
     <p style="margin-top:1rem;text-align:right"><a href="${props.link}">Link do komentarza lub znaleziska</a></p>
     <label class="${DOM.MODAL.CLASSNAME.INPUT_LABEL}">Treść odznaki: <input autocomplete="off" value="${props.label}" class="${DOM.MODAL.CLASSNAME.INPUT_TEXT}" id="${DOM.MODAL.ID.BADGE_TEXT}"></label>
+    <label class="${DOM.MODAL.CLASSNAME.INPUT_LABEL}">Kolor odznaki: <input type="color" id="${DOM.MODAL.ID.BADGE_COLOR}" value="${props.color ? props.color : '#ff0000'}" style="margin-left: 1rem;"></label>
     `,
       button: "Usu\u0144 oznaczenie",
       buttonClose: "Zapisz"
@@ -584,19 +589,26 @@
     };
 
     // adds nick to marked users array of objects along with the link and desired label
-    const addNickToMarkedUsersArray = (nick, link, label, content, media) => {
+    const addNickToMarkedUsersArray = (nick, link, label, content, media, color) => {
       markedUsers = getLocalStorage("marked");
-      const marked = [...markedUsers, { nick, link, label, content, media }];
+      const marked = [...markedUsers, { nick, link, label, content, media, color }];
       localStorage.setItem(
         STORAGE_KEY_NAMES.MARKED_USERS,
         JSON.stringify(marked)
       );
     };
 
-    const addNickToArrays = (nick, link, content = '', media = '', label = settings.BADGE.DEFAULT_NAME) => {
+    const addNickToArrays = (
+      nick, 
+      link, 
+      content = '', 
+      media = '', 
+      label = settings.BADGE.DEFAULT_NAME, 
+      color = settings.BADGE.DEFAULT_COLOR
+    ) => {
       if (!isMarked(nick)) {
         addNickToUniqueNicksArray(nick);
-        addNickToMarkedUsersArray(nick, link, label, content, media);
+        addNickToMarkedUsersArray(nick, link, label, content, media, color);
       }
     };
 
@@ -628,6 +640,7 @@
       !!$(`.${EL.CLASSNAME.MARK_BUTTON}`, element);
 
     const getDefaultBadgeLabelFromSettings = () => settings.BADGE.DEFAULT_NAME;
+    const getDefaultBadgeColorFromSettings = () => settings.BADGE.DEFAULT_COLOR;
 
     // goes through all user elements on a page and checks, if user nicks are present in uniqueNicksSet array. If they are, AND they haven't yet been awarded a badge, it injects the badge.
     const markUsers = () => {
@@ -635,11 +648,12 @@
         const elements = getAllNickElements();
         elements.forEach(element => {
           const nick = getNick(element);
-          const userData = getNickData(nick) ? getNickData(nick) : null;
-          const label = userData ? userData.label : getDefaultBadgeLabelFromSettings();
-
+          
           if (isMarked(nick) && isNotAwarded(element)) {
-            element.insertAdjacentHTML("afterbegin", badge$1(nick, label));
+            const userData = getNickData(nick) ? getNickData(nick) : null;
+            const label = userData ? userData.label : getDefaultBadgeLabelFromSettings();
+            const color = userData && userData.color ? userData.color : getDefaultBadgeColorFromSettings();
+            element.insertAdjacentHTML("afterbegin", badge$1(nick, label, true, color));
           } else if (!hasButtonAppended(element)) {
             element.insertAdjacentHTML("beforeend", buttonMarkup);
           }
@@ -658,7 +672,7 @@
 
     /**
      * Updates view - checks if badges are already present on the page for marked users, and if not - injects them.
-     * @param {boolean} dataChange - set to true if you only want to update label text 
+     * @param {boolean} dataChange - set to true if you only want to update label text or color 
      */
     const updateView = dataChange => {
       markUsers();
@@ -676,7 +690,7 @@
         if (dataChange && isMarked(nick) && !isNotAwarded(element)) {
           $(`.${EL.CLASSNAME.BADGE}`, element).remove();
           const nickData = getNickData(nick);
-          element.insertAdjacentHTML("afterbegin", badge$1(nick, nickData.label));
+          element.insertAdjacentHTML("afterbegin", badge$1(nick, nickData.label, true, nickData.color));
         }
         // if user is marked - remove button to mark him as it's not needed anymore
         if (
@@ -785,6 +799,7 @@
             link: markedUsers[i].link,
             nick: markedUsers[i].nick,
             label: markedUsers[i].label,
+            color: markedUsers[i].color,
             content: markedUsers[i].content,
             media: markedUsers[i].media,
           };
@@ -824,8 +839,10 @@
           );
         } else if (result.isDenied) {
           const newLabel = $(`#${DOM.MODAL.ID.BADGE_TEXT}`).value;
+          const newColor = $(`#${DOM.MODAL.ID.BADGE_COLOR}`).value;
           changeMarkedUser(nick, 'label', newLabel);
-          updateView();
+          changeMarkedUser(nick, 'color', newColor);
+          updateView(true);
         }
       });
     };
@@ -1104,6 +1121,16 @@
         class="checkbox"
         type="checkbox"
         category="GENERAL"
+        name="REMOVE_POSTED_VIA_APP"
+        id="removePostedViaApp"
+      />
+      <label class="inline" for="removePostedViaApp">Usuwaj info o tym, że dany komentarz został wysłany przez aplikację (np. "via Android")</label>
+    </div>
+    <div class="row">
+      <input
+        class="checkbox"
+        type="checkbox"
+        category="GENERAL"
         name="REMOVE_ALL_COMMENTS"
         id="removeAllComments"
       />
@@ -1124,7 +1151,14 @@
 <!--  BADGE -->
   <div class="space ${CLASSNAME.SETTINGS_BOX} ${CLASSNAME.SETTINGS_BADGE}">
     <div class="row" style="display:flex;align-items:center;">
-      <input type="color" id="badgeDefaultColor" name="DEFAULT_COLOR" category="BADGE" style="margin-left:.5rem">
+      <input 
+        type="color" 
+        id="badgeDefaultColor" 
+        name="DEFAULT_COLOR" 
+        category="BADGE" 
+        style="margin-left:.5rem" 
+        value="#ff0000"
+      />
       <label class="inline" for="badgeDefaultColor">Domyślny kolor odznaki</label> 
     </div>
     <div class="row space">
@@ -1172,7 +1206,8 @@
       <tr>
         <td>no.</td>
         <td>Nick</td>
-        <td>Typ</td>
+        <td>Nazwa</td>
+        <td>Kolor</td>
         <td>Link</td>
         <td>Usuń</td>
       </tr>
@@ -1183,11 +1218,12 @@
 </div>
 `;
 
-  const settingsUserTableRow = (nick, badgeLabel, link) => `
+  const settingsUserTableRow = (nick, badgeLabel, link, color) => `
 <tr class="${CLASSNAME.WH_USER_TABLE_ROW}">
   <td></td>
   <td><a href="https://www.wykop.pl/ludzie/${nick}" target="_blank">${nick}</a></td>
   <td>${badgeLabel}</td>
+  <td>${color}</td>
   <td><a href="${link}" target="_blank">&#128279</a></td>
   <td><span class="${CLASSNAME.WH_USER_TABLE_REMOVE_BUTTON}" data-whuserremove="${nick}">&#x02717;</a></td>
 </tr>
@@ -1253,7 +1289,7 @@
         tableBody.insertAdjacentHTML(
           'beforeend', 
           settingsModel.settingsUserTableRow(
-            el.nick, el.label || settings.BADGE.DEFAULT_NAME, el.link
+            el.nick, el.label || settings.BADGE.DEFAULT_NAME, el.link, el.color || settings.BADGE.DEFAULT_COLOR
           )
         );
       });
@@ -1478,7 +1514,7 @@
     content: `
 Dodatek WykopHelper został właśnie zaktualizowany do wersji <strong>${version}</strong>. Wprowadzone zmiany to: <br>
 <ul class="${DOM.MODAL.CLASSNAME.LIST}">
-  ${changesArray.map(el => listItem(el))}
+  ${changesArray.map(el => listItem(el)).join('')}
 </ul>
 `,
     button: "Okej!",
@@ -1679,6 +1715,33 @@ Dodatek WykopHelper został właśnie zaktualizowany do wersji <strong>${version
     }
   };
 
+  const removePostedViaApp = () => {
+    /**
+     * Check if user settings allow for removing this text.
+     * @return {boolean} True if yes, false otherwise
+     */
+    const isSettingActive = () => {
+      const settings = getLocalStorage('settings');
+
+      if (settings.GENERAL.REMOVE_POSTED_VIA_APP) {
+        return true;
+      }
+
+      return false;
+    };
+
+    const handleRemoval = () => {
+      $$(`.${DOM.BADGE.CLASSNAME.NICK_ELEMENT}`).forEach(el => {
+        // tests show that using style.display = 'none' is significantly (around 3 times) faster than remove().
+        el.querySelector('a + small').style.display = 'none';
+      });
+    };
+
+    if (isSettingActive()) {
+      handleRemoval();
+    }
+  };
+
   /**
   * Capitalize first letter
   */
@@ -1700,6 +1763,7 @@ Dodatek WykopHelper został właśnie zaktualizowany do wersji <strong>${version
     warnOnReload();
     embedOnPaste();
     hideMarkedUsers();
+    removePostedViaApp();
   }
   if (isPath.userProfile()) {
     displayBadgeInUserProfile();
