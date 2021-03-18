@@ -140,12 +140,21 @@
         SUSPECT_DOMAINS_SETTINGS_LINK: 'suspectDomainsSettings',
         SUSPECT_DOMAINS_SETTINGS_TEXTAREA: 'suspectDomains',
         WARN_ON_RELOAD_SETTING: 'warnOnReload',
-        WARN_ON_RELOAD_INFO_LINK: 'warnOnReloadInfo'
+        WARN_ON_RELOAD_INFO_LINK: 'warnOnReloadInfo',
+        IMPORT_BUTTON: 'buttonImport',
+        EXPORT_BUTTON: 'buttonExport',
+        IMPORT_TEXTAREA: 'importArea',
+        EXPORT_TEXTAREA: 'exportArea',
+        EXPORT_SETTINGS_BUTTON: 'buttonExportSettings',
+        EXPORT_MARKED_BUTTON: 'buttonExportMarkedUsers',
+        IMPORT_SETTINGS_BUTTON: 'buttonImportSettings',
+        IMPORT_MARKED_BUTTON: 'buttonImportMarkedUsers'
       },
       SELECTOR: {
         LAST_NAV_ELEMENT: '#site .nav > ul > li:last-child',
         ACTIVE_NAV_ELEMENT: '#site .nav > ul .active',
         SETTINGS_FORM_ELEMENT: '#site .grid-main .settings',
+        IMPORT_CHECKBOX_NAME: 'whImportExportChoice',
       },
     },
     HIGHLIGHT_OP: {
@@ -560,6 +569,29 @@
       buttonClose: "Zapisz"
     };
   };
+
+  const importSettingsModal = `
+<p>Wybierz, jaki typ danych importujesz:</p>
+<input type="radio" id="${DOM.SETTINGS.ID.IMPORT_SETTINGS_BUTTON}" name="${DOM.SETTINGS.SELECTOR.IMPORT_CHECKBOX_NAME}" value="settings">
+<label for="${DOM.SETTINGS.ID.IMPORT_SETTINGS_BUTTON}">Ustawienia</label><br>
+<input type="radio" id="${DOM.SETTINGS.ID.IMPORT_MARKED_BUTTON}" name="${DOM.SETTINGS.SELECTOR.IMPORT_CHECKBOX_NAME}" value="markedUsers">
+<label for="${DOM.SETTINGS.ID.IMPORT_MARKED_BUTTON}">Oznaczeni użytkownicy</label><br>
+<label style="padding-top:1rem">
+Wklej swoje przenoszone dane poniżej:
+<textarea class="" id="${DOM.SETTINGS.ID.IMPORT_TEXTAREA}" style="display: block; width: 100%; padding: 0.3rem 1rem; margin: 0.5rem 0px 0; height: 150px; max-height: 15rem; overflow: auto; resize: none;"></textarea>
+</label>
+`;
+
+  const exportSettingsModal = `
+<p>Wybierz, co chcesz wyeksportować:</p>
+<button class="button" id="${DOM.SETTINGS.ID.EXPORT_SETTINGS_BUTTON}">USTAWIENIA</button>
+<button class="button" id="${DOM.SETTINGS.ID.EXPORT_MARKED_BUTTON}">OZNACZONYCH UŻYTKOWNIKÓW</button>
+<label style="display:block;padding-top:1rem">
+DANE:
+<textarea class="" id="${DOM.SETTINGS.ID.EXPORT_TEXTAREA}" style="display: block; width: 100%; padding: 0.3rem 1rem; margin: 0.5rem 0px 0; height: 150px; max-height: 15rem; overflow: auto; resize: none;"></textarea>
+</label>
+<small>Po skopiowaniu edytuj dane TYLKO jeśli wiesz, co robisz - inaczej możesz uszkodzić i stracić wszystkie swoje dane, co wymusi konieczność reinstalacji dodatku "na świeżo".</small>
+`;
 
   /**
    * Injects styles in <style> tags at the beginning of a page
@@ -1187,6 +1219,14 @@
       />
     </div>
   </div>
+<!--  Export and import -->
+  <div class="space ${CLASSNAME.SETTINGS_BOX} ${CLASSNAME.SETTINGS_IMPORT_EXPORT}">
+    <div class="row" style="display:flex;align-items:center;">
+      <small>Jeśli chcesz, możesz eksportować swoje ustawienia bądź bazę oznaczonych użytkowników, albo też ją zaimportować na innym komputerze. O proces przenosin musisz zadbać sam/a - możesz do tego wykorzystać na przykład plik tekstowy "notatnika".</small>
+      <button class="button" style="margin: 0 .5rem" id="buttonImport">IMPORTUJ</button>
+      <button class="button" style="margin: 0 .5rem" id="buttonExport">EKSPORTUJ</button>
+    </div>
+  </div>
 <!-- SPECIAL -->
   <div class="space ${CLASSNAME.SETTINGS_BOX} ${CLASSNAME.SETTINGS_SPECIAL}">
     <div class="row">
@@ -1320,6 +1360,12 @@
       }
     };
 
+    const parseImportForUniqueNames = text => {
+      const array = JSON.parse(text);
+      const nicks = array.map(el => el.nick);
+      return JSON.stringify(nicks);
+    };
+
     const showModalWithPropagandaExplanation = () => {
       // eslint-disable-next-line
       Swal.fire({
@@ -1363,6 +1409,60 @@
         confirmButtonColor: '#3085d6',
         confirmButtonText: 'OK',
         width: "80%"
+      });
+    };
+
+    const showModalWithImport = () => {
+      // eslint-disable-next-line
+      Swal.fire({
+        html: importSettingsModal,
+        icon: 'info',
+        // eslint-disable-next-line
+        iconHtml: '<svg style="fill:currentColor;width:2rem;height: auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path d="M0 0h48v48H0z" fill="none"/><path d="M38 8H10c-2.21 0-4 1.79-4 4v24c0 2.21 1.79 4 4 4h8v-4h-8V16h28v20h-8v4h8c2.21 0 4-1.79 4-4V12c0-2.21-1.79-4-4-4zM24 20l-8 8h6v12h4V28h6l-8-8z"/></svg>',
+        iconColor: '#fff',
+        showCancelButton: true,
+        showCloseButton: true,
+        confirmButtonColor: '#0a8658',
+        confirmButtonText: 'Zapisz nowe',
+        showLoaderOnConfirm: true,
+        cancelButtonText: 'Anuluj',
+        width: "80%",
+      }).then(result => {
+        if (result.isConfirmed) {
+          const imported = $(`#${EL$3.ID.IMPORT_TEXTAREA}`).value;
+          const checkboxValue = $(`input[type="radio"][name="${EL$3.SELECTOR.IMPORT_CHECKBOX_NAME}"]:checked`).value;
+
+          if (checkboxValue && checkboxValue === 'settings') {
+            localStorage.setItem(STORAGE_KEY_NAMES.WH_SETTINGS, imported);
+          } else if (checkboxValue && checkboxValue === 'markedUsers') {
+            localStorage.setItem(STORAGE_KEY_NAMES.MARKED_USERS, imported);
+            localStorage.setItem(STORAGE_KEY_NAMES.UNIQUE_USERS, parseImportForUniqueNames(imported));
+          } else {
+            // eslint-disable-next-line no-alert
+            alert('Nie wybrano typu danych: czy importujesz ustawienia, czy oznaczonych u\u017Cytkownik\xF3w?');
+          }
+        }
+      });
+    };
+
+    const showModalWithExport = () => {
+      // eslint-disable-next-line
+      Swal.fire({
+        html: exportSettingsModal,
+        icon: 'info',
+        // eslint-disable-next-line
+        iconHtml: '<svg style="fill:currentColor;width:2rem;height: auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path d="M0 0h48v48H0z" fill="none"/><path d="M34 6H10c-2.21 0-4 1.79-4 4v28c0 2.21 1.79 4 4 4h28c2.21 0 4-1.79 4-4V14l-8-8zM24 38c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6zm6-20H10v-8h20v8z"/></svg>',
+        iconColor: '#fff',
+        showCloseButton: true,
+        confirmButtonColor: '#0a8658',
+        confirmButtonText: 'SKOPIUJ DO SCHOWKA',
+        width: "80%",
+      }).then(result => {
+        if (result.isConfirmed) {
+          const exportedData = $(`#${EL$3.ID.EXPORT_TEXTAREA}`);
+          exportedData.select();
+          document.execCommand('copy');
+        }
       });
     };
 
@@ -1437,7 +1537,26 @@
         if (event.target.id === EL$3.ID.WARN_ON_RELOAD_INFO_LINK) {
           showModalWithWarnOnReloadExplanation();
         }
+        if (event.target.id === EL$3.ID.IMPORT_BUTTON) {
+          event.preventDefault();
+          showModalWithImport();
+        }
+        if (event.target.id === EL$3.ID.EXPORT_BUTTON) {
+          event.preventDefault();
+          showModalWithExport();
+        }
       }, {passive: false});
+
+      document.addEventListener('click', event => {
+        if (event.target.id === EL$3.ID.EXPORT_SETTINGS_BUTTON) {
+          $(`#${EL$3.ID.EXPORT_TEXTAREA}`).innerText = '';
+          $(`#${EL$3.ID.EXPORT_TEXTAREA}`).innerText = JSON.stringify(settings);
+        }
+        if (event.target.id === EL$3.ID.EXPORT_MARKED_BUTTON) {
+          $(`#${EL$3.ID.EXPORT_TEXTAREA}`).innerText = '';
+          $(`#${EL$3.ID.EXPORT_TEXTAREA}`).innerText = JSON.stringify(markedUsers);
+        }
+      }, {passive: true});
 
       settingsFormElement.addEventListener('keyup', event => {
         const category = event.target.getAttribute('category');

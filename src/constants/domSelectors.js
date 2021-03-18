@@ -80,12 +80,21 @@ export const DOM = {
       SUSPECT_DOMAINS_SETTINGS_LINK: 'suspectDomainsSettings',
       SUSPECT_DOMAINS_SETTINGS_TEXTAREA: 'suspectDomains',
       WARN_ON_RELOAD_SETTING: 'warnOnReload',
-      WARN_ON_RELOAD_INFO_LINK: 'warnOnReloadInfo'
+      WARN_ON_RELOAD_INFO_LINK: 'warnOnReloadInfo',
+      IMPORT_BUTTON: 'buttonImport',
+      EXPORT_BUTTON: 'buttonExport',
+      IMPORT_TEXTAREA: 'importArea',
+      EXPORT_TEXTAREA: 'exportArea',
+      EXPORT_SETTINGS_BUTTON: 'buttonExportSettings',
+      EXPORT_MARKED_BUTTON: 'buttonExportMarkedUsers',
+      IMPORT_SETTINGS_BUTTON: 'buttonImportSettings',
+      IMPORT_MARKED_BUTTON: 'buttonImportMarkedUsers'
     },
     SELECTOR: {
       LAST_NAV_ELEMENT: '#site .nav > ul > li:last-child',
       ACTIVE_NAV_ELEMENT: '#site .nav > ul .active',
       SETTINGS_FORM_ELEMENT: '#site .grid-main .settings',
+      IMPORT_CHECKBOX_NAME: 'whImportExportChoice',
     },
   },
   HIGHLIGHT_OP: {
