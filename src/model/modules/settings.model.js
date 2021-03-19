@@ -97,6 +97,14 @@ export const settingsMarkup = `
       />
     </div>
   </div>
+<!--  Export and import -->
+  <div class="space ${CLASSNAME.SETTINGS_BOX} ${CLASSNAME.SETTINGS_IMPORT_EXPORT}">
+    <div class="row" style="display:flex;align-items:center;">
+      <small>Jeśli chcesz, możesz eksportować swoje ustawienia bądź bazę oznaczonych użytkowników, albo też ją zaimportować na innym komputerze. O proces przenosin musisz zadbać sam/a - możesz do tego wykorzystać na przykład plik tekstowy "notatnika".</small>
+      <button class="button" style="margin: 0 .5rem" id="buttonImport">IMPORTUJ</button>
+      <button class="button" style="margin: 0 .5rem" id="buttonExport">EKSPORTUJ</button>
+    </div>
+  </div>
 <!-- SPECIAL -->
   <div class="space ${CLASSNAME.SETTINGS_BOX} ${CLASSNAME.SETTINGS_SPECIAL}">
     <div class="row">

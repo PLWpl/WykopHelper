@@ -2,6 +2,7 @@
 * W ustawieniach można wybrać domyślny kolor odznaki, który będzie nadawany każdemu nowemu oznaczonemu.
 * ...Ale kolor ten można zmienić dla każdego z osobna -  w popupie aktywowanym kliknięciem w odznakę przy danym userze.
 * Dodano funkcję, aktywowaną w ustawieniach, umożliwiającą usuwanie tekstu "via [nazwa aplikacji]" w komentarzach użytkowników. Przy dłuższych nickach, albo przy stosowaniu innych dodatków (np. pokazujących czy dany user wykopał czy zakopał znalezisko) ta mało użyteczna informacja o aplikacji jakiej ktoś używa potrafi spowodować nachodzenie na siebie różnych tekstów.
+* W ustawieniach można również od teraz eksportować i importować swoje ustawienia i listy oznaczonych użytkowników. Na razie jest to proces raczej ręczny (wymaga kopiowania i przeklejania ciągów znaków między przeglądarkami); możliwe, że w przyszłości coś tutaj zostanie udoskonalone, chociaż nie ukrywam, że wynika to z mojej niechęci do używania zewnętrznych usług - bo wtedy wchodziłyby w grę kwestie prywatności, dostępów, śledzenia i tak dalej i tak dalej... a tego chcę za wszelką cenę uniknąć.
 * Od teraz odznaka będzie się wyświetlać dokładnie tak, jak to ustawisz w ustawieniach bądź konkretnemu userowi. Do tej pory wymuszana była konwencja rozpoczynania tekstu wielką literą, a reszta małymi - ale już nie jest. Jeśli chcesz, możesz nawet pisać po pOkEmOnOwEmU :)
 
 0.65
