@@ -23,6 +23,7 @@ const initialSettings = {
 };
 const initialUnique = [];
 const initialMarked = [];
+const initialBlacklist = [];
 
 /**
  * Initializes settings with initial values
@@ -38,7 +39,7 @@ export const initSettings = () => {
 
 /**
  * Returns parsed object from localStorage, based on param provided.
- * @param {string} [name=marked] - provide either "marked", "unique" or "settings" to get corresponding objects from localStorage. Default is "marked"
+ * @param {string} [name=marked] - provide either "marked", "unique", "blacklist" or "settings" to get corresponding objects from localStorage. Default is "marked"
  */
 export const getLocalStorage = (name = "marked") => {
   switch (name) {
@@ -64,7 +65,16 @@ export const getLocalStorage = (name = "marked") => {
       }
       return JSON.parse(localStorage.getItem(STORAGE_KEY_NAMES.MARKED_USERS));
 
+    case "blacklist":
+      if (!localStorage.getItem(STORAGE_KEY_NAMES.BLACKLIST)) {
+        localStorage.setItem(
+          STORAGE_KEY_NAMES.BLACKLIST,
+          JSON.stringify(initialBlacklist)
+        );
+      }
+      return JSON.parse(localStorage.getItem(STORAGE_KEY_NAMES.BLACKLIST));
+
     default:
-      throw new Error(`Unknown storage type: ${name}. Pick either "unique", "marked" or "settings"`);
+      throw new Error(`Unknown storage type: ${name}. Pick either "unique", "marked", "blacklist" or "settings"`);
   }
 };

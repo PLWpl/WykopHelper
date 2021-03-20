@@ -56,6 +56,7 @@
     MARKED_USERS: 'whMarkedUsers',
     UNIQUE_USERS: 'whUniqueNicks',
     WH_SETTINGS: 'whSettings',
+    BLACKLIST: 'whBlacklist',
   };
 
   const DOM = {
@@ -71,7 +72,9 @@
         COMMENTS_STREAM: 'itemsStream',
       },
       SELECTOR: {
-        TAGS: '.fix-tagline > .tag.affect.create[href]'
+        TAGS: '.fix-tagline > .tag.affect.create[href]',
+        COMMENT: '[data-type="comment"]',
+        THREAD: '[data-type="entrycomment"]',
       }
     },
     BADGE: {
@@ -93,9 +96,11 @@
         MODAL_BUTTON: 'modalWH-button',
         MODAL_BUTTON_REMOVE: 'modalWH-button--remove',
         MODAL_TEXT: 'modalWH-text',
+        PROFILE_BLACKLISTED: 'whProfile--blacklistedIcon',
       },
       ID: {
         VOTES_CONTAINER: 'votesContainer',
+        PROFILE_BLACKLISTED: 'whBlacklistedIcon',
       },
       SELECTOR: {
         // wykop.pl elements
@@ -106,6 +111,7 @@
         COMMENT_FORM: '#commentFormContainer textarea',
         USER_PROFILE_NICK_ELEMENT: '.user-profile h2',
         USER_PROFILE_NICK: '.user-profile h2 span',
+        // custom WH elements
       },
       DYNAMIC: {
         DATASET: {
@@ -194,7 +200,8 @@
       },
       ID: {
         BADGE_TEXT: 'whModal_badgeText',
-        BADGE_COLOR: 'whModal_badgeColor'
+        BADGE_COLOR: 'whModal_badgeColor',
+        BLACKLIST: 'whModal_blacklist'
       }
     },
   };
@@ -257,6 +264,10 @@
 .${DOM.BADGE.CLASSNAME.MARK_ALL_BUTTON} {
   top: 0.8rem;
   position: relative;
+}
+
+.${DOM.BADGE.CLASSNAME.PROFILE_BLACKLISTED} {
+  cursor: pointer;
 }
 
 .${DOM.HIGHLIGHT_OP.CLASSNAME.HIGHLIGHT_BUTTON} {
@@ -451,6 +462,7 @@
   };
   const initialUnique = [];
   const initialMarked = [];
+  const initialBlacklist = [];
 
   /**
    * Initializes settings with initial values
@@ -466,7 +478,7 @@
 
   /**
    * Returns parsed object from localStorage, based on param provided.
-   * @param {string} [name=marked] - provide either "marked", "unique" or "settings" to get corresponding objects from localStorage. Default is "marked"
+   * @param {string} [name=marked] - provide either "marked", "unique", "blacklist" or "settings" to get corresponding objects from localStorage. Default is "marked"
    */
   const getLocalStorage = (name = "marked") => {
     switch (name) {
@@ -492,8 +504,17 @@
         }
         return JSON.parse(localStorage.getItem(STORAGE_KEY_NAMES.MARKED_USERS));
 
+      case "blacklist":
+        if (!localStorage.getItem(STORAGE_KEY_NAMES.BLACKLIST)) {
+          localStorage.setItem(
+            STORAGE_KEY_NAMES.BLACKLIST,
+            JSON.stringify(initialBlacklist)
+          );
+        }
+        return JSON.parse(localStorage.getItem(STORAGE_KEY_NAMES.BLACKLIST));
+
       default:
-        throw new Error(`Unknown storage type: ${name}. Pick either "unique", "marked" or "settings"`);
+        throw new Error(`Unknown storage type: ${name}. Pick either "unique", "marked", "blacklist" or "settings"`);
     }
   };
 
@@ -552,7 +573,7 @@
   <p>Ten ficzer jest eksperymentalny. Obecnie prawdopodobnie udało mi się wyeliminować błędy, które sprawiały, że w przeszłości (nie)działał jak chciał, ale mimo wszystko - proponuję najpierw przetestować, czy działa jak trzeba również u Ciebie, zanim zaczniesz na nim polegać dla ochrony przed utratą treści :) 
 `;
 
-  const badgeUserModal = props => {
+  const badgeUserModal = (props, blocked) => {
     const mediaText = link => `<p style="margin-top:5px;"><a href="${link}" target="_blank">Link do osadzonej treści multimedialnej (obrazek lub film)</a></p>`;
 
     return {
@@ -562,8 +583,9 @@
     <div class="${DOM.MODAL.CLASSNAME.SCROLLABLE_TEXT}"><p>${props.content}</p>
     ${props.media ? mediaText(props.media) : ''}</div>
     <p style="margin-top:1rem;text-align:right"><a href="${props.link}">Link do komentarza lub znaleziska</a></p>
-    <label class="${DOM.MODAL.CLASSNAME.INPUT_LABEL}">Treść odznaki: <input autocomplete="off" data-label="${props.label}" value="${props.label}" class="${DOM.MODAL.CLASSNAME.INPUT_TEXT}" id="${DOM.MODAL.ID.BADGE_TEXT}"></label>
+    <label class="${DOM.MODAL.CLASSNAME.INPUT_LABEL}">Treść odznaki: <input autocomplete="off" data-label="${props.label}" value="${props.label}" class="${DOM.MODAL.CLASSNAME.INPUT_TEXT}" id="${DOM.MODAL.ID.BADGE_TEXT}" style="margin-left: 1rem;"></label>
     <label class="${DOM.MODAL.CLASSNAME.INPUT_LABEL}">Kolor odznaki: <input type="color" data-color="${props.color ? props.color : settings$2.BADGE.DEFAULT_COLOR}" id="${DOM.MODAL.ID.BADGE_COLOR}" value="${props.color ? props.color : settings$2.BADGE.DEFAULT_COLOR}" style="margin-left: 1rem;"></label>
+    <label class="${DOM.MODAL.CLASSNAME.INPUT_LABEL}">Czarna lista: <input data-blocked="${blocked}" type="checkbox" id="${DOM.MODAL.ID.BLACKLIST}" style="margin-left: 2rem;" ${blocked ? 'checked' : ''}></label>
     `,
       button: "Usu\u0144 oznaczenie",
       buttonClose: "Zapisz"
@@ -853,7 +875,9 @@ DANE:
     const showUserModal = element => {
       const nick = $(element).dataset.whusername;
       const userData = getNickData(nick);
-      const modal = badgeUserModal(userData);
+      const blacklist = getLocalStorage('blacklist');
+      const blocked = blacklist.includes(nick);
+      const modal = badgeUserModal(userData, blocked);
 
       // eslint-disable-next-line
       Swal.fire({
@@ -882,11 +906,29 @@ DANE:
           const newLabel = $(`#${DOM.MODAL.ID.BADGE_TEXT}`).value;
           const oldColor = $(`#${DOM.MODAL.ID.BADGE_COLOR}`).dataset.color;
           const newColor = $(`#${DOM.MODAL.ID.BADGE_COLOR}`).value;
+          const isBlocked = $(`#${DOM.MODAL.ID.BLACKLIST}`).dataset.blocked;
+          const shouldBeBlocked = $(`#${DOM.MODAL.ID.BLACKLIST}`).checked;
           if (newLabel !== oldLabel) {
             changeMarkedUser(nick, 'label', newLabel);
           }
           if (newColor !== oldColor) {
             changeMarkedUser(nick, 'color', newColor);
+          }
+          if (isBlocked !== shouldBeBlocked) {
+            let newBlacklist;
+            if (shouldBeBlocked) {
+              blacklist.push(nick);
+              localStorage.setItem(
+                STORAGE_KEY_NAMES.BLACKLIST,
+                JSON.stringify(blacklist)
+              );
+            } else if (!shouldBeBlocked) {
+              newBlacklist = blacklist.filter(el => el !== nick);
+              localStorage.setItem(
+                STORAGE_KEY_NAMES.BLACKLIST,
+                JSON.stringify(newBlacklist)
+              );
+            }
           }
           updateView(true);
         }
@@ -958,6 +1000,45 @@ DANE:
           }
         });
     }
+  };
+
+  /**
+   * Handles removal of comments of users that are blacklisted.
+   */
+  const handleRemovalOfBlacklisted = () => {
+    const blacklist = getLocalStorage('blacklist');
+    const isBlacklisted = nick => blacklist.includes(nick);
+    $$(DOM.BADGE.SELECTOR.NICK).forEach(el => {
+      if (isBlacklisted(el.innerText)) {
+        if (el.closest(DOM.COMMON.SELECTOR.COMMENT)) {
+          el.closest(DOM.COMMON.SELECTOR.COMMENT).remove();
+        } else if (el.closest(DOM.COMMON.SELECTOR.THREAD)) {
+          el.closest(DOM.COMMON.SELECTOR.THREAD).remove();
+        }
+      }
+    });
+  };
+
+  const handleBlacklistedProfile = () => {
+    const nick = location.pathname.split('/')[2];
+    const blacklist = getLocalStorage('blacklist');
+    const isBlacklisted = nick => blacklist.includes(nick);
+
+    if (isBlacklisted(nick)) {
+      $(`${DOM.BADGE.SELECTOR.USER_PROFILE_NICK}:not(:first-child)`).style.filter = 'grayscale(65%)';
+      $(DOM.BADGE.SELECTOR.USER_PROFILE_NICK_ELEMENT).insertAdjacentHTML('beforeend', `<span class="${DOM.BADGE.CLASSNAME.PROFILE_BLACKLISTED}" id="${DOM.BADGE.ID.PROFILE_BLACKLISTED}">🔐</span>`);
+    }
+
+    document.addEventListener('click', event => {
+      if (event.target.id === DOM.BADGE.ID.PROFILE_BLACKLISTED) {
+        const newBlacklist = blacklist.filter(el => el !== nick);
+        localStorage.setItem(
+          STORAGE_KEY_NAMES.BLACKLIST,
+          JSON.stringify(newBlacklist)
+        );
+        location.reload();
+      }
+    });
   };
 
   const { BADGE: EL$1 } = DOM;
@@ -1607,25 +1688,16 @@ DANE:
    * Util function that is supposed to run only once, immediately after script update.
    */
   const runOnceOnUpdate = () => {
-    let settings;
-
-    // preparation
-    if (localStorage.getItem(STORAGE_KEY_NAMES.WH_SETTINGS)) {
-      settings = getLocalStorage('settings');
-      if (!settings.GENERAL.SUSPECT_DOMAINS) {
-        settings.GENERAL.SUSPECT_DOMAINS = rawDomains;
-      }
-      if (!settings.GENERAL.SUSPECT_DOMAINS_LABEL) {
-        settings.GENERAL.SUSPECT_DOMAINS_LABEL = 'Uwa\u017Caj! \u0179r\xF3d\u0142o tego znaleziska jest podejrzewane o szerzenie rosyjskiej propagandy.';
-      }
+    if (!localStorage.getItem(STORAGE_KEY_NAMES.BLACKLIST)) {
+      const initialBlacklist = [];
+      localStorage.setItem(STORAGE_KEY_NAMES.BLACKLIST, JSON.stringify(initialBlacklist));
     }
-
-    localStorage.setItem(STORAGE_KEY_NAMES.WH_SETTINGS, JSON.stringify(settings));
   };
 
   /* eslint max-len: 0 */
 
   const changesArray = [
+    'W ustawieniach mo\u017Cna r\xF3wnie\u017C od teraz eksportowa\u0107 i importowa\u0107 swoje ustawienia i listy oznaczonych u\u017Cytkownik\xF3w. Na razie jest to proces raczej r\u0119czny (wymaga kopiowania i przeklejania ci\u0105g\xF3w znak\xF3w mi\u0119dzy przegl\u0105darkami); mo\u017Cliwe, \u017Ce w przysz\u0142o\u015Bci co\u015B tutaj zostanie udoskonalone, chocia\u017C nie ukrywam, \u017Ce wynika to z mojej niech\u0119ci do u\u017Cywania zewn\u0119trznych us\u0142ug - bo wtedy wchodzi\u0142yby w gr\u0119 kwestie prywatno\u015Bci, dost\u0119p\xF3w, \u015Bledzenia i tak dalej i tak dalej... a tego chc\u0119 za wszelk\u0105 cen\u0119 unikn\u0105\u0107.',
     'Od teraz w ustawieniach mo\u017Cna wybra\u0107 domy\u015Blny kolor odznaki. Wkr\xF3tce pojawi si\u0119 mo\u017Cliwo\u015B\u0107 ustawiania osobnego koloru dla ka\u017Cdego oznaczonego u\u017Cytkownika.',
     'Znikn\u0119\u0142o sporo pomniejszych bug\xF3w.',
     'Z pewno\u015Bci\u0105 pojawi\u0142o si\u0119 sporo nowych bug\xF3w :)'
@@ -1664,6 +1736,7 @@ Dodatek WykopHelper został właśnie zaktualizowany do wersji <strong>${version
         html: updateText.content,
         showCloseButton: true,
         icon: 'info',
+        iconHtml: '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 48 48"><defs><path d="M0 0h48v48H0V0z" id="a"/></defs><clipPath id="b"><use overflow="visible" xlink:href="#a"/></clipPath><path clip-path="url(#b)" d="M40 8H8c-2.21 0-3.98 1.79-3.98 4L4 36c0 2.21 1.79 4 4 4h32c2.21 0 4-1.79 4-4V12c0-2.21-1.79-4-4-4zM17 30h-2.4l-5.1-7v7H7V18h2.5l5 7v-7H17v12zm10-9.49h-5v2.24h5v2.51h-5v2.23h5V30h-8V18h8v2.51zM41 28c0 1.1-.9 2-2 2h-8c-1.1 0-2-.9-2-2V18h2.5v9.01h2.25v-7.02h2.5v7.02h2.25V18H41v10z"/></svg>',
         width: '80%',
         confirmButtonText: updateText.button
       });
@@ -1675,6 +1748,7 @@ Dodatek WykopHelper został właśnie zaktualizowany do wersji <strong>${version
         title: welcomeText.title,
         html: welcomeText.content,
         icon: 'warning',
+        iconHtml: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path d="M0 0h48v48H0z" fill="none"/><path d="M2 42h8V18H2v24zm44-22c0-2.21-1.79-4-4-4H29.37l1.91-9.14c.04-.2.07-.41.07-.63 0-.83-.34-1.58-.88-2.12L28.34 2 15.17 15.17C14.45 15.9 14 16.9 14 18v20c0 2.21 1.79 4 4 4h18c1.66 0 3.08-1.01 3.68-2.44l6.03-14.1A4 4 0 0046 24v-3.83l-.02-.02L46 20z"/></svg>',
         width: '80%',
         confirmButtonText: welcomeText.button
       });
@@ -1893,6 +1967,7 @@ Dodatek WykopHelper został właśnie zaktualizowany do wersji <strong>${version
   }
   if (isPath.main()) {
     handleBadges();
+    handleRemovalOfBlacklisted();
     warnOnReload();
     embedOnPaste();
     hideMarkedUsers();
@@ -1900,6 +1975,7 @@ Dodatek WykopHelper został właśnie zaktualizowany do wersji <strong>${version
   }
   if (isPath.userProfile()) {
     displayBadgeInUserProfile();
+    handleBlacklistedProfile();
   }
   if (isPath.settings()) {
     createSettingsPage();

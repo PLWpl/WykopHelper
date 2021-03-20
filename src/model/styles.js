@@ -60,6 +60,10 @@ export const badge = `
   position: relative;
 }
 
+.${DOM.BADGE.CLASSNAME.PROFILE_BLACKLISTED} {
+  cursor: pointer;
+}
+
 .${DOM.HIGHLIGHT_OP.CLASSNAME.HIGHLIGHT_BUTTON} {
   position: absolute;
   top: .1rem;

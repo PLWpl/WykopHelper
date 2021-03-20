@@ -33,7 +33,7 @@ export const warnOnReloadModal = `
   <p>Ten ficzer jest eksperymentalny. Obecnie prawdopodobnie udało mi się wyeliminować błędy, które sprawiały, że w przeszłości (nie)działał jak chciał, ale mimo wszystko - proponuję najpierw przetestować, czy działa jak trzeba również u Ciebie, zanim zaczniesz na nim polegać dla ochrony przed utratą treści :) 
 `
 
-export const badgeUserModal = props => {
+export const badgeUserModal = (props, blocked) => {
   const mediaText = link => `<p style="margin-top:5px;"><a href="${link}" target="_blank">Link do osadzonej treści multimedialnej (obrazek lub film)</a></p>`
 
   return {
@@ -43,8 +43,9 @@ export const badgeUserModal = props => {
     <div class="${DOM.MODAL.CLASSNAME.SCROLLABLE_TEXT}"><p>${props.content}</p>
     ${props.media ? mediaText(props.media) : ''}</div>
     <p style="margin-top:1rem;text-align:right"><a href="${props.link}">Link do komentarza lub znaleziska</a></p>
-    <label class="${DOM.MODAL.CLASSNAME.INPUT_LABEL}">Treść odznaki: <input autocomplete="off" data-label="${props.label}" value="${props.label}" class="${DOM.MODAL.CLASSNAME.INPUT_TEXT}" id="${DOM.MODAL.ID.BADGE_TEXT}"></label>
+    <label class="${DOM.MODAL.CLASSNAME.INPUT_LABEL}">Treść odznaki: <input autocomplete="off" data-label="${props.label}" value="${props.label}" class="${DOM.MODAL.CLASSNAME.INPUT_TEXT}" id="${DOM.MODAL.ID.BADGE_TEXT}" style="margin-left: 1rem;"></label>
     <label class="${DOM.MODAL.CLASSNAME.INPUT_LABEL}">Kolor odznaki: <input type="color" data-color="${props.color ? props.color : settings.BADGE.DEFAULT_COLOR}" id="${DOM.MODAL.ID.BADGE_COLOR}" value="${props.color ? props.color : settings.BADGE.DEFAULT_COLOR}" style="margin-left: 1rem;"></label>
+    <label class="${DOM.MODAL.CLASSNAME.INPUT_LABEL}">Czarna lista: <input data-blocked="${blocked}" type="checkbox" id="${DOM.MODAL.ID.BLACKLIST}" style="margin-left: 2rem;" ${blocked ? 'checked' : ''}></label>
     `,
     button: "Usuń oznaczenie",
     buttonClose: "Zapisz"

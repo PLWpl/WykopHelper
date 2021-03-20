@@ -11,7 +11,9 @@ export const DOM = {
       COMMENTS_STREAM: 'itemsStream',
     },
     SELECTOR: {
-      TAGS: '.fix-tagline > .tag.affect.create[href]'
+      TAGS: '.fix-tagline > .tag.affect.create[href]',
+      COMMENT: '[data-type="comment"]',
+      THREAD: '[data-type="entrycomment"]',
     }
   },
   BADGE: {
@@ -33,9 +35,11 @@ export const DOM = {
       MODAL_BUTTON: 'modalWH-button',
       MODAL_BUTTON_REMOVE: 'modalWH-button--remove',
       MODAL_TEXT: 'modalWH-text',
+      PROFILE_BLACKLISTED: 'whProfile--blacklistedIcon',
     },
     ID: {
       VOTES_CONTAINER: 'votesContainer',
+      PROFILE_BLACKLISTED: 'whBlacklistedIcon',
     },
     SELECTOR: {
       // wykop.pl elements
@@ -46,6 +50,7 @@ export const DOM = {
       COMMENT_FORM: '#commentFormContainer textarea',
       USER_PROFILE_NICK_ELEMENT: '.user-profile h2',
       USER_PROFILE_NICK: '.user-profile h2 span',
+      // custom WH elements
     },
     DYNAMIC: {
       DATASET: {
@@ -134,7 +139,8 @@ export const DOM = {
     },
     ID: {
       BADGE_TEXT: 'whModal_badgeText',
-      BADGE_COLOR: 'whModal_badgeColor'
+      BADGE_COLOR: 'whModal_badgeColor',
+      BLACKLIST: 'whModal_blacklist'
     }
   },
 };
