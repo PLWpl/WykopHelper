@@ -92,8 +92,10 @@ export const DOM = {
       EXPORT_TEXTAREA: 'exportArea',
       EXPORT_SETTINGS_BUTTON: 'buttonExportSettings',
       EXPORT_MARKED_BUTTON: 'buttonExportMarkedUsers',
+      EXPORT_BLACKLIST_BUTTON: 'buttonExportBlacklist',
       IMPORT_SETTINGS_BUTTON: 'buttonImportSettings',
-      IMPORT_MARKED_BUTTON: 'buttonImportMarkedUsers'
+      IMPORT_MARKED_BUTTON: 'buttonImportMarkedUsers',
+      IMPORT_BLACKLIST_BUTTON: 'buttonImportBlacklist'
     },
     SELECTOR: {
       LAST_NAV_ELEMENT: '#site .nav > ul > li:last-child',

@@ -32,6 +32,7 @@ export const handleSettings = () => {
   let settings = getLocalStorage('settings');
   const markedUsers = getLocalStorage();
   const uniqueNicksSet = getLocalStorage('unique');
+  const blacklist = getLocalStorage('blacklist');
 
   const settingsFormElement = $(EL.SELECTOR.SETTINGS_FORM_ELEMENT);
 
@@ -148,6 +149,8 @@ export const handleSettings = () => {
         } else if (checkboxValue && checkboxValue === 'markedUsers') {
           localStorage.setItem(STORAGE_KEY_NAMES.MARKED_USERS, imported);
           localStorage.setItem(STORAGE_KEY_NAMES.UNIQUE_USERS, parseImportForUniqueNames(imported));
+        } else if (checkboxValue && checkboxValue === 'blacklist') {
+          localStorage.setItem(STORAGE_KEY_NAMES.BLACKLIST, imported);
         } else {
           // eslint-disable-next-line no-alert
           alert('Nie wybrano typu danych: czy importujesz ustawienia, czy oznaczonych użytkowników?')
@@ -267,6 +270,10 @@ export const handleSettings = () => {
         $(`#${EL.ID.EXPORT_TEXTAREA}`).innerText = '';
         $(`#${EL.ID.EXPORT_TEXTAREA}`).innerText = JSON.stringify(markedUsers);
       }
+      if (event.target.id === EL.ID.EXPORT_BLACKLIST_BUTTON) {
+        $(`#${EL.ID.EXPORT_TEXTAREA}`).innerText = '';
+        $(`#${EL.ID.EXPORT_TEXTAREA}`).innerText = JSON.stringify(blacklist);
+      }
     }, {passive: true});
 
     settingsFormElement.addEventListener('keyup', event => {
@@ -312,4 +319,4 @@ export const handleSettings = () => {
   }
   
   init();
-}; 
+};
