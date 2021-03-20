@@ -1,5 +1,6 @@
 import isPath from './utils/checkPath';
 import { handleBadges } from './modules/badges';
+import { handleRemovalOfBlacklisted, handleBlacklistedProfile } from './modules/handleBlacklist';
 import { displayBadgeInUserProfile } from './modules/badges/displayInUserProfile';
 import { handleDomainCheck } from './modules/domainChecker'
 import { hideMarkedUsers } from './modules/hideMarkedUsers'
@@ -32,6 +33,7 @@ if (isPath.sitewide()) {
 }
 if (isPath.main()) {
   handleBadges();
+  handleRemovalOfBlacklisted();
   warnOnReload();
   embedOnPaste();
   hideMarkedUsers();
@@ -39,6 +41,7 @@ if (isPath.main()) {
 }
 if (isPath.userProfile()) {
   displayBadgeInUserProfile();
+  handleBlacklistedProfile();
 }
 if (isPath.settings()) {
   createSettingsPage();

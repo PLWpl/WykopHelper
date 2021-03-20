@@ -259,7 +259,9 @@ export const handleBadges = () => {
   const showUserModal = element => {
     const nick = $(element).dataset.whusername;
     const userData = getNickData(nick);
-    const modal = badgeUserModal(userData);
+    const blacklist = getLocalStorage('blacklist');
+    const blocked = blacklist.includes(nick);
+    const modal = badgeUserModal(userData, blocked);
 
     // eslint-disable-next-line
     Swal.fire({
@@ -288,11 +290,29 @@ export const handleBadges = () => {
         const newLabel = $(`#${DOM.MODAL.ID.BADGE_TEXT}`).value;
         const oldColor = $(`#${DOM.MODAL.ID.BADGE_COLOR}`).dataset.color;
         const newColor = $(`#${DOM.MODAL.ID.BADGE_COLOR}`).value;
+        const isBlocked = $(`#${DOM.MODAL.ID.BLACKLIST}`).dataset.blocked;
+        const shouldBeBlocked = $(`#${DOM.MODAL.ID.BLACKLIST}`).checked;
         if (newLabel !== oldLabel) {
           changeMarkedUser(nick, 'label', newLabel);
         }
         if (newColor !== oldColor) {
           changeMarkedUser(nick, 'color', newColor);
+        }
+        if (isBlocked !== shouldBeBlocked) {
+          let newBlacklist;
+          if (shouldBeBlocked) {
+            blacklist.push(nick);
+            localStorage.setItem(
+              STORAGE_KEY_NAMES.BLACKLIST,
+              JSON.stringify(blacklist)
+            );
+          } else if (!shouldBeBlocked) {
+            newBlacklist = blacklist.filter(el => el !== nick);
+            localStorage.setItem(
+              STORAGE_KEY_NAMES.BLACKLIST,
+              JSON.stringify(newBlacklist)
+            );
+          }
         }
         updateView(true);
       } else {
