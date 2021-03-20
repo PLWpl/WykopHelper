@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         WykopHelper - DEV
-// @version      0.65
+// @version      0.70
 // @updateURL    https://cdn.jsdelivr.net/gh/plwpl/WykopHelper/dist/whhelper-dev.user.js
 // @downloadURL  https://cdn.jsdelivr.net/gh/plwpl/WykopHelper/dist/whhelper-dev.user.js
 // @description  Zestaw narzędzi pomocnych na wykopie.
@@ -153,8 +153,10 @@
         EXPORT_TEXTAREA: 'exportArea',
         EXPORT_SETTINGS_BUTTON: 'buttonExportSettings',
         EXPORT_MARKED_BUTTON: 'buttonExportMarkedUsers',
+        EXPORT_BLACKLIST_BUTTON: 'buttonExportBlacklist',
         IMPORT_SETTINGS_BUTTON: 'buttonImportSettings',
-        IMPORT_MARKED_BUTTON: 'buttonImportMarkedUsers'
+        IMPORT_MARKED_BUTTON: 'buttonImportMarkedUsers',
+        IMPORT_BLACKLIST_BUTTON: 'buttonImportBlacklist'
       },
       SELECTOR: {
         LAST_NAV_ELEMENT: '#site .nav > ul > li:last-child',
@@ -593,26 +595,29 @@
   };
 
   const importSettingsModal = `
-<p>Wybierz, jaki typ danych importujesz:</p>
-<input type="radio" id="${DOM.SETTINGS.ID.IMPORT_SETTINGS_BUTTON}" name="${DOM.SETTINGS.SELECTOR.IMPORT_CHECKBOX_NAME}" value="settings">
-<label for="${DOM.SETTINGS.ID.IMPORT_SETTINGS_BUTTON}">Ustawienia</label><br>
-<input type="radio" id="${DOM.SETTINGS.ID.IMPORT_MARKED_BUTTON}" name="${DOM.SETTINGS.SELECTOR.IMPORT_CHECKBOX_NAME}" value="markedUsers">
-<label for="${DOM.SETTINGS.ID.IMPORT_MARKED_BUTTON}">Oznaczeni użytkownicy</label><br>
-<label style="padding-top:1rem">
-Wklej swoje przenoszone dane poniżej:
-<textarea class="" id="${DOM.SETTINGS.ID.IMPORT_TEXTAREA}" style="display: block; width: 100%; padding: 0.3rem 1rem; margin: 0.5rem 0px 0; height: 150px; max-height: 15rem; overflow: auto; resize: none;"></textarea>
-</label>
+  <p>Wybierz, jaki typ danych importujesz:</p>
+  <input type="radio" id="${DOM.SETTINGS.ID.IMPORT_SETTINGS_BUTTON}" name="${DOM.SETTINGS.SELECTOR.IMPORT_CHECKBOX_NAME}" value="settings">
+  <label for="${DOM.SETTINGS.ID.IMPORT_SETTINGS_BUTTON}">Ustawienia</label><br>
+  <input type="radio" id="${DOM.SETTINGS.ID.IMPORT_MARKED_BUTTON}" name="${DOM.SETTINGS.SELECTOR.IMPORT_CHECKBOX_NAME}" value="markedUsers">
+  <label for="${DOM.SETTINGS.ID.IMPORT_MARKED_BUTTON}">Oznaczeni użytkownicy</label><br>
+  <input type="radio" id="${DOM.SETTINGS.ID.IMPORT_BLACKLIST_BUTTON}" name="${DOM.SETTINGS.SELECTOR.IMPORT_CHECKBOX_NAME}" value="blacklist">
+  <label for="${DOM.SETTINGS.ID.IMPORT_BLACKLIST_BUTTON}">Czarna lista</label><br>
+  <label style="padding-top:1rem">
+    Wklej swoje przenoszone dane poniżej:
+    <textarea id="${DOM.SETTINGS.ID.IMPORT_TEXTAREA}" style="display: block; width: 100%; padding: 0.3rem 1rem; margin: 0.5rem 0px 0; height: 150px; max-height: 15rem; overflow: auto; resize: none;"></textarea>
+  </label>
 `;
 
   const exportSettingsModal = `
-<p>Wybierz, co chcesz wyeksportować:</p>
-<button class="button" id="${DOM.SETTINGS.ID.EXPORT_SETTINGS_BUTTON}">USTAWIENIA</button>
-<button class="button" id="${DOM.SETTINGS.ID.EXPORT_MARKED_BUTTON}">OZNACZONYCH UŻYTKOWNIKÓW</button>
-<label style="display:block;padding-top:1rem">
-DANE:
-<textarea class="" id="${DOM.SETTINGS.ID.EXPORT_TEXTAREA}" style="display: block; width: 100%; padding: 0.3rem 1rem; margin: 0.5rem 0px 0; height: 150px; max-height: 15rem; overflow: auto; resize: none;"></textarea>
-</label>
-<small>Po skopiowaniu edytuj dane TYLKO jeśli wiesz, co robisz - inaczej możesz uszkodzić i stracić wszystkie swoje dane, co wymusi konieczność reinstalacji dodatku "na świeżo".</small>
+  <p>Wybierz, co chcesz wyeksportować:</p>
+  <button class="button" id="${DOM.SETTINGS.ID.EXPORT_SETTINGS_BUTTON}">USTAWIENIA</button>
+  <button class="button" id="${DOM.SETTINGS.ID.EXPORT_MARKED_BUTTON}">OZNACZONYCH UŻYTKOWNIKÓW</button>
+  <button class="button" id="${DOM.SETTINGS.ID.EXPORT_BLACKLIST_BUTTON}">CZARNĄ LISTĘ</button>
+  <label style="display:block;padding-top:1rem">
+    DANE:
+    <textarea id="${DOM.SETTINGS.ID.EXPORT_TEXTAREA}" style="display: block; width: 100%; padding: 0.3rem 1rem; margin: 0.5rem 0px 0; height: 150px; max-height: 15rem; overflow: auto; resize: none;"></textarea>
+  </label>
+  <small>Po skopiowaniu edytuj dane TYLKO jeśli wiesz, co robisz - inaczej możesz uszkodzić i stracić wszystkie swoje dane, co wymusi konieczność reinstalacji dodatku "na świeżo".</small>
 `;
 
   /**
@@ -1026,6 +1031,7 @@ DANE:
 
     if (isBlacklisted(nick)) {
       $(`${DOM.BADGE.SELECTOR.USER_PROFILE_NICK}:not(:first-child)`).style.filter = 'grayscale(65%)';
+      // eslint-disable-next-line max-len
       $(DOM.BADGE.SELECTOR.USER_PROFILE_NICK_ELEMENT).insertAdjacentHTML('beforeend', `<span class="${DOM.BADGE.CLASSNAME.PROFILE_BLACKLISTED}" id="${DOM.BADGE.ID.PROFILE_BLACKLISTED}">🔐</span>`);
     }
 
@@ -1402,6 +1408,7 @@ DANE:
     let settings = getLocalStorage('settings');
     const markedUsers = getLocalStorage();
     const uniqueNicksSet = getLocalStorage('unique');
+    const blacklist = getLocalStorage('blacklist');
 
     const settingsFormElement = $(EL$3.SELECTOR.SETTINGS_FORM_ELEMENT);
 
@@ -1518,6 +1525,8 @@ DANE:
           } else if (checkboxValue && checkboxValue === 'markedUsers') {
             localStorage.setItem(STORAGE_KEY_NAMES.MARKED_USERS, imported);
             localStorage.setItem(STORAGE_KEY_NAMES.UNIQUE_USERS, parseImportForUniqueNames(imported));
+          } else if (checkboxValue && checkboxValue === 'blacklist') {
+            localStorage.setItem(STORAGE_KEY_NAMES.BLACKLIST, imported);
           } else {
             // eslint-disable-next-line no-alert
             alert('Nie wybrano typu danych: czy importujesz ustawienia, czy oznaczonych u\u017Cytkownik\xF3w?');
@@ -1637,6 +1646,10 @@ DANE:
           $(`#${EL$3.ID.EXPORT_TEXTAREA}`).innerText = '';
           $(`#${EL$3.ID.EXPORT_TEXTAREA}`).innerText = JSON.stringify(markedUsers);
         }
+        if (event.target.id === EL$3.ID.EXPORT_BLACKLIST_BUTTON) {
+          $(`#${EL$3.ID.EXPORT_TEXTAREA}`).innerText = '';
+          $(`#${EL$3.ID.EXPORT_TEXTAREA}`).innerText = JSON.stringify(blacklist);
+        }
       }, {passive: true});
 
       settingsFormElement.addEventListener('keyup', event => {
@@ -1697,15 +1710,20 @@ DANE:
   /* eslint max-len: 0 */
 
   const changesArray = [
-    'W ustawieniach mo\u017Cna r\xF3wnie\u017C od teraz eksportowa\u0107 i importowa\u0107 swoje ustawienia i listy oznaczonych u\u017Cytkownik\xF3w. Na razie jest to proces raczej r\u0119czny (wymaga kopiowania i przeklejania ci\u0105g\xF3w znak\xF3w mi\u0119dzy przegl\u0105darkami); mo\u017Cliwe, \u017Ce w przysz\u0142o\u015Bci co\u015B tutaj zostanie udoskonalone, chocia\u017C nie ukrywam, \u017Ce wynika to z mojej niech\u0119ci do u\u017Cywania zewn\u0119trznych us\u0142ug - bo wtedy wchodzi\u0142yby w gr\u0119 kwestie prywatno\u015Bci, dost\u0119p\xF3w, \u015Bledzenia i tak dalej i tak dalej... a tego chc\u0119 za wszelk\u0105 cen\u0119 unikn\u0105\u0107.',
-    'Od teraz w ustawieniach mo\u017Cna wybra\u0107 domy\u015Blny kolor odznaki. Wkr\xF3tce pojawi si\u0119 mo\u017Cliwo\u015B\u0107 ustawiania osobnego koloru dla ka\u017Cdego oznaczonego u\u017Cytkownika.',
+    'W ustawieniach mo\u017Cna wybra\u0107 <strong>domy\u015Blny</strong> kolor odznaki, kt\xF3ry b\u0119dzie nadawany ka\u017Cdemu nowemu oznaczonemu.',
+    '...Ale kolor ten mo\u017Cna zmieni\u0107 dla ka\u017Cdego z osobna -  w popupie aktywowanym klikni\u0119ciem w odznak\u0119 przy danym userze.',
+    'Dodatkowo, w popupie usera mo\u017Cna zadecydowa\u0107 o wrzuceniu usera na <strong>super</strong> czarn\u0105 list\u0119. Ale <strong>ostro\u017Cnie</strong> - po zczarnolistowaniu, posty danego u\u017Cytkownika b\u0119d\u0105 <em>ca\u0142kowicie</em> usuwane, a nie tylko chowane jak w wykopowej czarnej li\u015Bcie. P\xF3\u017Aniej - aby u\u017Cytkownikowi wybaczy\u0107, i z czarnej listy go zdj\u0105\u0107 - nale\u017Cy uda\u0107 si\u0119 do jego profilu (wykop.pl/ludzie/NICK) i klikn\u0105\u0107 na ikon\u0119 k\u0142\xF3dki przy jego nicku. O tym, \u017Ce dany user jest zczarnolistowany, \u015Bwiadczy w jego profilu ta k\u0142\xF3dka, oraz lekko przytumiony nick.',
+    'Dodano funkcj\u0119, aktywowan\u0105 w ustawieniach, umo\u017Cliwiaj\u0105c\u0105 usuwanie tekstu "via [nazwa aplikacji]" w komentarzach u\u017Cytkownik\xF3w. Przy d\u0142u\u017Cszych nickach, albo przy stosowaniu innych dodatk\xF3w (np. pokazuj\u0105cych czy dany user wykopa\u0142 czy zakopa\u0142 znalezisko) ta ma\u0142o u\u017Cyteczna informacja o aplikacji jakiej kto\u015B u\u017Cywa potrafi spowodowa\u0107 nachodzenie na siebie r\xF3\u017Cnych tekst\xF3w.',
+    'W ustawieniach mo\u017Cna r\xF3wnie\u017C od teraz eksportowa\u0107 i importowa\u0107 swoje ustawienia i listy oznaczonych i czarnolistowanych u\u017Cytkownik\xF3w. Na razie jest to proces raczej r\u0119czny (wymaga kopiowania i przeklejania ci\u0105g\xF3w znak\xF3w mi\u0119dzy przegl\u0105darkami); mo\u017Cliwe, \u017Ce w przysz\u0142o\u015Bci co\u015B tutaj zostanie udoskonalone, chocia\u017C nie ukrywam, \u017Ce wynika to z mojej niech\u0119ci do u\u017Cywania zewn\u0119trznych us\u0142ug - bo wtedy wchodzi\u0142yby w gr\u0119 kwestie prywatno\u015Bci, dost\u0119p\xF3w, \u015Bledzenia i tak dalej i tak dalej... a tego chc\u0119 za wszelk\u0105 cen\u0119 unikn\u0105\u0107.',
+    'Od teraz odznaka b\u0119dzie si\u0119 wy\u015Bwietla\u0107 dok\u0142adnie tak, jak to ustawisz w ustawieniach b\u0105d\u017A konkretnemu userowi. Do tej pory wymuszana by\u0142a konwencja rozpoczynania tekstu wielk\u0105 liter\u0105, a reszta ma\u0142ymi - ale ju\u017C nie jest. Je\u015Bli chcesz, mo\u017Cesz nawet pisa\u0107 po pOkEmOnOwEmU :)',
+    'Par\u0119 wizualnych zmian (ikony itp.; nic prze\u0142omowego). Redesign ca\u0142o\u015Bci, a zw\u0142aszcza popupu odznaki, wkr\xF3tce - bo powoli robi si\u0119 ma\u0142o estetyczny ba\u0142agan.',
     'Znikn\u0119\u0142o sporo pomniejszych bug\xF3w.',
     'Z pewno\u015Bci\u0105 pojawi\u0142o si\u0119 sporo nowych bug\xF3w :)'
   ];
 
   const listItem = text => `<li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">${text}</li>`;
 
-  const version = `0.65`;
+  const version = `0.70`;
 
   const welcomeText = {
     title: "WykopHelper zainstalowany!",
@@ -1736,7 +1754,7 @@ Dodatek WykopHelper został właśnie zaktualizowany do wersji <strong>${version
         html: updateText.content,
         showCloseButton: true,
         icon: 'info',
-        iconHtml: '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 48 48"><defs><path d="M0 0h48v48H0V0z" id="a"/></defs><clipPath id="b"><use overflow="visible" xlink:href="#a"/></clipPath><path clip-path="url(#b)" d="M40 8H8c-2.21 0-3.98 1.79-3.98 4L4 36c0 2.21 1.79 4 4 4h32c2.21 0 4-1.79 4-4V12c0-2.21-1.79-4-4-4zM17 30h-2.4l-5.1-7v7H7V18h2.5l5 7v-7H17v12zm10-9.49h-5v2.24h5v2.51h-5v2.23h5V30h-8V18h8v2.51zM41 28c0 1.1-.9 2-2 2h-8c-1.1 0-2-.9-2-2V18h2.5v9.01h2.25v-7.02h2.5v7.02h2.25V18H41v10z"/></svg>',
+        iconHtml: '<svg xmlns="http://www.w3.org/2000/svg" style="fill:currentColor;width:2rem;height: auto" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 48 48"><defs><path d="M0 0h48v48H0V0z" id="a"/></defs><clipPath id="b"><use overflow="visible" xlink:href="#a"/></clipPath><path clip-path="url(#b)" d="M40 8H8c-2.21 0-3.98 1.79-3.98 4L4 36c0 2.21 1.79 4 4 4h32c2.21 0 4-1.79 4-4V12c0-2.21-1.79-4-4-4zM17 30h-2.4l-5.1-7v7H7V18h2.5l5 7v-7H17v12zm10-9.49h-5v2.24h5v2.51h-5v2.23h5V30h-8V18h8v2.51zM41 28c0 1.1-.9 2-2 2h-8c-1.1 0-2-.9-2-2V18h2.5v9.01h2.25v-7.02h2.5v7.02h2.25V18H41v10z"/></svg>',
         width: '80%',
         confirmButtonText: updateText.button
       });
@@ -1748,7 +1766,7 @@ Dodatek WykopHelper został właśnie zaktualizowany do wersji <strong>${version
         title: welcomeText.title,
         html: welcomeText.content,
         icon: 'warning',
-        iconHtml: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path d="M0 0h48v48H0z" fill="none"/><path d="M2 42h8V18H2v24zm44-22c0-2.21-1.79-4-4-4H29.37l1.91-9.14c.04-.2.07-.41.07-.63 0-.83-.34-1.58-.88-2.12L28.34 2 15.17 15.17C14.45 15.9 14 16.9 14 18v20c0 2.21 1.79 4 4 4h18c1.66 0 3.08-1.01 3.68-2.44l6.03-14.1A4 4 0 0046 24v-3.83l-.02-.02L46 20z"/></svg>',
+        iconHtml: '<svg xmlns="http://www.w3.org/2000/svg" style="fill:currentColor;width:2rem;height: auto" viewBox="0 0 48 48"><path d="M0 0h48v48H0z" fill="none"/><path d="M2 42h8V18H2v24zm44-22c0-2.21-1.79-4-4-4H29.37l1.91-9.14c.04-.2.07-.41.07-.63 0-.83-.34-1.58-.88-2.12L28.34 2 15.17 15.17C14.45 15.9 14 16.9 14 18v20c0 2.21 1.79 4 4 4h18c1.66 0 3.08-1.01 3.68-2.44l6.03-14.1A4 4 0 0046 24v-3.83l-.02-.02L46 20z"/></svg>',
         width: '80%',
         confirmButtonText: welcomeText.button
       });

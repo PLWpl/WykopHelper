@@ -53,24 +53,27 @@ export const badgeUserModal = (props, blocked) => {
 };
 
 export const importSettingsModal = `
-<p>Wybierz, jaki typ danych importujesz:</p>
-<input type="radio" id="${DOM.SETTINGS.ID.IMPORT_SETTINGS_BUTTON}" name="${DOM.SETTINGS.SELECTOR.IMPORT_CHECKBOX_NAME}" value="settings">
-<label for="${DOM.SETTINGS.ID.IMPORT_SETTINGS_BUTTON}">Ustawienia</label><br>
-<input type="radio" id="${DOM.SETTINGS.ID.IMPORT_MARKED_BUTTON}" name="${DOM.SETTINGS.SELECTOR.IMPORT_CHECKBOX_NAME}" value="markedUsers">
-<label for="${DOM.SETTINGS.ID.IMPORT_MARKED_BUTTON}">Oznaczeni użytkownicy</label><br>
-<label style="padding-top:1rem">
-Wklej swoje przenoszone dane poniżej:
-<textarea class="" id="${DOM.SETTINGS.ID.IMPORT_TEXTAREA}" style="display: block; width: 100%; padding: 0.3rem 1rem; margin: 0.5rem 0px 0; height: 150px; max-height: 15rem; overflow: auto; resize: none;"></textarea>
-</label>
+  <p>Wybierz, jaki typ danych importujesz:</p>
+  <input type="radio" id="${DOM.SETTINGS.ID.IMPORT_SETTINGS_BUTTON}" name="${DOM.SETTINGS.SELECTOR.IMPORT_CHECKBOX_NAME}" value="settings">
+  <label for="${DOM.SETTINGS.ID.IMPORT_SETTINGS_BUTTON}">Ustawienia</label><br>
+  <input type="radio" id="${DOM.SETTINGS.ID.IMPORT_MARKED_BUTTON}" name="${DOM.SETTINGS.SELECTOR.IMPORT_CHECKBOX_NAME}" value="markedUsers">
+  <label for="${DOM.SETTINGS.ID.IMPORT_MARKED_BUTTON}">Oznaczeni użytkownicy</label><br>
+  <input type="radio" id="${DOM.SETTINGS.ID.IMPORT_BLACKLIST_BUTTON}" name="${DOM.SETTINGS.SELECTOR.IMPORT_CHECKBOX_NAME}" value="blacklist">
+  <label for="${DOM.SETTINGS.ID.IMPORT_BLACKLIST_BUTTON}">Czarna lista</label><br>
+  <label style="padding-top:1rem">
+    Wklej swoje przenoszone dane poniżej:
+    <textarea id="${DOM.SETTINGS.ID.IMPORT_TEXTAREA}" style="display: block; width: 100%; padding: 0.3rem 1rem; margin: 0.5rem 0px 0; height: 150px; max-height: 15rem; overflow: auto; resize: none;"></textarea>
+  </label>
 `;
 
 export const exportSettingsModal = `
-<p>Wybierz, co chcesz wyeksportować:</p>
-<button class="button" id="${DOM.SETTINGS.ID.EXPORT_SETTINGS_BUTTON}">USTAWIENIA</button>
-<button class="button" id="${DOM.SETTINGS.ID.EXPORT_MARKED_BUTTON}">OZNACZONYCH UŻYTKOWNIKÓW</button>
-<label style="display:block;padding-top:1rem">
-DANE:
-<textarea class="" id="${DOM.SETTINGS.ID.EXPORT_TEXTAREA}" style="display: block; width: 100%; padding: 0.3rem 1rem; margin: 0.5rem 0px 0; height: 150px; max-height: 15rem; overflow: auto; resize: none;"></textarea>
-</label>
-<small>Po skopiowaniu edytuj dane TYLKO jeśli wiesz, co robisz - inaczej możesz uszkodzić i stracić wszystkie swoje dane, co wymusi konieczność reinstalacji dodatku "na świeżo".</small>
+  <p>Wybierz, co chcesz wyeksportować:</p>
+  <button class="button" id="${DOM.SETTINGS.ID.EXPORT_SETTINGS_BUTTON}">USTAWIENIA</button>
+  <button class="button" id="${DOM.SETTINGS.ID.EXPORT_MARKED_BUTTON}">OZNACZONYCH UŻYTKOWNIKÓW</button>
+  <button class="button" id="${DOM.SETTINGS.ID.EXPORT_BLACKLIST_BUTTON}">CZARNĄ LISTĘ</button>
+  <label style="display:block;padding-top:1rem">
+    DANE:
+    <textarea id="${DOM.SETTINGS.ID.EXPORT_TEXTAREA}" style="display: block; width: 100%; padding: 0.3rem 1rem; margin: 0.5rem 0px 0; height: 150px; max-height: 15rem; overflow: auto; resize: none;"></textarea>
+  </label>
+  <small>Po skopiowaniu edytuj dane TYLKO jeśli wiesz, co robisz - inaczej możesz uszkodzić i stracić wszystkie swoje dane, co wymusi konieczność reinstalacji dodatku "na świeżo".</small>
 `;
