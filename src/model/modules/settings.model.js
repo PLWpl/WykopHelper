@@ -74,13 +74,13 @@ export const settingsMarkup = `
   </div>
 <!--  BADGE -->
   <div class="space ${CLASSNAME.SETTINGS_BOX} ${CLASSNAME.SETTINGS_BADGE}">
-    <div class="row" style="display:flex;align-items:center;">
+    <div class="row space" style="display:flex;align-items:center;">
       <input 
         type="color" 
         id="badgeDefaultColor" 
         name="DEFAULT_COLOR" 
         category="BADGE" 
-        style="margin-left:.5rem" 
+        style="height:2rem; border:0; padding:0; width:2rem;" 
         value="#ff0000"
       />
       <label class="inline" for="badgeDefaultColor">Domyślny kolor odznaki</label> 

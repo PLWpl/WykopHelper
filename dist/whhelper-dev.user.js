@@ -377,8 +377,9 @@
 
 .${DOM.MODAL.CLASSNAME.INPUT_LABEL} {
   text-transform: none;
-  display: flex;
   align-items: center;
+  display: inline-flex;
+  margin: .3rem 0;
 }
 
 .${DOM.MODAL.CLASSNAME.INPUT_TEXT}, .${DOM.MODAL.CLASSNAME.INPUT_TEXT}:focus {
@@ -585,9 +586,11 @@
     <div class="${DOM.MODAL.CLASSNAME.SCROLLABLE_TEXT}"><p>${props.content}</p>
     ${props.media ? mediaText(props.media) : ''}</div>
     <p style="margin-top:1rem;text-align:right"><a href="${props.link}">Link do komentarza lub znaleziska</a></p>
-    <label class="${DOM.MODAL.CLASSNAME.INPUT_LABEL}">Treść odznaki: <input autocomplete="off" data-label="${props.label}" value="${props.label}" class="${DOM.MODAL.CLASSNAME.INPUT_TEXT}" id="${DOM.MODAL.ID.BADGE_TEXT}" style="margin-left: 1rem;"></label>
-    <label class="${DOM.MODAL.CLASSNAME.INPUT_LABEL}">Kolor odznaki: <input type="color" data-color="${props.color ? props.color : settings$2.BADGE.DEFAULT_COLOR}" id="${DOM.MODAL.ID.BADGE_COLOR}" value="${props.color ? props.color : settings$2.BADGE.DEFAULT_COLOR}" style="margin-left: 1rem;"></label>
-    <label class="${DOM.MODAL.CLASSNAME.INPUT_LABEL}">Czarna lista: <input data-blocked="${blocked}" type="checkbox" id="${DOM.MODAL.ID.BLACKLIST}" style="margin-left: 2rem;" ${blocked ? 'checked' : ''}></label>
+    <div style="display:flex;flex-direction:column;">
+      <label class="${DOM.MODAL.CLASSNAME.INPUT_LABEL}">Treść odznaki: <input autocomplete="off" data-label="${props.label}" value="${props.label}" class="${DOM.MODAL.CLASSNAME.INPUT_TEXT}" id="${DOM.MODAL.ID.BADGE_TEXT}" style="margin-left: 1rem;"></label>
+      <label class="${DOM.MODAL.CLASSNAME.INPUT_LABEL}">Kolor odznaki: <input type="color" data-color="${props.color ? props.color : settings$2.BADGE.DEFAULT_COLOR}" id="${DOM.MODAL.ID.BADGE_COLOR}" value="${props.color ? props.color : settings$2.BADGE.DEFAULT_COLOR}" style="margin-left: 1rem;height:2rem;border:0;padding:0;width:2rem;"></label>
+      <label class="${DOM.MODAL.CLASSNAME.INPUT_LABEL}">Czarna lista: <input data-blocked="${blocked}" type="checkbox" id="${DOM.MODAL.ID.BLACKLIST}" style="margin-left: 2rem;" ${blocked ? 'checked' : ''}></label>
+    </div>
     `,
       button: "Usu\u0144 oznaczenie",
       buttonClose: "Zapisz"
@@ -1283,13 +1286,13 @@
   </div>
 <!--  BADGE -->
   <div class="space ${CLASSNAME.SETTINGS_BOX} ${CLASSNAME.SETTINGS_BADGE}">
-    <div class="row" style="display:flex;align-items:center;">
+    <div class="row space" style="display:flex;align-items:center;">
       <input 
         type="color" 
         id="badgeDefaultColor" 
         name="DEFAULT_COLOR" 
         category="BADGE" 
-        style="margin-left:.5rem" 
+        style="height:2rem; border:0; padding:0; width:2rem;" 
         value="#ff0000"
       />
       <label class="inline" for="badgeDefaultColor">Domyślny kolor odznaki</label> 

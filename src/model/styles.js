@@ -169,8 +169,9 @@ export const modal = `
 
 .${DOM.MODAL.CLASSNAME.INPUT_LABEL} {
   text-transform: none;
-  display: flex;
   align-items: center;
+  display: inline-flex;
+  margin: .3rem 0;
 }
 
 .${DOM.MODAL.CLASSNAME.INPUT_TEXT}, .${DOM.MODAL.CLASSNAME.INPUT_TEXT}:focus {
