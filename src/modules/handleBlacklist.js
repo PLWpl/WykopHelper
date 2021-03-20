@@ -27,6 +27,7 @@ export const handleBlacklistedProfile = () => {
 
   if (isBlacklisted(nick)) {
     $(`${DOM.BADGE.SELECTOR.USER_PROFILE_NICK}:not(:first-child)`).style.filter = 'grayscale(65%)';
+    // eslint-disable-next-line max-len
     $(DOM.BADGE.SELECTOR.USER_PROFILE_NICK_ELEMENT).insertAdjacentHTML('beforeend', `<span class="${DOM.BADGE.CLASSNAME.PROFILE_BLACKLISTED}" id="${DOM.BADGE.ID.PROFILE_BLACKLISTED}">🔐</span>`);
   }
 
