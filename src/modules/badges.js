@@ -1,6 +1,7 @@
 import { $, $$ } from "../utils/dom";
 import { STORAGE_KEY_NAMES } from "../constants/localStorageKeyNames";
 import { DOM } from "../constants/domSelectors";
+import isPath from '../utils/checkPath';
 
 import styles from "../model/styles.js";
 import { buttonMarkup, badge, markedInBulk, buttonBulkMarkup } from "../model/modules/badges.model";
@@ -151,6 +152,12 @@ export const handleBadges = () => {
         $(`.${EL.CLASSNAME.BADGE}`, element).remove();
       }
     });
+
+    if (isPath.userProfile()) {
+      setTimeout(() => {
+        location.reload();
+      }, 200)
+    }
   };
 
   // fired on clicking a button "Oznacz".
@@ -286,7 +293,11 @@ export const handleBadges = () => {
           "Usunięto!",
           "Użytkownik nie będzie już więcej oznaczany.",
           "info"
-        );
+        ).then(() => {
+          if (isPath.userProfile()) {
+            location.reload();
+          }
+        });
       } else if (result.isDenied) {
         const oldLabel = $(`#${DOM.MODAL.ID.BADGE_TEXT}`).dataset.label;
         const newLabel = $(`#${DOM.MODAL.ID.BADGE_TEXT}`).value;
@@ -365,6 +376,14 @@ export const handleBadges = () => {
         markUsers();
       }, 500);
     }
+    if (target.classList.contains(EL.CLASSNAME.BADGE)) {
+      const nick = target.dataset.whusername;
+      showUserModal(EL.DYNAMIC.DATASET.USERNAME(nick));
+    }
+  });
+
+  $(`.${EL.CLASSNAME.USER_PROFILE}`).addEventListener("click", event => {
+    const target = event.target;
     if (target.classList.contains(EL.CLASSNAME.BADGE)) {
       const nick = target.dataset.whusername;
       showUserModal(EL.DYNAMIC.DATASET.USERNAME(nick));

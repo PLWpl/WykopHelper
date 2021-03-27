@@ -775,6 +775,12 @@
           $(`.${EL.CLASSNAME.BADGE}`, element).remove();
         }
       });
+
+      if (isPath.userProfile()) {
+        setTimeout(() => {
+          location.reload();
+        }, 200);
+      }
     };
 
     // fired on clicking a button "Oznacz".
@@ -910,7 +916,11 @@
             "Usuni\u0119to!",
             "U\u017Cytkownik nie b\u0119dzie ju\u017C wi\u0119cej oznaczany.",
             "info"
-          );
+          ).then(() => {
+            if (isPath.userProfile()) {
+              location.reload();
+            }
+          });
         } else if (result.isDenied) {
           const oldLabel = $(`#${DOM.MODAL.ID.BADGE_TEXT}`).dataset.label;
           const newLabel = $(`#${DOM.MODAL.ID.BADGE_TEXT}`).value;
@@ -993,6 +1003,14 @@
       }
     });
 
+    $(`.${EL.CLASSNAME.USER_PROFILE}`).addEventListener("click", event => {
+      const target = event.target;
+      if (target.classList.contains(EL.CLASSNAME.BADGE)) {
+        const nick = target.dataset.whusername;
+        showUserModal(EL.DYNAMIC.DATASET.USERNAME(nick));
+      }
+    });
+
     if (document.getElementById(EL.ID.VOTES_CONTAINER)) {
       document.getElementById(EL.ID.VOTES_CONTAINER)
         .closest('.rbl-block').querySelector('.nav').addEventListener("click", event => {
@@ -1010,9 +1028,6 @@
           }
         });
     }
-
-    window.getNick = getNickData;
-    window.isMarked = isMarked;
   };
 
   /**
@@ -1074,7 +1089,6 @@
    */
   const isNotAwarded = element => !$(`.${EL$1.CLASSNAME.BADGE}`, element);
 
-  let markedUsers = getLocalStorage("marked");
   let settings$3 = getLocalStorage("settings");
 
   /**
@@ -1085,12 +1099,16 @@
     if (!nick) {
       throw new Error("getNickData requires nick to be provided.");
     }
+
+    const markedUsers = getLocalStorage("marked");
+
     for (let i = 0; i < markedUsers.length; i++) {
       if (markedUsers[i].nick === nick) {
         return {
           link: markedUsers[i].link,
           nick: markedUsers[i].nick,
           label: markedUsers[i].label,
+          color: markedUsers[i].color,
           content: markedUsers[i].content,
           media: markedUsers[i].media,
         };
@@ -1104,6 +1122,7 @@
    * @returns {String} default name for badge set in settings by user.
    */
   const getDefaultBadgeLabelFromSettings = () => settings$3.BADGE.DEFAULT_NAME;
+  const getDefaultBadgeColorFromSettings = () => settings$3.BADGE.DEFAULT_COLOR;
 
   const { BADGE: EL$2 } = DOM;
 
@@ -1115,9 +1134,10 @@
     const nick = $(EL$2.SELECTOR.USER_PROFILE_NICK).textContent;
     const userData = getNickData(nick) ? getNickData(nick) : null;
     const label = userData ? userData.label : getDefaultBadgeLabelFromSettings();
+    const color = userData ? userData.color : getDefaultBadgeColorFromSettings();
 
     if (isMarked(nick) && isNotAwarded(nickElement)) {
-      nickElement.insertAdjacentHTML("afterbegin", badge$1(nick, label, false));
+      nickElement.insertAdjacentHTML("afterbegin", badge$1(nick, label, true, color));
     }
   };
 
