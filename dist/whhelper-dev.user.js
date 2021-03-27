@@ -858,22 +858,24 @@
       updateView(true);
     };
 
-    // gets user data from objects inside marked users array. For now the only useful data returned is link to the offending post
+    // gets user data from objects inside marked users array. 
     const getNickData = nick => {
       if (!nick) {
         throw new Error("getNickData requires nick to be provided.");
       }
-      for (let i = 0; i < markedUsers.length; i++) {
-        if (markedUsers[i].nick === nick) {
+      const updatedMarkedUsers = getLocalStorage("marked");
+
+      for (let i = 0; i < updatedMarkedUsers.length; i++) {
+        if (updatedMarkedUsers[i].nick === nick) {
           return {
-            link: markedUsers[i].link,
-            nick: markedUsers[i].nick,
-            label: markedUsers[i].label,
-            color: markedUsers[i].color,
-            content: markedUsers[i].content,
-            media: markedUsers[i].media,
+            link: updatedMarkedUsers[i].link,
+            nick: updatedMarkedUsers[i].nick,
+            label: updatedMarkedUsers[i].label,
+            color: updatedMarkedUsers[i].color,
+            content: updatedMarkedUsers[i].content,
+            media: updatedMarkedUsers[i].media,
           };
-        } else if (markedUsers[i] === undefined || markedUsers[i] === null) {
+        } else if (updatedMarkedUsers[i] === undefined || updatedMarkedUsers[i] === null) {
           continue;
         }
       }
@@ -1008,6 +1010,9 @@
           }
         });
     }
+
+    window.getNick = getNickData;
+    window.isMarked = isMarked;
   };
 
   /**
