@@ -851,10 +851,11 @@
     };
 
     const changeMarkedUser = (nick, prop, newValue) => {
-      for (let item of markedUsers.entries()) {
+      const updatedMarkedUsers = getLocalStorage("marked");
+      for (let item of updatedMarkedUsers.entries()) {
         if (item[1].nick === nick) {
           item[1][prop] = newValue;
-          const marked = markedUsers.filter(el => el != null);
+          const marked = updatedMarkedUsers.filter(el => el != null);
           localStorage.setItem(
             STORAGE_KEY_NAMES.MARKED_USERS,
             JSON.stringify(marked)
@@ -1003,13 +1004,15 @@
       }
     });
 
-    $(`.${EL.CLASSNAME.USER_PROFILE}`).addEventListener("click", event => {
-      const target = event.target;
-      if (target.classList.contains(EL.CLASSNAME.BADGE)) {
-        const nick = target.dataset.whusername;
-        showUserModal(EL.DYNAMIC.DATASET.USERNAME(nick));
-      }
-    });
+    if (isPath.userProfile()) {
+      $(`.${EL.CLASSNAME.USER_PROFILE}`).addEventListener("click", event => {
+        const target = event.target;
+        if (target.classList.contains(EL.CLASSNAME.BADGE)) {
+          const nick = target.dataset.whusername;
+          showUserModal(EL.DYNAMIC.DATASET.USERNAME(nick));
+        }
+      });
+    }
 
     if (document.getElementById(EL.ID.VOTES_CONTAINER)) {
       document.getElementById(EL.ID.VOTES_CONTAINER)
