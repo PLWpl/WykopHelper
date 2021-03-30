@@ -32,15 +32,18 @@ W widocznej na screenie ramce znajdzie się treść komentarza (na wypadek, gdyb
 
 Odznaka będzie wyświetlana również w profilu użytkownika, między avatarem a nickiem.
 
-Ostatnia opcja to możliwość zmiany tekstu odznaki. Domyślnie nadawana jest taka, jaką zdefiniowano w ustawieniach (czytaj dalej). Jednak każdego użytkownika z osobna możemy oznaczyć osobno właśnie tutaj. Zmiana następuje po potwierdzeniu przyciskiem "Zapisz".
+Niżej znajduje się opcja zmiany tekstu i koloru odznaki. Domyślnie nadawane są takie wartości, jakie zdefiniowano w ustawieniach. Jednak każdego użytkownika z osobna możemy edytować właśnie tutaj. Zmiana następuje po potwierdzeniu przyciskiem "Zapisz".
 
-> Docelowo będzie tu znacznie więcej opcji - po szczegóły zapraszam do sekcji trzeciej, "Plany".
+Ostatnia opcja to czarna lista. Ostrożnie z tym ficzerem! Jest znacznie potężniejszy niż wykopowa opcja o tej samej nazwie. W odróżnieniu od tej z wykopu, po zczarnolistowaniu użytkownika w dodatku, jego treści są usuwane całkowicie; nie zobaczysz już opcji rozwinięcia takiego komentarza!
 
-Może też się tak zdarzyć, że po pewnym czasie uznasz, że user już nie zasługuje na dalszą stygmatyzację. Wtedy wystarczy kliknąć ten duży przycisk "Usuń oznaczenie".
+Może też się tak zdarzyć, że po pewnym czasie uznasz, że user już nie zasługuje na dalsze wyróżnianie. Wtedy wystarczy kliknąć ten duży przycisk "Usuń oznaczenie".
+
+> ** Jak odznaczyć użytkownika, który trafił na czarną listę?
+> Musisz znać jego nick; wejdź na jego profil (https://wykop.pl/ludzie/nazwa_uzytkownika), i kliknij w ikonę kłódki, która będzie wyświetlona przy jego nicku.
 
 ![usun-oznaczenie](/removed-marking.png)
 
-**Domyślnie, tekst jaki jest na odznace to "Debil" - uznałem, że najpewniej to jest komunikat, jaki będzie cieszyć się największą popularnością ;) Tym niemniej, domyślny tekst może zostać zmieniony w ustawieniach - o nich nieco niżej.**
+**Domyślnie, tekst jaki jest na odznace to "debil" - uznałem, że najpewniej to jest komunikat, jaki będzie cieszyć się największą popularnością ;) Tym niemniej, domyślny tekst może zostać zmieniony w ustawieniach - o nich nieco niżej.**
 
 ### Hurtowe oznaczanie użytkowników
 
@@ -90,11 +93,20 @@ Czasem może być tak, że chcesz widzieć znaleziska z jakiejś kategorii (np. 
 
 ![comments-removed](/comments-removed.png)
 
+
+### Usuwanie informacji o tym, z jakiej aplikacji został dodany komentarz 🔧
+
+Gdy użytkownik używa jakiejś aplikacji mobilnej do komentowania, informacja o tym znajduje się przy treściach przez niego stworzonych:
+
+![posted-via](/posted-via.png)
+
+Czasem może to być uciążliwe, na przykład gdy ktoś ma długi nick, zwłaszcza na mniejszych ekranach lub przy włączonym powiększeniu. W ustawieniach pojawiła się opcja pozwalająca na usuwanie tego komunikatu.
+
 ### Ostrzeganie przed wyjściem ze strony, gdy zostanie wykryte pisanie komentarza 🔧
 
 Gdy zostanie wykryte pisanie komentarza (w polu tekstowym znajdzie się co najmniej 6 słów), przed przeładowaniem/zamknięciem strony zostanie wyświetlony monit z pytaniem, czy użytkownik jest pewien swoich działań.
 
-**Uwaga - ficzer przez dłuższy czas miał jakieś kłopoty z działaniem na niektórych przeglądarkach; wydaje mi się, że najnowsza aktualizacja problem naprawia, zalecam jednak mimo wszystko przeprowadzić własne testy :)**
+**Uwaga - ficzer przez dłuższy czas miał jakieś kłopoty z działaniem na niektórych przeglądarkach; wydaje mi się, że aktualnie problem jest już rozwiązany, zalecam jednak mimo wszystko przeprowadzić własne testy :)**
 
 ### Ustawienia 🔧🔧🔧
 
@@ -108,7 +120,17 @@ W pierwszym polu tekstowym można zdefiniować, po przecinku, listę tagów po w
 
 W drugim zaś polu tekstowym można ustawić, jaki będzie domyślny tekst na odznace nadawanej użytkownikowi po kliknięciu przycisku "Oznacz" (lub masowym oznaczaniu). 
 
-Poniżej z kolei znajduje się opcja usunięcia wszystkich odznaczeń lub przejrzenia tabeli z wyróżnionymi userami. Z poziomu tabeli można również daną osobę usunąć, jak również przejść do komentarza.
+Pomiędzy nimi pojawia się opcja wyboru domyślnego koloru odznaki.
+
+W najnowszej aktualizacji dodana została opcja importu i eksportu danych dodatku tak, by można było relatywnie łatwo migrować między przeglądarkami. Aby wyeksportować dane, wystarczy kliknąć w oznaczony tak przycisk, a następnie - w oknie które się otworzy - wybrać, jaki rodzaj danych chcemy ściągnąć. Po wyborze, dane zostaną załadowane do okienka tekstowego. Należy je samodzielnie skopiować i zapisać w pliku tekstowym w celach późniejszego importu.
+
+![export](/export-settings.png)
+
+Importowanie ustawień polega na dokładnie odwrotnym procesie - w otworzonym oknie należy wkleić wcześniej wyeksportowaną treść, wybrać typ importowanych danych i zapisać je.
+
+![import](/import-settings.png)
+
+Na samym dole znajduje się opcja usunięcia wszystkich odznaczeń lub przejrzenia tabeli z wyróżnionymi userami. Z poziomu tabeli można również daną osobę usunąć, jak również przejść do komentarza lub znaleziska będącego powodem oznaczenia.
 
 ## 2. Instalacja 
 Do skorzystania z WykopHelpera konieczne będzie pobranie rozszerzenia do przeglądarki obsługującego UserScripty: [Tampermonkey](https://www.tampermonkey.net/), [Greasemonkey](https://www.greasespot.net/) albo jeden z miliona innych menadżerów skryptów (dostępne dla każdej sensownej przeglądarki, acz lojalnie uprzedzam, że sam używam tampermonkey i tylko tam testowałem WH; ale powinien działać wszędzie tak samo). Po zainstalowaniu, wystarczy wejść pod ten adres: [https://cdn.jsdelivr.net/gh/plwpl/WykopHelper@master/dist/whhelper.user.js](https://cdn.jsdelivr.net/gh/plwpl/WykopHelper@master/dist/whhelper.user.js), a następnie zainstalować skrypt.
@@ -122,15 +144,10 @@ Po zainstalowaniu dodatek będzie aktualizował się automatycznie. Po każdej i
 
 Czego można się spodziewać? (🐾 - oznacza, że nad tym aktualnie pracuję, i zapewne znajdzie się to w najbliższej aktualizacji)
 
- * Rozwinięcie funkcjonalności odznak: 🐾
-   - Możliwość ustawienia domyślnego, jak również customowego koloru dla każdego oznaczonego użytkownika z osobna 🐾
-   - możliwość zadecydowania, że treści od danego użytkownika nie chcemy już widzieć w ogóle (taka super-czarna lista, całkowicie usuwająca treści danego usera) 🐾
-   - możliwość eksportu i importu listy oznaczonych userów - tak, by móc je migrować między przeglądarkami, czy komputerami 🐾
-   - redesign popupu odznaki 🐾
  * Zintegrowanie funkcjonalności podobnych do tych, jakie można odnaleźć w tych dodatkach: https://www.wykop.pl/dodatki/pokaz/1021/ , https://www.wykop.pl/dodatki/pokaz/1013/ , https://www.wykop.pl/dodatki/pokaz/231/
- * Opcja ograniczania dostępu do wypoku - przy walce z uzależnieniem ;)
- * możliwość włączenia podglądu na żywo, jak wyglądać będzie post po opublikowaniu
- * ostrzeżenie "paywall" przy znaleziskach ze źródłem z paywallem; wyświetlane analogicznie do ostrzeżenia 18+.
+ * Opcja ograniczania dostępu do wypoku - przy walce z uzależnieniem ;) 🐾
+ * możliwość włączenia podglądu na żywo, jak wyglądać będzie post po opublikowaniu 🐾
+ * ostrzeżenie "paywall" przy znaleziskach ze źródłem z paywallem; wyświetlane analogicznie do ostrzeżenia 18+. 🐾
  * Redesign całości
    - ujednolicenie wyglądu poszczególnych elementów
    - wsparcie dla trybu dziennego
@@ -189,6 +206,18 @@ Bez komentarza.
 
 
 ## 6. Changelog
+
+**0.70** - _30.03.2021_
+
+  * W ustawieniach można wybrać **domyślny** kolor odznaki, który będzie nadawany każdemu nowemu oznaczonemu...
+  * ...Ale kolor ten można zmienić dla każdego z osobna -  w popupie aktywowanym kliknięciem w odznakę przy danym userze.
+  * Dodatkowo, w popupie usera można zadecydować o wrzuceniu usera na **super** czarną listę. Ale **ostrożnie** - po zczarnolistowaniu, posty danego użytkownika będą _całkowicie_ usuwane, a nie tylko chowane jak w wykopowej czarnej liście. Później - aby użytkownikowi wybaczyć, i z czarnej listy go zdjąć - należy udać się do jego profilu (wykop.pl/ludzie/NICK) i kliknąć na ikonę kłódki przy jego nicku. O tym, że dany user jest zczarnolistowany, świadczy w jego profilu ta kłódka, oraz lekko przytumiony nick.
+  * Dodano funkcję, aktywowaną w ustawieniach, umożliwiającą usuwanie tekstu "via [nazwa aplikacji]" w komentarzach użytkowników. Przy dłuższych nickach, albo przy stosowaniu innych dodatków (np. pokazujących czy dany user wykopał czy zakopał znalezisko) ta mało użyteczna informacja o aplikacji jakiej ktoś używa potrafi spowodować nachodzenie na siebie różnych tekstów.
+  * W ustawieniach można również od teraz eksportować i importować swoje ustawienia i listy oznaczonych i czarnolistowanych użytkowników. Na razie jest to proces raczej ręczny (wymaga kopiowania i przeklejania ciągów znaków między przeglądarkami); możliwe, że w przyszłości coś tutaj zostanie udoskonalone, chociaż nie ukrywam, że wynika to z mojej niechęci do używania zewnętrznych usług - bo wtedy wchodziłyby w grę kwestie prywatności, dostępów, śledzenia i tak dalej i tak dalej... a tego chcę za wszelką cenę uniknąć.
+  * Od teraz odznaka będzie się wyświetlać dokładnie tak, jak to ustawisz w ustawieniach bądź konkretnemu userowi. Do tej pory wymuszana była konwencja rozpoczynania tekstu wielką literą, a reszta małymi - ale już nie jest. Jeśli chcesz, możesz nawet pisać po pOkEmOnOwEmU :)
+  * Parę wizualnych zmian (ikony itp.; nic przełomowego). Redesign całości, a zwłaszcza popupu odznaki, wkrótce - bo powoli robi się mało estetyczny bałagan.
+  * Zniknęło sporo pomniejszych bugów.
+  * Z pewnością pojawiło się sporo nowych bugów :)
 
 **0.65**
 * Funkcja ostrzegania przed znaleziskami podejrzanymi o szerzenie propagandy rosyjskiej została zmodyfikowana. Od teraz możesz samodzielnie ustalić, czy takie ostrzeżenie ma w ogóle być pokazywane, a także jaka ma być jego treść i dla jakich domen ma się aktywować. Zdecydować o tym możesz oczywiście w ustawieniach (ikona zębatki przy odpowiednim checkboxie).
