@@ -137,7 +137,7 @@ Do skorzystania z WykopHelpera konieczne będzie pobranie rozszerzenia do przegl
 
 > **Hur dur nie chcem zminifikowanego kodu**
 > 
-> Spoko. W takim razie wbijaj na [https://cdn.jsdelivr.net/gh/plwpl/WykopHelper@master/dist/whhelper-dev.user.js](https://cdn.jsdelivr.net/gh/plwpl/WykopHelper@master/dist/whhelper-dev.user.js) albo zerknij po prostu na repo tego projektu (link na samej górze strony). **Miej tylko na uwadze, że wersja `-dev` to wersja mniej stabilna, przeznaczona do testów. Używając jej szybciej dostaniesz nowe ficzery, ale i szybciej dostaniesz nowe bugi :)**
+> Spoko. W takim razie wbijaj na [https://cdn.jsdelivr.net/gh/plwpl/WykopHelper@develop/dist/whhelper-dev.user.js](https://cdn.jsdelivr.net/gh/plwpl/WykopHelper@master/dist/whhelper-dev.user.js) albo zerknij po prostu na repo tego projektu (link na samej górze strony). **Miej tylko na uwadze, że wersja `-dev` to wersja mniej stabilna, przeznaczona do testów. Używając jej szybciej dostaniesz nowe ficzery, ale i szybciej dostaniesz nowe bugi :)**
 
 ## 3. Plany
 Po zainstalowaniu dodatek będzie aktualizował się automatycznie. Po każdej istotnej aktualizacji, po wejściu na wykop wyświetli się popup z informacjami o nowych ficzerach czy zmianach.
