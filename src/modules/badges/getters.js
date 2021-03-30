@@ -1,6 +1,5 @@
 import { getLocalStorage } from "../../utils/handleLocalStorage";
 
-let markedUsers = getLocalStorage("marked");
 let settings = getLocalStorage("settings");
 
 /**
@@ -11,12 +10,16 @@ export const getNickData = nick => {
   if (!nick) {
     throw new Error("getNickData requires nick to be provided.");
   }
+
+  const markedUsers = getLocalStorage("marked");
+
   for (let i = 0; i < markedUsers.length; i++) {
     if (markedUsers[i].nick === nick) {
       return {
         link: markedUsers[i].link,
         nick: markedUsers[i].nick,
         label: markedUsers[i].label,
+        color: markedUsers[i].color,
         content: markedUsers[i].content,
         media: markedUsers[i].media,
       };
@@ -30,3 +33,4 @@ export const getNickData = nick => {
  * @returns {String} default name for badge set in settings by user.
  */
 export const getDefaultBadgeLabelFromSettings = () => settings.BADGE.DEFAULT_NAME;
+export const getDefaultBadgeColorFromSettings = () => settings.BADGE.DEFAULT_COLOR;

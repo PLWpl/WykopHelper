@@ -21,7 +21,7 @@ export const badge = `
   opacity: 0;
 }
 .${DOM.BADGE.CLASSNAME.BADGE} {
-  color: red;
+  color: var(--badgeColor);
   font-weight: bold;
   margin-right: .3rem;
   border: 1px solid currentColor;
@@ -58,6 +58,10 @@ export const badge = `
 .${DOM.BADGE.CLASSNAME.MARK_ALL_BUTTON} {
   top: 0.8rem;
   position: relative;
+}
+
+.${DOM.BADGE.CLASSNAME.PROFILE_BLACKLISTED} {
+  cursor: pointer;
 }
 
 .${DOM.HIGHLIGHT_OP.CLASSNAME.HIGHLIGHT_BUTTON} {
@@ -101,6 +105,13 @@ export const settings = `
 .${DOM.SETTINGS.CLASSNAME.WH_USER_TABLE_HEAD} {
   font-weight: bold;
   border-bottom: 2px solid currentColor;
+}
+.${DOM.SETTINGS.CLASSNAME.WH_USER_TABLE_BADGE_COLOR} {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  background: var(--settingsBadgeColor);
+  border-radius: .5rem;
 }
 .${DOM.SETTINGS.CLASSNAME.WH_SETTINGS_CROSSED} {
   opacity: .4;
@@ -158,6 +169,9 @@ export const modal = `
 
 .${DOM.MODAL.CLASSNAME.INPUT_LABEL} {
   text-transform: none;
+  align-items: center;
+  display: inline-flex;
+  margin: .3rem 0;
 }
 
 .${DOM.MODAL.CLASSNAME.INPUT_TEXT}, .${DOM.MODAL.CLASSNAME.INPUT_TEXT}:focus {

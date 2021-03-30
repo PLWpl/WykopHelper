@@ -1,5 +1,6 @@
 import isPath from './utils/checkPath';
 import { handleBadges } from './modules/badges';
+import { handleRemovalOfBlacklisted, handleBlacklistedProfile } from './modules/handleBlacklist';
 import { displayBadgeInUserProfile } from './modules/badges/displayInUserProfile';
 import { handleDomainCheck } from './modules/domainChecker'
 import { hideMarkedUsers } from './modules/hideMarkedUsers'
@@ -12,6 +13,7 @@ import { embedOnPaste } from './modules/embedOnPaste';
 import { removeWoodle } from './modules/removeWoodle';
 import { removeCommentsByTag } from './modules/removeCommentsByTag';
 import { removeAllComments } from './modules/removeAllComments';
+import { removePostedViaApp } from './modules/removePostedViaApp';
 
 /**
 * Capitalize first letter
@@ -31,12 +33,15 @@ if (isPath.sitewide()) {
 }
 if (isPath.main()) {
   handleBadges();
+  handleRemovalOfBlacklisted();
   warnOnReload();
   embedOnPaste();
   hideMarkedUsers();
+  removePostedViaApp();
 }
 if (isPath.userProfile()) {
   displayBadgeInUserProfile();
+  handleBlacklistedProfile();
 }
 if (isPath.settings()) {
   createSettingsPage();

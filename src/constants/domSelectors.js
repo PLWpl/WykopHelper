@@ -11,7 +11,9 @@ export const DOM = {
       COMMENTS_STREAM: 'itemsStream',
     },
     SELECTOR: {
-      TAGS: '.fix-tagline > .tag.affect.create[href]'
+      TAGS: '.fix-tagline > .tag.affect.create[href]',
+      COMMENT: '[data-type="comment"]',
+      THREAD: '[data-type="entrycomment"]',
     }
   },
   BADGE: {
@@ -33,9 +35,11 @@ export const DOM = {
       MODAL_BUTTON: 'modalWH-button',
       MODAL_BUTTON_REMOVE: 'modalWH-button--remove',
       MODAL_TEXT: 'modalWH-text',
+      PROFILE_BLACKLISTED: 'whProfile--blacklistedIcon',
     },
     ID: {
       VOTES_CONTAINER: 'votesContainer',
+      PROFILE_BLACKLISTED: 'whBlacklistedIcon',
     },
     SELECTOR: {
       // wykop.pl elements
@@ -46,6 +50,7 @@ export const DOM = {
       COMMENT_FORM: '#commentFormContainer textarea',
       USER_PROFILE_NICK_ELEMENT: '.user-profile h2',
       USER_PROFILE_NICK: '.user-profile h2 span',
+      // custom WH elements
     },
     DYNAMIC: {
       DATASET: {
@@ -69,6 +74,7 @@ export const DOM = {
       WH_USER_TABLE_CONTAINER_HIDDEN: 'tableWH__container--hidden',
       WH_USER_TABLE_BODY: 'tableWH__body',
       WH_USER_TABLE_REMOVE_BUTTON: 'tableWH__nick-remove',
+      WH_USER_TABLE_BADGE_COLOR: 'tableWH__badgeColor',
       WH_SETTINGS_CROSSED: 'settings__crossed',
     },
     ID: {
@@ -79,12 +85,23 @@ export const DOM = {
       SUSPECT_DOMAINS_SETTINGS_LINK: 'suspectDomainsSettings',
       SUSPECT_DOMAINS_SETTINGS_TEXTAREA: 'suspectDomains',
       WARN_ON_RELOAD_SETTING: 'warnOnReload',
-      WARN_ON_RELOAD_INFO_LINK: 'warnOnReloadInfo'
+      WARN_ON_RELOAD_INFO_LINK: 'warnOnReloadInfo',
+      IMPORT_BUTTON: 'buttonImport',
+      EXPORT_BUTTON: 'buttonExport',
+      IMPORT_TEXTAREA: 'importArea',
+      EXPORT_TEXTAREA: 'exportArea',
+      EXPORT_SETTINGS_BUTTON: 'buttonExportSettings',
+      EXPORT_MARKED_BUTTON: 'buttonExportMarkedUsers',
+      EXPORT_BLACKLIST_BUTTON: 'buttonExportBlacklist',
+      IMPORT_SETTINGS_BUTTON: 'buttonImportSettings',
+      IMPORT_MARKED_BUTTON: 'buttonImportMarkedUsers',
+      IMPORT_BLACKLIST_BUTTON: 'buttonImportBlacklist'
     },
     SELECTOR: {
       LAST_NAV_ELEMENT: '#site .nav > ul > li:last-child',
       ACTIVE_NAV_ELEMENT: '#site .nav > ul .active',
       SETTINGS_FORM_ELEMENT: '#site .grid-main .settings',
+      IMPORT_CHECKBOX_NAME: 'whImportExportChoice',
     },
   },
   HIGHLIGHT_OP: {
@@ -124,6 +141,8 @@ export const DOM = {
     },
     ID: {
       BADGE_TEXT: 'whModal_badgeText',
+      BADGE_COLOR: 'whModal_badgeColor',
+      BLACKLIST: 'whModal_blacklist'
     }
   },
 };

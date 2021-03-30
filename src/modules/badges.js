@@ -1,6 +1,7 @@
 import { $, $$ } from "../utils/dom";
 import { STORAGE_KEY_NAMES } from "../constants/localStorageKeyNames";
 import { DOM } from "../constants/domSelectors";
+import isPath from '../utils/checkPath';
 
 import styles from "../model/styles.js";
 import { buttonMarkup, badge, markedInBulk, buttonBulkMarkup } from "../model/modules/badges.model";
@@ -35,19 +36,26 @@ export const handleBadges = () => {
   };
 
   // adds nick to marked users array of objects along with the link and desired label
-  const addNickToMarkedUsersArray = (nick, link, label, content, media) => {
+  const addNickToMarkedUsersArray = (nick, link, label, content, media, color) => {
     markedUsers = getLocalStorage("marked");
-    const marked = [...markedUsers, { nick, link, label, content, media }];
+    const marked = [...markedUsers, { nick, link, label, content, media, color }];
     localStorage.setItem(
       STORAGE_KEY_NAMES.MARKED_USERS,
       JSON.stringify(marked)
     );
   };
 
-  const addNickToArrays = (nick, link, content = '', media = '', label = settings.BADGE.DEFAULT_NAME) => {
+  const addNickToArrays = (
+    nick, 
+    link, 
+    content = '', 
+    media = '', 
+    label = settings.BADGE.DEFAULT_NAME, 
+    color = settings.BADGE.DEFAULT_COLOR
+  ) => {
     if (!isMarked(nick)) {
       addNickToUniqueNicksArray(nick);
-      addNickToMarkedUsersArray(nick, link, label, content, media);
+      addNickToMarkedUsersArray(nick, link, label, content, media, color);
     }
   };
 
@@ -79,6 +87,7 @@ export const handleBadges = () => {
     !!$(`.${EL.CLASSNAME.MARK_BUTTON}`, element);
 
   const getDefaultBadgeLabelFromSettings = () => settings.BADGE.DEFAULT_NAME;
+  const getDefaultBadgeColorFromSettings = () => settings.BADGE.DEFAULT_COLOR;
 
   // goes through all user elements on a page and checks, if user nicks are present in uniqueNicksSet array. If they are, AND they haven't yet been awarded a badge, it injects the badge.
   const markUsers = () => {
@@ -86,11 +95,12 @@ export const handleBadges = () => {
       const elements = getAllNickElements();
       elements.forEach(element => {
         const nick = getNick(element);
-        const userData = getNickData(nick) ? getNickData(nick) : null;
-        const label = userData ? userData.label : getDefaultBadgeLabelFromSettings();
-
+        
         if (isMarked(nick) && isNotAwarded(element)) {
-          element.insertAdjacentHTML("afterbegin", badge(nick, label));
+          const userData = getNickData(nick) ? getNickData(nick) : null;
+          const label = userData ? userData.label : getDefaultBadgeLabelFromSettings();
+          const color = userData && userData.color ? userData.color : getDefaultBadgeColorFromSettings();
+          element.insertAdjacentHTML("afterbegin", badge(nick, label, true, color));
         } else if (!hasButtonAppended(element)) {
           element.insertAdjacentHTML("beforeend", buttonMarkup);
         }
@@ -109,7 +119,7 @@ export const handleBadges = () => {
 
   /**
    * Updates view - checks if badges are already present on the page for marked users, and if not - injects them.
-   * @param {boolean} dataChange - set to true if you only want to update label text 
+   * @param {boolean} dataChange - set to true if you only want to update label text or color 
    */
   const updateView = dataChange => {
     markUsers();
@@ -127,7 +137,7 @@ export const handleBadges = () => {
       if (dataChange && isMarked(nick) && !isNotAwarded(element)) {
         $(`.${EL.CLASSNAME.BADGE}`, element).remove();
         const nickData = getNickData(nick);
-        element.insertAdjacentHTML("afterbegin", badge(nick, nickData.label));
+        element.insertAdjacentHTML("afterbegin", badge(nick, nickData.label, true, nickData.color));
       }
       // if user is marked - remove button to mark him as it's not needed anymore
       if (
@@ -142,6 +152,12 @@ export const handleBadges = () => {
         $(`.${EL.CLASSNAME.BADGE}`, element).remove();
       }
     });
+
+    if (isPath.userProfile()) {
+      setTimeout(() => {
+        location.reload();
+      }, 200)
+    }
   };
 
   // fired on clicking a button "Oznacz".
@@ -212,10 +228,11 @@ export const handleBadges = () => {
   };
 
   const changeMarkedUser = (nick, prop, newValue) => {
-    for (let item of markedUsers.entries()) {
+    const updatedMarkedUsers = getLocalStorage("marked");
+    for (let item of updatedMarkedUsers.entries()) {
       if (item[1].nick === nick) {
         item[1][prop] = newValue;
-        const marked = markedUsers.filter(el => el != null);
+        const marked = updatedMarkedUsers.filter(el => el != null);
         localStorage.setItem(
           STORAGE_KEY_NAMES.MARKED_USERS,
           JSON.stringify(marked)
@@ -225,21 +242,24 @@ export const handleBadges = () => {
     updateView(true);
   }
 
-  // gets user data from objects inside marked users array. For now the only useful data returned is link to the offending post
+  // gets user data from objects inside marked users array. 
   const getNickData = nick => {
     if (!nick) {
       throw new Error("getNickData requires nick to be provided.");
     }
-    for (let i = 0; i < markedUsers.length; i++) {
-      if (markedUsers[i].nick === nick) {
+    const updatedMarkedUsers = getLocalStorage("marked");
+
+    for (let i = 0; i < updatedMarkedUsers.length; i++) {
+      if (updatedMarkedUsers[i].nick === nick) {
         return {
-          link: markedUsers[i].link,
-          nick: markedUsers[i].nick,
-          label: markedUsers[i].label,
-          content: markedUsers[i].content,
-          media: markedUsers[i].media,
+          link: updatedMarkedUsers[i].link,
+          nick: updatedMarkedUsers[i].nick,
+          label: updatedMarkedUsers[i].label,
+          color: updatedMarkedUsers[i].color,
+          content: updatedMarkedUsers[i].content,
+          media: updatedMarkedUsers[i].media,
         };
-      } else if (markedUsers[i] === undefined || markedUsers[i] === null) {
+      } else if (updatedMarkedUsers[i] === undefined || updatedMarkedUsers[i] === null) {
         continue;
       }
     }
@@ -249,7 +269,9 @@ export const handleBadges = () => {
   const showUserModal = element => {
     const nick = $(element).dataset.whusername;
     const userData = getNickData(nick);
-    const modal = badgeUserModal(userData);
+    const blacklist = getLocalStorage('blacklist');
+    const blocked = blacklist.includes(nick);
+    const modal = badgeUserModal(userData, blocked);
 
     // eslint-disable-next-line
     Swal.fire({
@@ -272,11 +294,41 @@ export const handleBadges = () => {
           "Usunięto!",
           "Użytkownik nie będzie już więcej oznaczany.",
           "info"
-        );
+        ).then(() => {
+          if (isPath.userProfile()) {
+            location.reload();
+          }
+        });
       } else if (result.isDenied) {
+        const oldLabel = $(`#${DOM.MODAL.ID.BADGE_TEXT}`).dataset.label;
         const newLabel = $(`#${DOM.MODAL.ID.BADGE_TEXT}`).value;
-        changeMarkedUser(nick, 'label', newLabel);
-        updateView();
+        const oldColor = $(`#${DOM.MODAL.ID.BADGE_COLOR}`).dataset.color;
+        const newColor = $(`#${DOM.MODAL.ID.BADGE_COLOR}`).value;
+        const isBlocked = $(`#${DOM.MODAL.ID.BLACKLIST}`).dataset.blocked;
+        const shouldBeBlocked = $(`#${DOM.MODAL.ID.BLACKLIST}`).checked;
+        if (newLabel !== oldLabel) {
+          changeMarkedUser(nick, 'label', newLabel);
+        }
+        if (newColor !== oldColor) {
+          changeMarkedUser(nick, 'color', newColor);
+        }
+        if (isBlocked !== shouldBeBlocked) {
+          let newBlacklist;
+          if (shouldBeBlocked) {
+            blacklist.push(nick);
+            localStorage.setItem(
+              STORAGE_KEY_NAMES.BLACKLIST,
+              JSON.stringify(blacklist)
+            );
+          } else if (!shouldBeBlocked) {
+            newBlacklist = blacklist.filter(el => el !== nick);
+            localStorage.setItem(
+              STORAGE_KEY_NAMES.BLACKLIST,
+              JSON.stringify(newBlacklist)
+            );
+          }
+        }
+        updateView(true);
       } else {
         // supress
       }
@@ -330,6 +382,16 @@ export const handleBadges = () => {
       showUserModal(EL.DYNAMIC.DATASET.USERNAME(nick));
     }
   });
+
+  if (isPath.userProfile()) {
+    $(`.${EL.CLASSNAME.USER_PROFILE}`).addEventListener("click", event => {
+      const target = event.target;
+      if (target.classList.contains(EL.CLASSNAME.BADGE)) {
+        const nick = target.dataset.whusername;
+        showUserModal(EL.DYNAMIC.DATASET.USERNAME(nick));
+      }
+    });
+  }
 
   if (document.getElementById(EL.ID.VOTES_CONTAINER)) {
     document.getElementById(EL.ID.VOTES_CONTAINER)

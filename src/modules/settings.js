@@ -12,7 +12,12 @@ import { getLocalStorage } from '../utils/handleLocalStorage';
 import settingsModel from '../model/modules/settings.model';
 import styles from '../model/styles';
 import { injectStyles } from '../utils/inject';
-import { suspectDomainsSettingsModal, warnOnReloadModal } from '../model/utils/modals';
+import { 
+  suspectDomainsSettingsModal, 
+  warnOnReloadModal, 
+  importSettingsModal,
+  exportSettingsModal 
+} from '../model/utils/modals';
 
 const { SETTINGS: EL } = DOM;
 
@@ -27,6 +32,7 @@ export const handleSettings = () => {
   let settings = getLocalStorage('settings');
   const markedUsers = getLocalStorage();
   const uniqueNicksSet = getLocalStorage('unique');
+  const blacklist = getLocalStorage('blacklist');
 
   const settingsFormElement = $(EL.SELECTOR.SETTINGS_FORM_ELEMENT);
 
@@ -49,7 +55,7 @@ export const handleSettings = () => {
       tableBody.insertAdjacentHTML(
         'beforeend', 
         settingsModel.settingsUserTableRow(
-          el.nick, el.label || settings.BADGE.DEFAULT_NAME, el.link
+          el.nick, el.label || settings.BADGE.DEFAULT_NAME, el.link, el.color || settings.BADGE.DEFAULT_COLOR
         )
       );
     });
@@ -64,6 +70,12 @@ export const handleSettings = () => {
     } else {
       document.getElementById(EL.ID.SHOW_MARKED_TABLE).textContent = settingsModel.textContent.HIDE_TABLE;
     }
+  }
+
+  const parseImportForUniqueNames = text => {
+    const array = JSON.parse(text);
+    const nicks = array.map(el => el.nick);
+    return JSON.stringify(nicks);
   }
 
   const showModalWithPropagandaExplanation = () => {
@@ -112,6 +124,62 @@ export const handleSettings = () => {
     });
   };
 
+  const showModalWithImport = () => {
+    // eslint-disable-next-line
+    Swal.fire({
+      html: importSettingsModal,
+      icon: 'info',
+      // eslint-disable-next-line
+      iconHtml: '<svg style="fill:currentColor;width:2rem;height: auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path d="M0 0h48v48H0z" fill="none"/><path d="M38 8H10c-2.21 0-4 1.79-4 4v24c0 2.21 1.79 4 4 4h8v-4h-8V16h28v20h-8v4h8c2.21 0 4-1.79 4-4V12c0-2.21-1.79-4-4-4zM24 20l-8 8h6v12h4V28h6l-8-8z"/></svg>',
+      iconColor: '#fff',
+      showCancelButton: true,
+      showCloseButton: true,
+      confirmButtonColor: '#0a8658',
+      confirmButtonText: 'Zapisz nowe',
+      showLoaderOnConfirm: true,
+      cancelButtonText: 'Anuluj',
+      width: "80%",
+    }).then(result => {
+      if (result.isConfirmed) {
+        const imported = $(`#${EL.ID.IMPORT_TEXTAREA}`).value;
+        const checkboxValue = $(`input[type="radio"][name="${EL.SELECTOR.IMPORT_CHECKBOX_NAME}"]:checked`).value;
+
+        if (checkboxValue && checkboxValue === 'settings') {
+          localStorage.setItem(STORAGE_KEY_NAMES.WH_SETTINGS, imported);
+        } else if (checkboxValue && checkboxValue === 'markedUsers') {
+          localStorage.setItem(STORAGE_KEY_NAMES.MARKED_USERS, imported);
+          localStorage.setItem(STORAGE_KEY_NAMES.UNIQUE_USERS, parseImportForUniqueNames(imported));
+        } else if (checkboxValue && checkboxValue === 'blacklist') {
+          localStorage.setItem(STORAGE_KEY_NAMES.BLACKLIST, imported);
+        } else {
+          // eslint-disable-next-line no-alert
+          alert('Nie wybrano typu danych: czy importujesz ustawienia, czy oznaczonych użytkowników?')
+        }
+      }
+    });
+  };
+
+  const showModalWithExport = () => {
+    // eslint-disable-next-line
+    Swal.fire({
+      html: exportSettingsModal,
+      icon: 'info',
+      // eslint-disable-next-line
+      iconHtml: '<svg style="fill:currentColor;width:2rem;height: auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path d="M0 0h48v48H0z" fill="none"/><path d="M34 6H10c-2.21 0-4 1.79-4 4v28c0 2.21 1.79 4 4 4h28c2.21 0 4-1.79 4-4V14l-8-8zM24 38c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6zm6-20H10v-8h20v8z"/></svg>',
+      iconColor: '#fff',
+      showCloseButton: true,
+      confirmButtonColor: '#0a8658',
+      confirmButtonText: 'SKOPIUJ DO SCHOWKA',
+      width: "80%",
+    }).then(result => {
+      if (result.isConfirmed) {
+        const exportedData = $(`#${EL.ID.EXPORT_TEXTAREA}`);
+        exportedData.select();
+        document.execCommand('copy');
+      }
+    });
+  };
+
   /**
    * Assigns proper state to inputs in settings, based on saved settings object
    */
@@ -124,6 +192,8 @@ export const handleSettings = () => {
         el.checked = settings[category][el.name];
       } else if (el.type === 'text' && el.name !== 'nsQ') {
         el.value = settings[category][el.name] || '';
+      } else if (el.type === 'color') {
+        el.value = settings[category][el.name];
       }
     })    
   }
@@ -155,6 +225,10 @@ export const handleSettings = () => {
         settings[category][name] = !settings[category][name];
         localStorage.setItem(STORAGE_KEY_NAMES.WH_SETTINGS, JSON.stringify(settings));
       }
+      if (event.target.type === 'color') {
+        settings[category][name] = event.target.value;
+        localStorage.setItem(STORAGE_KEY_NAMES.WH_SETTINGS, JSON.stringify(settings));
+      }
     }, {passive: true});
 
     settingsFormElement.addEventListener('click', event => {
@@ -177,14 +251,37 @@ export const handleSettings = () => {
       if (event.target.id === EL.ID.WARN_ON_RELOAD_INFO_LINK) {
         showModalWithWarnOnReloadExplanation();
       }
-    }, {passive: false})
+      if (event.target.id === EL.ID.IMPORT_BUTTON) {
+        event.preventDefault();
+        showModalWithImport();
+      }
+      if (event.target.id === EL.ID.EXPORT_BUTTON) {
+        event.preventDefault();
+        showModalWithExport();
+      }
+    }, {passive: false});
+
+    document.addEventListener('click', event => {
+      if (event.target.id === EL.ID.EXPORT_SETTINGS_BUTTON) {
+        $(`#${EL.ID.EXPORT_TEXTAREA}`).innerText = '';
+        $(`#${EL.ID.EXPORT_TEXTAREA}`).innerText = JSON.stringify(settings);
+      }
+      if (event.target.id === EL.ID.EXPORT_MARKED_BUTTON) {
+        $(`#${EL.ID.EXPORT_TEXTAREA}`).innerText = '';
+        $(`#${EL.ID.EXPORT_TEXTAREA}`).innerText = JSON.stringify(markedUsers);
+      }
+      if (event.target.id === EL.ID.EXPORT_BLACKLIST_BUTTON) {
+        $(`#${EL.ID.EXPORT_TEXTAREA}`).innerText = '';
+        $(`#${EL.ID.EXPORT_TEXTAREA}`).innerText = JSON.stringify(blacklist);
+      }
+    }, {passive: true});
 
     settingsFormElement.addEventListener('keyup', event => {
       const category = event.target.getAttribute('category');
       const name = event.target.name;
 
       if (event.target.type === 'text') {
-        settings[category][name] = event.target.value.toLowerCase();
+        settings[category][name] = event.target.value;
         localStorage.setItem(STORAGE_KEY_NAMES.WH_SETTINGS, JSON.stringify(settings));
       }
     }, {passive: true})
@@ -222,4 +319,4 @@ export const handleSettings = () => {
   }
   
   init();
-}; 
+};

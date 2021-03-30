@@ -45,6 +45,16 @@ export const settingsMarkup = `
         class="checkbox"
         type="checkbox"
         category="GENERAL"
+        name="REMOVE_POSTED_VIA_APP"
+        id="removePostedViaApp"
+      />
+      <label class="inline" for="removePostedViaApp">Usuwaj info o tym, że dany komentarz został wysłany przez aplikację (np. "via Android")</label>
+    </div>
+    <div class="row">
+      <input
+        class="checkbox"
+        type="checkbox"
+        category="GENERAL"
         name="REMOVE_ALL_COMMENTS"
         id="removeAllComments"
       />
@@ -64,16 +74,16 @@ export const settingsMarkup = `
   </div>
 <!--  BADGE -->
   <div class="space ${CLASSNAME.SETTINGS_BOX} ${CLASSNAME.SETTINGS_BADGE}">
-    <div class="row">
-      <input
-        class="checkbox"
-        type="checkbox"
-        category="BADGE"
-        name="HIDE_MARKED_USERS"
-        id="hideMarkedUser"
-        disabled
+    <div class="row space" style="display:flex;align-items:center;">
+      <input 
+        type="color" 
+        id="badgeDefaultColor" 
+        name="DEFAULT_COLOR" 
+        category="BADGE" 
+        style="height:2rem; border:0; padding:0; width:2rem;" 
+        value="#ff0000"
       />
-      <label title="Ficzer w trakcie prac koncepcyjnych :)" class="inline settings__crossed" for="hideMarkedUser">Ukrywaj treści oznakowanych użytkowników</label>
+      <label class="inline" for="badgeDefaultColor">Domyślny kolor odznaki</label> 
     </div>
     <div class="row space">
       <label class="inline" for="badgeDefaultValue" style="margin-left:0;display:block;">Domyślny tekst odznaki:</label>
@@ -85,6 +95,14 @@ export const settingsMarkup = `
         name="DEFAULT_NAME" 
         type="text"
       />
+    </div>
+  </div>
+<!--  Export and import -->
+  <div class="space ${CLASSNAME.SETTINGS_BOX} ${CLASSNAME.SETTINGS_IMPORT_EXPORT}">
+    <div class="row" style="display:flex;align-items:center;">
+      <small>Jeśli chcesz, możesz eksportować swoje ustawienia bądź bazę oznaczonych użytkowników, albo też ją zaimportować na innym komputerze. O proces przenosin musisz zadbać sam/a - możesz do tego wykorzystać na przykład plik tekstowy "notatnika".</small>
+      <button class="button" style="margin: 0 .5rem" id="buttonImport">IMPORTUJ</button>
+      <button class="button" style="margin: 0 .5rem" id="buttonExport">EKSPORTUJ</button>
     </div>
   </div>
 <!-- SPECIAL -->
@@ -120,7 +138,8 @@ export const settingsUserTable = `
       <tr>
         <td>no.</td>
         <td>Nick</td>
-        <td>Typ</td>
+        <td>Nazwa</td>
+        <td>Kolor</td>
         <td>Link</td>
         <td>Usuń</td>
       </tr>
@@ -131,11 +150,12 @@ export const settingsUserTable = `
 </div>
 `;
 
-export const settingsUserTableRow = (nick, badgeLabel, link) => `
+export const settingsUserTableRow = (nick, badgeLabel, link, color) => `
 <tr class="${CLASSNAME.WH_USER_TABLE_ROW}">
   <td></td>
   <td><a href="https://www.wykop.pl/ludzie/${nick}" target="_blank">${nick}</a></td>
   <td>${badgeLabel}</td>
+  <td style="text-align: center"><span style="--settingsBadgeColor: ${color}" class="${CLASSNAME.WH_USER_TABLE_BADGE_COLOR}"></span></td>
   <td><a href="${link}" target="_blank">&#128279</a></td>
   <td><span class="${CLASSNAME.WH_USER_TABLE_REMOVE_BUTTON}" data-whuserremove="${nick}">&#x02717;</a></td>
 </tr>

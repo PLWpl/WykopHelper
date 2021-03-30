@@ -4,7 +4,7 @@ import { DOM } from "../../constants/domSelectors";
 import { badge } from "../../model/modules/badges.model";
 
 import { isMarked, isNotAwarded } from "./checks";
-import { getNickData, getDefaultBadgeLabelFromSettings } from "./getters";
+import { getNickData, getDefaultBadgeLabelFromSettings, getDefaultBadgeColorFromSettings } from "./getters";
 
 const { BADGE: EL } = DOM;
 
@@ -16,8 +16,9 @@ export const displayBadgeInUserProfile = () => {
   const nick = $(EL.SELECTOR.USER_PROFILE_NICK).textContent;
   const userData = getNickData(nick) ? getNickData(nick) : null;
   const label = userData ? userData.label : getDefaultBadgeLabelFromSettings();
+  const color = userData ? userData.color : getDefaultBadgeColorFromSettings();
 
   if (isMarked(nick) && isNotAwarded(nickElement)) {
-    nickElement.insertAdjacentHTML("afterbegin", badge(nick, label, false));
+    nickElement.insertAdjacentHTML("afterbegin", badge(nick, label, true, color));
   }
 }

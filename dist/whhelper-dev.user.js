@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         WykopHelper - DEV
-// @version      0.65
+// @version      0.70
 // @updateURL    https://cdn.jsdelivr.net/gh/plwpl/WykopHelper/dist/whhelper-dev.user.js
 // @downloadURL  https://cdn.jsdelivr.net/gh/plwpl/WykopHelper/dist/whhelper-dev.user.js
 // @description  Zestaw narzędzi pomocnych na wykopie.
@@ -56,6 +56,7 @@
     MARKED_USERS: 'whMarkedUsers',
     UNIQUE_USERS: 'whUniqueNicks',
     WH_SETTINGS: 'whSettings',
+    BLACKLIST: 'whBlacklist',
   };
 
   const DOM = {
@@ -71,7 +72,9 @@
         COMMENTS_STREAM: 'itemsStream',
       },
       SELECTOR: {
-        TAGS: '.fix-tagline > .tag.affect.create[href]'
+        TAGS: '.fix-tagline > .tag.affect.create[href]',
+        COMMENT: '[data-type="comment"]',
+        THREAD: '[data-type="entrycomment"]',
       }
     },
     BADGE: {
@@ -93,9 +96,11 @@
         MODAL_BUTTON: 'modalWH-button',
         MODAL_BUTTON_REMOVE: 'modalWH-button--remove',
         MODAL_TEXT: 'modalWH-text',
+        PROFILE_BLACKLISTED: 'whProfile--blacklistedIcon',
       },
       ID: {
         VOTES_CONTAINER: 'votesContainer',
+        PROFILE_BLACKLISTED: 'whBlacklistedIcon',
       },
       SELECTOR: {
         // wykop.pl elements
@@ -106,6 +111,7 @@
         COMMENT_FORM: '#commentFormContainer textarea',
         USER_PROFILE_NICK_ELEMENT: '.user-profile h2',
         USER_PROFILE_NICK: '.user-profile h2 span',
+        // custom WH elements
       },
       DYNAMIC: {
         DATASET: {
@@ -129,6 +135,7 @@
         WH_USER_TABLE_CONTAINER_HIDDEN: 'tableWH__container--hidden',
         WH_USER_TABLE_BODY: 'tableWH__body',
         WH_USER_TABLE_REMOVE_BUTTON: 'tableWH__nick-remove',
+        WH_USER_TABLE_BADGE_COLOR: 'tableWH__badgeColor',
         WH_SETTINGS_CROSSED: 'settings__crossed',
       },
       ID: {
@@ -139,12 +146,23 @@
         SUSPECT_DOMAINS_SETTINGS_LINK: 'suspectDomainsSettings',
         SUSPECT_DOMAINS_SETTINGS_TEXTAREA: 'suspectDomains',
         WARN_ON_RELOAD_SETTING: 'warnOnReload',
-        WARN_ON_RELOAD_INFO_LINK: 'warnOnReloadInfo'
+        WARN_ON_RELOAD_INFO_LINK: 'warnOnReloadInfo',
+        IMPORT_BUTTON: 'buttonImport',
+        EXPORT_BUTTON: 'buttonExport',
+        IMPORT_TEXTAREA: 'importArea',
+        EXPORT_TEXTAREA: 'exportArea',
+        EXPORT_SETTINGS_BUTTON: 'buttonExportSettings',
+        EXPORT_MARKED_BUTTON: 'buttonExportMarkedUsers',
+        EXPORT_BLACKLIST_BUTTON: 'buttonExportBlacklist',
+        IMPORT_SETTINGS_BUTTON: 'buttonImportSettings',
+        IMPORT_MARKED_BUTTON: 'buttonImportMarkedUsers',
+        IMPORT_BLACKLIST_BUTTON: 'buttonImportBlacklist'
       },
       SELECTOR: {
         LAST_NAV_ELEMENT: '#site .nav > ul > li:last-child',
         ACTIVE_NAV_ELEMENT: '#site .nav > ul .active',
         SETTINGS_FORM_ELEMENT: '#site .grid-main .settings',
+        IMPORT_CHECKBOX_NAME: 'whImportExportChoice',
       },
     },
     HIGHLIGHT_OP: {
@@ -184,6 +202,8 @@
       },
       ID: {
         BADGE_TEXT: 'whModal_badgeText',
+        BADGE_COLOR: 'whModal_badgeColor',
+        BLACKLIST: 'whModal_blacklist'
       }
     },
   };
@@ -209,7 +229,7 @@
   opacity: 0;
 }
 .${DOM.BADGE.CLASSNAME.BADGE} {
-  color: red;
+  color: var(--badgeColor);
   font-weight: bold;
   margin-right: .3rem;
   border: 1px solid currentColor;
@@ -246,6 +266,10 @@
 .${DOM.BADGE.CLASSNAME.MARK_ALL_BUTTON} {
   top: 0.8rem;
   position: relative;
+}
+
+.${DOM.BADGE.CLASSNAME.PROFILE_BLACKLISTED} {
+  cursor: pointer;
 }
 
 .${DOM.HIGHLIGHT_OP.CLASSNAME.HIGHLIGHT_BUTTON} {
@@ -289,6 +313,13 @@
 .${DOM.SETTINGS.CLASSNAME.WH_USER_TABLE_HEAD} {
   font-weight: bold;
   border-bottom: 2px solid currentColor;
+}
+.${DOM.SETTINGS.CLASSNAME.WH_USER_TABLE_BADGE_COLOR} {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  background: var(--settingsBadgeColor);
+  border-radius: .5rem;
 }
 .${DOM.SETTINGS.CLASSNAME.WH_SETTINGS_CROSSED} {
   opacity: .4;
@@ -346,6 +377,9 @@
 
 .${DOM.MODAL.CLASSNAME.INPUT_LABEL} {
   text-transform: none;
+  align-items: center;
+  display: inline-flex;
+  margin: .3rem 0;
 }
 
 .${DOM.MODAL.CLASSNAME.INPUT_TEXT}, .${DOM.MODAL.CLASSNAME.INPUT_TEXT}:focus {
@@ -365,25 +399,6 @@
     badge,
     settings,
     modal
-  };
-
-  const buttonMarkup = `<span class="${DOM.BADGE.CLASSNAME.MARK_BUTTON}">Oznacz</span>`;
-  const buttonBulkMarkup = `<li class="${DOM.BADGE.CLASSNAME.MARK_ALL_BUTTON_ELEMENT}" style="display:none"><span class="${DOM.BADGE.CLASSNAME.MARK_BUTTON} ${DOM.BADGE.CLASSNAME.MARK_ALL_BUTTON}">Oznacz wszystkich poniżej</span></li>`;
-
-  /**
-   * 
-   * @param {string} nick - nickname of user
-   * @param {string} [label=debil] - what will be displayed as a badge
-   * @param {boolean} [clickable=true] - if badge should be styled with cursor:pointer
-   */
-  const badge$1 = (nick, label = 'debil', clickable = true) => `<span class="${DOM.BADGE.CLASSNAME.BADGE} ${clickable ? DOM.BADGE.CLASSNAME.BADGE_CLICKABLE : DOM.BADGE.CLASSNAME.BADGE_UNCLICKABLE}" data-whusername="${nick}">${label.toLowerCase().capitalize()}</span>`;
-
-  /**
-   * 
-   * @param {string} action - either "wykop" or "zakop". 
-   */
-  const markedInBulk = action => {
-    return `Użytkownik ${action}ał podlinkowane znalezisko.`;
   };
 
   const warningAnnotation = 'Uwa\u017Caj! \u0179r\xF3d\u0142o tego znaleziska jest podejrzewane o szerzenie rosyjskiej propagandy.';
@@ -445,10 +460,12 @@
       REMOVE_WOODLE: false,
       REMOVE_COMMENTS: '',
       REMOVE_ALL_COMMENTS: false,
+      REMOVE_POSTED_VIA_APP: false,
     },
   };
   const initialUnique = [];
   const initialMarked = [];
+  const initialBlacklist = [];
 
   /**
    * Initializes settings with initial values
@@ -464,7 +481,7 @@
 
   /**
    * Returns parsed object from localStorage, based on param provided.
-   * @param {string} [name=marked] - provide either "marked", "unique" or "settings" to get corresponding objects from localStorage. Default is "marked"
+   * @param {string} [name=marked] - provide either "marked", "unique", "blacklist" or "settings" to get corresponding objects from localStorage. Default is "marked"
    */
   const getLocalStorage = (name = "marked") => {
     switch (name) {
@@ -490,12 +507,44 @@
         }
         return JSON.parse(localStorage.getItem(STORAGE_KEY_NAMES.MARKED_USERS));
 
+      case "blacklist":
+        if (!localStorage.getItem(STORAGE_KEY_NAMES.BLACKLIST)) {
+          localStorage.setItem(
+            STORAGE_KEY_NAMES.BLACKLIST,
+            JSON.stringify(initialBlacklist)
+          );
+        }
+        return JSON.parse(localStorage.getItem(STORAGE_KEY_NAMES.BLACKLIST));
+
       default:
-        throw new Error(`Unknown storage type: ${name}. Pick either "unique", "marked" or "settings"`);
+        throw new Error(`Unknown storage type: ${name}. Pick either "unique", "marked", "blacklist" or "settings"`);
     }
   };
 
   const settings$1 = getLocalStorage('settings');
+
+  const defaultColor = settings$1.BADGE.DEFAULT_COLOR;
+
+  const buttonMarkup = `<span class="${DOM.BADGE.CLASSNAME.MARK_BUTTON}">Oznacz</span>`;
+  const buttonBulkMarkup = `<li class="${DOM.BADGE.CLASSNAME.MARK_ALL_BUTTON_ELEMENT}" style="display:none"><span class="${DOM.BADGE.CLASSNAME.MARK_BUTTON} ${DOM.BADGE.CLASSNAME.MARK_ALL_BUTTON}">Oznacz wszystkich poniżej</span></li>`;
+
+  /**
+   * 
+   * @param {string} nick - nickname of user
+   * @param {string} [label=debil] - what will be displayed as a badge
+   * @param {boolean} [clickable=true] - if badge should be styled with cursor:pointer
+   */
+  const badge$1 = (nick, label = 'debil', clickable = true, color = defaultColor) => `<span style="--badgeColor: ${color}" class="${DOM.BADGE.CLASSNAME.BADGE} ${clickable ? DOM.BADGE.CLASSNAME.BADGE_CLICKABLE : DOM.BADGE.CLASSNAME.BADGE_UNCLICKABLE}" data-whusername="${nick}">${label}</span>`;
+
+  /**
+   * 
+   * @param {string} action - either "wykop" or "zakop". 
+   */
+  const markedInBulk = action => {
+    return `Użytkownik ${action}ał podlinkowane znalezisko.`;
+  };
+
+  const settings$2 = getLocalStorage('settings');
 
   /* eslint max-len: 0 */
   const russianPropagandaModal = `
@@ -512,11 +561,11 @@
   const suspectDomainsSettingsModal = `
   <label>
     Treść komunikatu ostrzegającego, gdy znalezisko pochodzi z podejrzanego źródła:
-    <input id="suspectDomainsLabel" value="${settings$1.GENERAL.SUSPECT_DOMAINS_LABEL || ''}" style="display: block;width: 100%;padding: .3rem 1rem;margin: .5rem 0 1rem;background: #2c2c2c;border: 1px solid #444;" class="">
+    <input id="suspectDomainsLabel" value="${settings$2.GENERAL.SUSPECT_DOMAINS_LABEL || ''}" style="display: block;width: 100%;padding: .3rem 1rem;margin: .5rem 0 1rem;background: #2c2c2c;border: 1px solid #444;" class="">
   </label>
   <label>
     Lista domen uznawanych za podejrzane:
-    <textarea class="" id="suspectDomains" style="display: block; width: 100%; padding: 0.3rem 1rem; margin: 0.5rem 0px 0; height: 150px; max-height: 15rem; overflow: auto; resize: none;">${settings$1.GENERAL.SUSPECT_DOMAINS ? settings$1.GENERAL.SUSPECT_DOMAINS.join('\n') : ''}</textarea>
+    <textarea class="" id="suspectDomains" style="display: block; width: 100%; padding: 0.3rem 1rem; margin: 0.5rem 0px 0; height: 150px; max-height: 15rem; overflow: auto; resize: none;">${settings$2.GENERAL.SUSPECT_DOMAINS ? settings$2.GENERAL.SUSPECT_DOMAINS.join('\n') : ''}</textarea>
   </label>
   <small>
     Same domeny, bez "https://" czy "www."; każda domena w osobnej linijce.
@@ -527,7 +576,7 @@
   <p>Ten ficzer jest eksperymentalny. Obecnie prawdopodobnie udało mi się wyeliminować błędy, które sprawiały, że w przeszłości (nie)działał jak chciał, ale mimo wszystko - proponuję najpierw przetestować, czy działa jak trzeba również u Ciebie, zanim zaczniesz na nim polegać dla ochrony przed utratą treści :) 
 `;
 
-  const badgeUserModal = props => {
+  const badgeUserModal = (props, blocked) => {
     const mediaText = link => `<p style="margin-top:5px;"><a href="${link}" target="_blank">Link do osadzonej treści multimedialnej (obrazek lub film)</a></p>`;
 
     return {
@@ -537,12 +586,42 @@
     <div class="${DOM.MODAL.CLASSNAME.SCROLLABLE_TEXT}"><p>${props.content}</p>
     ${props.media ? mediaText(props.media) : ''}</div>
     <p style="margin-top:1rem;text-align:right"><a href="${props.link}">Link do komentarza lub znaleziska</a></p>
-    <label class="${DOM.MODAL.CLASSNAME.INPUT_LABEL}">Treść odznaki: <input autocomplete="off" value="${props.label}" class="${DOM.MODAL.CLASSNAME.INPUT_TEXT}" id="${DOM.MODAL.ID.BADGE_TEXT}"></label>
+    <div style="display:flex;flex-direction:column;">
+      <label class="${DOM.MODAL.CLASSNAME.INPUT_LABEL}">Treść odznaki: <input autocomplete="off" data-label="${props.label}" value="${props.label}" class="${DOM.MODAL.CLASSNAME.INPUT_TEXT}" id="${DOM.MODAL.ID.BADGE_TEXT}" style="margin-left: 1rem;"></label>
+      <label class="${DOM.MODAL.CLASSNAME.INPUT_LABEL}">Kolor odznaki: <input type="color" data-color="${props.color ? props.color : settings$2.BADGE.DEFAULT_COLOR}" id="${DOM.MODAL.ID.BADGE_COLOR}" value="${props.color ? props.color : settings$2.BADGE.DEFAULT_COLOR}" style="margin-left: 1rem;height:2rem;border:0;padding:0;width:2rem;"></label>
+      <label class="${DOM.MODAL.CLASSNAME.INPUT_LABEL}">Czarna lista: <input data-blocked="${blocked}" type="checkbox" id="${DOM.MODAL.ID.BLACKLIST}" style="margin-left: 2rem;" ${blocked ? 'checked' : ''}></label>
+    </div>
     `,
       button: "Usu\u0144 oznaczenie",
       buttonClose: "Zapisz"
     };
   };
+
+  const importSettingsModal = `
+  <p>Wybierz, jaki typ danych importujesz:</p>
+  <input type="radio" id="${DOM.SETTINGS.ID.IMPORT_SETTINGS_BUTTON}" name="${DOM.SETTINGS.SELECTOR.IMPORT_CHECKBOX_NAME}" value="settings">
+  <label for="${DOM.SETTINGS.ID.IMPORT_SETTINGS_BUTTON}">Ustawienia</label><br>
+  <input type="radio" id="${DOM.SETTINGS.ID.IMPORT_MARKED_BUTTON}" name="${DOM.SETTINGS.SELECTOR.IMPORT_CHECKBOX_NAME}" value="markedUsers">
+  <label for="${DOM.SETTINGS.ID.IMPORT_MARKED_BUTTON}">Oznaczeni użytkownicy</label><br>
+  <input type="radio" id="${DOM.SETTINGS.ID.IMPORT_BLACKLIST_BUTTON}" name="${DOM.SETTINGS.SELECTOR.IMPORT_CHECKBOX_NAME}" value="blacklist">
+  <label for="${DOM.SETTINGS.ID.IMPORT_BLACKLIST_BUTTON}">Czarna lista</label><br>
+  <label style="padding-top:1rem">
+    Wklej swoje przenoszone dane poniżej:
+    <textarea id="${DOM.SETTINGS.ID.IMPORT_TEXTAREA}" style="display: block; width: 100%; padding: 0.3rem 1rem; margin: 0.5rem 0px 0; height: 150px; max-height: 15rem; overflow: auto; resize: none;"></textarea>
+  </label>
+`;
+
+  const exportSettingsModal = `
+  <p>Wybierz, co chcesz wyeksportować:</p>
+  <button class="button" id="${DOM.SETTINGS.ID.EXPORT_SETTINGS_BUTTON}">USTAWIENIA</button>
+  <button class="button" id="${DOM.SETTINGS.ID.EXPORT_MARKED_BUTTON}">OZNACZONYCH UŻYTKOWNIKÓW</button>
+  <button class="button" id="${DOM.SETTINGS.ID.EXPORT_BLACKLIST_BUTTON}">CZARNĄ LISTĘ</button>
+  <label style="display:block;padding-top:1rem">
+    DANE:
+    <textarea id="${DOM.SETTINGS.ID.EXPORT_TEXTAREA}" style="display: block; width: 100%; padding: 0.3rem 1rem; margin: 0.5rem 0px 0; height: 150px; max-height: 15rem; overflow: auto; resize: none;"></textarea>
+  </label>
+  <small>Po skopiowaniu edytuj dane TYLKO jeśli wiesz, co robisz - inaczej możesz uszkodzić i stracić wszystkie swoje dane, co wymusi konieczność reinstalacji dodatku "na świeżo".</small>
+`;
 
   /**
    * Injects styles in <style> tags at the beginning of a page
@@ -580,19 +659,26 @@
     };
 
     // adds nick to marked users array of objects along with the link and desired label
-    const addNickToMarkedUsersArray = (nick, link, label, content, media) => {
+    const addNickToMarkedUsersArray = (nick, link, label, content, media, color) => {
       markedUsers = getLocalStorage("marked");
-      const marked = [...markedUsers, { nick, link, label, content, media }];
+      const marked = [...markedUsers, { nick, link, label, content, media, color }];
       localStorage.setItem(
         STORAGE_KEY_NAMES.MARKED_USERS,
         JSON.stringify(marked)
       );
     };
 
-    const addNickToArrays = (nick, link, content = '', media = '', label = settings.BADGE.DEFAULT_NAME) => {
+    const addNickToArrays = (
+      nick, 
+      link, 
+      content = '', 
+      media = '', 
+      label = settings.BADGE.DEFAULT_NAME, 
+      color = settings.BADGE.DEFAULT_COLOR
+    ) => {
       if (!isMarked(nick)) {
         addNickToUniqueNicksArray(nick);
-        addNickToMarkedUsersArray(nick, link, label, content, media);
+        addNickToMarkedUsersArray(nick, link, label, content, media, color);
       }
     };
 
@@ -624,6 +710,7 @@
       !!$(`.${EL.CLASSNAME.MARK_BUTTON}`, element);
 
     const getDefaultBadgeLabelFromSettings = () => settings.BADGE.DEFAULT_NAME;
+    const getDefaultBadgeColorFromSettings = () => settings.BADGE.DEFAULT_COLOR;
 
     // goes through all user elements on a page and checks, if user nicks are present in uniqueNicksSet array. If they are, AND they haven't yet been awarded a badge, it injects the badge.
     const markUsers = () => {
@@ -631,11 +718,12 @@
         const elements = getAllNickElements();
         elements.forEach(element => {
           const nick = getNick(element);
-          const userData = getNickData(nick) ? getNickData(nick) : null;
-          const label = userData ? userData.label : getDefaultBadgeLabelFromSettings();
-
+          
           if (isMarked(nick) && isNotAwarded(element)) {
-            element.insertAdjacentHTML("afterbegin", badge$1(nick, label));
+            const userData = getNickData(nick) ? getNickData(nick) : null;
+            const label = userData ? userData.label : getDefaultBadgeLabelFromSettings();
+            const color = userData && userData.color ? userData.color : getDefaultBadgeColorFromSettings();
+            element.insertAdjacentHTML("afterbegin", badge$1(nick, label, true, color));
           } else if (!hasButtonAppended(element)) {
             element.insertAdjacentHTML("beforeend", buttonMarkup);
           }
@@ -654,7 +742,7 @@
 
     /**
      * Updates view - checks if badges are already present on the page for marked users, and if not - injects them.
-     * @param {boolean} dataChange - set to true if you only want to update label text 
+     * @param {boolean} dataChange - set to true if you only want to update label text or color 
      */
     const updateView = dataChange => {
       markUsers();
@@ -672,7 +760,7 @@
         if (dataChange && isMarked(nick) && !isNotAwarded(element)) {
           $(`.${EL.CLASSNAME.BADGE}`, element).remove();
           const nickData = getNickData(nick);
-          element.insertAdjacentHTML("afterbegin", badge$1(nick, nickData.label));
+          element.insertAdjacentHTML("afterbegin", badge$1(nick, nickData.label, true, nickData.color));
         }
         // if user is marked - remove button to mark him as it's not needed anymore
         if (
@@ -687,6 +775,12 @@
           $(`.${EL.CLASSNAME.BADGE}`, element).remove();
         }
       });
+
+      if (isPath.userProfile()) {
+        setTimeout(() => {
+          location.reload();
+        }, 200);
+      }
     };
 
     // fired on clicking a button "Oznacz".
@@ -757,10 +851,11 @@
     };
 
     const changeMarkedUser = (nick, prop, newValue) => {
-      for (let item of markedUsers.entries()) {
+      const updatedMarkedUsers = getLocalStorage("marked");
+      for (let item of updatedMarkedUsers.entries()) {
         if (item[1].nick === nick) {
           item[1][prop] = newValue;
-          const marked = markedUsers.filter(el => el != null);
+          const marked = updatedMarkedUsers.filter(el => el != null);
           localStorage.setItem(
             STORAGE_KEY_NAMES.MARKED_USERS,
             JSON.stringify(marked)
@@ -770,21 +865,24 @@
       updateView(true);
     };
 
-    // gets user data from objects inside marked users array. For now the only useful data returned is link to the offending post
+    // gets user data from objects inside marked users array. 
     const getNickData = nick => {
       if (!nick) {
         throw new Error("getNickData requires nick to be provided.");
       }
-      for (let i = 0; i < markedUsers.length; i++) {
-        if (markedUsers[i].nick === nick) {
+      const updatedMarkedUsers = getLocalStorage("marked");
+
+      for (let i = 0; i < updatedMarkedUsers.length; i++) {
+        if (updatedMarkedUsers[i].nick === nick) {
           return {
-            link: markedUsers[i].link,
-            nick: markedUsers[i].nick,
-            label: markedUsers[i].label,
-            content: markedUsers[i].content,
-            media: markedUsers[i].media,
+            link: updatedMarkedUsers[i].link,
+            nick: updatedMarkedUsers[i].nick,
+            label: updatedMarkedUsers[i].label,
+            color: updatedMarkedUsers[i].color,
+            content: updatedMarkedUsers[i].content,
+            media: updatedMarkedUsers[i].media,
           };
-        } else if (markedUsers[i] === undefined || markedUsers[i] === null) {
+        } else if (updatedMarkedUsers[i] === undefined || updatedMarkedUsers[i] === null) {
           continue;
         }
       }
@@ -794,7 +892,9 @@
     const showUserModal = element => {
       const nick = $(element).dataset.whusername;
       const userData = getNickData(nick);
-      const modal = badgeUserModal(userData);
+      const blacklist = getLocalStorage('blacklist');
+      const blocked = blacklist.includes(nick);
+      const modal = badgeUserModal(userData, blocked);
 
       // eslint-disable-next-line
       Swal.fire({
@@ -817,11 +917,41 @@
             "Usuni\u0119to!",
             "U\u017Cytkownik nie b\u0119dzie ju\u017C wi\u0119cej oznaczany.",
             "info"
-          );
+          ).then(() => {
+            if (isPath.userProfile()) {
+              location.reload();
+            }
+          });
         } else if (result.isDenied) {
+          const oldLabel = $(`#${DOM.MODAL.ID.BADGE_TEXT}`).dataset.label;
           const newLabel = $(`#${DOM.MODAL.ID.BADGE_TEXT}`).value;
-          changeMarkedUser(nick, 'label', newLabel);
-          updateView();
+          const oldColor = $(`#${DOM.MODAL.ID.BADGE_COLOR}`).dataset.color;
+          const newColor = $(`#${DOM.MODAL.ID.BADGE_COLOR}`).value;
+          const isBlocked = $(`#${DOM.MODAL.ID.BLACKLIST}`).dataset.blocked;
+          const shouldBeBlocked = $(`#${DOM.MODAL.ID.BLACKLIST}`).checked;
+          if (newLabel !== oldLabel) {
+            changeMarkedUser(nick, 'label', newLabel);
+          }
+          if (newColor !== oldColor) {
+            changeMarkedUser(nick, 'color', newColor);
+          }
+          if (isBlocked !== shouldBeBlocked) {
+            let newBlacklist;
+            if (shouldBeBlocked) {
+              blacklist.push(nick);
+              localStorage.setItem(
+                STORAGE_KEY_NAMES.BLACKLIST,
+                JSON.stringify(blacklist)
+              );
+            } else if (!shouldBeBlocked) {
+              newBlacklist = blacklist.filter(el => el !== nick);
+              localStorage.setItem(
+                STORAGE_KEY_NAMES.BLACKLIST,
+                JSON.stringify(newBlacklist)
+              );
+            }
+          }
+          updateView(true);
         }
       });
     };
@@ -874,6 +1004,16 @@
       }
     });
 
+    if (isPath.userProfile()) {
+      $(`.${EL.CLASSNAME.USER_PROFILE}`).addEventListener("click", event => {
+        const target = event.target;
+        if (target.classList.contains(EL.CLASSNAME.BADGE)) {
+          const nick = target.dataset.whusername;
+          showUserModal(EL.DYNAMIC.DATASET.USERNAME(nick));
+        }
+      });
+    }
+
     if (document.getElementById(EL.ID.VOTES_CONTAINER)) {
       document.getElementById(EL.ID.VOTES_CONTAINER)
         .closest('.rbl-block').querySelector('.nav').addEventListener("click", event => {
@@ -891,6 +1031,46 @@
           }
         });
     }
+  };
+
+  /**
+   * Handles removal of comments of users that are blacklisted.
+   */
+  const handleRemovalOfBlacklisted = () => {
+    const blacklist = getLocalStorage('blacklist');
+    const isBlacklisted = nick => blacklist.includes(nick);
+    $$(DOM.BADGE.SELECTOR.NICK).forEach(el => {
+      if (isBlacklisted(el.innerText)) {
+        if (el.closest(DOM.COMMON.SELECTOR.COMMENT)) {
+          el.closest(DOM.COMMON.SELECTOR.COMMENT).remove();
+        } else if (el.closest(DOM.COMMON.SELECTOR.THREAD)) {
+          el.closest(DOM.COMMON.SELECTOR.THREAD).remove();
+        }
+      }
+    });
+  };
+
+  const handleBlacklistedProfile = () => {
+    const nick = location.pathname.split('/')[2];
+    const blacklist = getLocalStorage('blacklist');
+    const isBlacklisted = nick => blacklist.includes(nick);
+
+    if (isBlacklisted(nick)) {
+      $(`${DOM.BADGE.SELECTOR.USER_PROFILE_NICK}:not(:first-child)`).style.filter = 'grayscale(65%)';
+      // eslint-disable-next-line max-len
+      $(DOM.BADGE.SELECTOR.USER_PROFILE_NICK_ELEMENT).insertAdjacentHTML('beforeend', `<span class="${DOM.BADGE.CLASSNAME.PROFILE_BLACKLISTED}" id="${DOM.BADGE.ID.PROFILE_BLACKLISTED}">🔐</span>`);
+    }
+
+    document.addEventListener('click', event => {
+      if (event.target.id === DOM.BADGE.ID.PROFILE_BLACKLISTED) {
+        const newBlacklist = blacklist.filter(el => el !== nick);
+        localStorage.setItem(
+          STORAGE_KEY_NAMES.BLACKLIST,
+          JSON.stringify(newBlacklist)
+        );
+        location.reload();
+      }
+    });
   };
 
   const { BADGE: EL$1 } = DOM;
@@ -912,8 +1092,7 @@
    */
   const isNotAwarded = element => !$(`.${EL$1.CLASSNAME.BADGE}`, element);
 
-  let markedUsers = getLocalStorage("marked");
-  let settings$2 = getLocalStorage("settings");
+  let settings$3 = getLocalStorage("settings");
 
   /**
    * gets user data from objects inside marked users array.
@@ -923,12 +1102,16 @@
     if (!nick) {
       throw new Error("getNickData requires nick to be provided.");
     }
+
+    const markedUsers = getLocalStorage("marked");
+
     for (let i = 0; i < markedUsers.length; i++) {
       if (markedUsers[i].nick === nick) {
         return {
           link: markedUsers[i].link,
           nick: markedUsers[i].nick,
           label: markedUsers[i].label,
+          color: markedUsers[i].color,
           content: markedUsers[i].content,
           media: markedUsers[i].media,
         };
@@ -941,7 +1124,8 @@
   /**
    * @returns {String} default name for badge set in settings by user.
    */
-  const getDefaultBadgeLabelFromSettings = () => settings$2.BADGE.DEFAULT_NAME;
+  const getDefaultBadgeLabelFromSettings = () => settings$3.BADGE.DEFAULT_NAME;
+  const getDefaultBadgeColorFromSettings = () => settings$3.BADGE.DEFAULT_COLOR;
 
   const { BADGE: EL$2 } = DOM;
 
@@ -953,9 +1137,10 @@
     const nick = $(EL$2.SELECTOR.USER_PROFILE_NICK).textContent;
     const userData = getNickData(nick) ? getNickData(nick) : null;
     const label = userData ? userData.label : getDefaultBadgeLabelFromSettings();
+    const color = userData ? userData.color : getDefaultBadgeColorFromSettings();
 
     if (isMarked(nick) && isNotAwarded(nickElement)) {
-      nickElement.insertAdjacentHTML("afterbegin", badge$1(nick, label, false));
+      nickElement.insertAdjacentHTML("afterbegin", badge$1(nick, label, true, color));
     }
   };
 
@@ -970,7 +1155,7 @@
 	</div>
 `;
 
-  const settings$3 = getLocalStorage('settings');
+  const settings$4 = getLocalStorage('settings');
 
   const handleDomainCheck = () => {
     /**
@@ -978,7 +1163,7 @@
      * @return {boolean} True if yes, false otherwise
      */
     const isSettingActive = () => {
-      if (settings$3.GENERAL.WARN_ON_SUSPECTED_RUSSIAN_PROPAGANDA) {
+      if (settings$4.GENERAL.WARN_ON_SUSPECTED_RUSSIAN_PROPAGANDA) {
         return true;
       }
 
@@ -986,7 +1171,7 @@
     };
 
     const processDomains = () => {
-      const domains = settings$3.GENERAL.SUSPECT_DOMAINS || [];
+      const domains = settings$4.GENERAL.SUSPECT_DOMAINS || [];
 
       const processedDomains = domains.map(domain => {
         const https = 'https://' + domain;
@@ -1012,7 +1197,7 @@
       const threadLink = $(DOM.DOMAIN_CHECKER.SELECTOR.THREAD_LINK).href;
       const url = new URL(threadLink);
       const threadLinkHostname = url.protocol + '//' + url.hostname;
-      const annotationMarkup = annotation(settings$3.GENERAL.SUSPECT_DOMAINS_LABEL);
+      const annotationMarkup = annotation(settings$4.GENERAL.SUSPECT_DOMAINS_LABEL);
 
       if (suspectDomains.includes(threadLinkHostname)) {
         $(`.${DOM.DOMAIN_CHECKER.CLASSNAME.WYKOP_ITEM_INTRO}`).insertAdjacentHTML('beforebegin', annotationMarkup);
@@ -1100,6 +1285,16 @@
         class="checkbox"
         type="checkbox"
         category="GENERAL"
+        name="REMOVE_POSTED_VIA_APP"
+        id="removePostedViaApp"
+      />
+      <label class="inline" for="removePostedViaApp">Usuwaj info o tym, że dany komentarz został wysłany przez aplikację (np. "via Android")</label>
+    </div>
+    <div class="row">
+      <input
+        class="checkbox"
+        type="checkbox"
+        category="GENERAL"
         name="REMOVE_ALL_COMMENTS"
         id="removeAllComments"
       />
@@ -1119,16 +1314,16 @@
   </div>
 <!--  BADGE -->
   <div class="space ${CLASSNAME.SETTINGS_BOX} ${CLASSNAME.SETTINGS_BADGE}">
-    <div class="row">
-      <input
-        class="checkbox"
-        type="checkbox"
-        category="BADGE"
-        name="HIDE_MARKED_USERS"
-        id="hideMarkedUser"
-        disabled
+    <div class="row space" style="display:flex;align-items:center;">
+      <input 
+        type="color" 
+        id="badgeDefaultColor" 
+        name="DEFAULT_COLOR" 
+        category="BADGE" 
+        style="height:2rem; border:0; padding:0; width:2rem;" 
+        value="#ff0000"
       />
-      <label title="Ficzer w trakcie prac koncepcyjnych :)" class="inline settings__crossed" for="hideMarkedUser">Ukrywaj treści oznakowanych użytkowników</label>
+      <label class="inline" for="badgeDefaultColor">Domyślny kolor odznaki</label> 
     </div>
     <div class="row space">
       <label class="inline" for="badgeDefaultValue" style="margin-left:0;display:block;">Domyślny tekst odznaki:</label>
@@ -1140,6 +1335,14 @@
         name="DEFAULT_NAME" 
         type="text"
       />
+    </div>
+  </div>
+<!--  Export and import -->
+  <div class="space ${CLASSNAME.SETTINGS_BOX} ${CLASSNAME.SETTINGS_IMPORT_EXPORT}">
+    <div class="row" style="display:flex;align-items:center;">
+      <small>Jeśli chcesz, możesz eksportować swoje ustawienia bądź bazę oznaczonych użytkowników, albo też ją zaimportować na innym komputerze. O proces przenosin musisz zadbać sam/a - możesz do tego wykorzystać na przykład plik tekstowy "notatnika".</small>
+      <button class="button" style="margin: 0 .5rem" id="buttonImport">IMPORTUJ</button>
+      <button class="button" style="margin: 0 .5rem" id="buttonExport">EKSPORTUJ</button>
     </div>
   </div>
 <!-- SPECIAL -->
@@ -1175,7 +1378,8 @@
       <tr>
         <td>no.</td>
         <td>Nick</td>
-        <td>Typ</td>
+        <td>Nazwa</td>
+        <td>Kolor</td>
         <td>Link</td>
         <td>Usuń</td>
       </tr>
@@ -1186,11 +1390,12 @@
 </div>
 `;
 
-  const settingsUserTableRow = (nick, badgeLabel, link) => `
+  const settingsUserTableRow = (nick, badgeLabel, link, color) => `
 <tr class="${CLASSNAME.WH_USER_TABLE_ROW}">
   <td></td>
   <td><a href="https://www.wykop.pl/ludzie/${nick}" target="_blank">${nick}</a></td>
   <td>${badgeLabel}</td>
+  <td style="text-align: center"><span style="--settingsBadgeColor: ${color}" class="${CLASSNAME.WH_USER_TABLE_BADGE_COLOR}"></span></td>
   <td><a href="${link}" target="_blank">&#128279</a></td>
   <td><span class="${CLASSNAME.WH_USER_TABLE_REMOVE_BUTTON}" data-whuserremove="${nick}">&#x02717;</a></td>
 </tr>
@@ -1234,6 +1439,7 @@
     let settings = getLocalStorage('settings');
     const markedUsers = getLocalStorage();
     const uniqueNicksSet = getLocalStorage('unique');
+    const blacklist = getLocalStorage('blacklist');
 
     const settingsFormElement = $(EL$3.SELECTOR.SETTINGS_FORM_ELEMENT);
 
@@ -1256,7 +1462,7 @@
         tableBody.insertAdjacentHTML(
           'beforeend', 
           settingsModel.settingsUserTableRow(
-            el.nick, el.label || settings.BADGE.DEFAULT_NAME, el.link
+            el.nick, el.label || settings.BADGE.DEFAULT_NAME, el.link, el.color || settings.BADGE.DEFAULT_COLOR
           )
         );
       });
@@ -1271,6 +1477,12 @@
       } else {
         document.getElementById(EL$3.ID.SHOW_MARKED_TABLE).textContent = settingsModel.textContent.HIDE_TABLE;
       }
+    };
+
+    const parseImportForUniqueNames = text => {
+      const array = JSON.parse(text);
+      const nicks = array.map(el => el.nick);
+      return JSON.stringify(nicks);
     };
 
     const showModalWithPropagandaExplanation = () => {
@@ -1319,6 +1531,62 @@
       });
     };
 
+    const showModalWithImport = () => {
+      // eslint-disable-next-line
+      Swal.fire({
+        html: importSettingsModal,
+        icon: 'info',
+        // eslint-disable-next-line
+        iconHtml: '<svg style="fill:currentColor;width:2rem;height: auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path d="M0 0h48v48H0z" fill="none"/><path d="M38 8H10c-2.21 0-4 1.79-4 4v24c0 2.21 1.79 4 4 4h8v-4h-8V16h28v20h-8v4h8c2.21 0 4-1.79 4-4V12c0-2.21-1.79-4-4-4zM24 20l-8 8h6v12h4V28h6l-8-8z"/></svg>',
+        iconColor: '#fff',
+        showCancelButton: true,
+        showCloseButton: true,
+        confirmButtonColor: '#0a8658',
+        confirmButtonText: 'Zapisz nowe',
+        showLoaderOnConfirm: true,
+        cancelButtonText: 'Anuluj',
+        width: "80%",
+      }).then(result => {
+        if (result.isConfirmed) {
+          const imported = $(`#${EL$3.ID.IMPORT_TEXTAREA}`).value;
+          const checkboxValue = $(`input[type="radio"][name="${EL$3.SELECTOR.IMPORT_CHECKBOX_NAME}"]:checked`).value;
+
+          if (checkboxValue && checkboxValue === 'settings') {
+            localStorage.setItem(STORAGE_KEY_NAMES.WH_SETTINGS, imported);
+          } else if (checkboxValue && checkboxValue === 'markedUsers') {
+            localStorage.setItem(STORAGE_KEY_NAMES.MARKED_USERS, imported);
+            localStorage.setItem(STORAGE_KEY_NAMES.UNIQUE_USERS, parseImportForUniqueNames(imported));
+          } else if (checkboxValue && checkboxValue === 'blacklist') {
+            localStorage.setItem(STORAGE_KEY_NAMES.BLACKLIST, imported);
+          } else {
+            // eslint-disable-next-line no-alert
+            alert('Nie wybrano typu danych: czy importujesz ustawienia, czy oznaczonych u\u017Cytkownik\xF3w?');
+          }
+        }
+      });
+    };
+
+    const showModalWithExport = () => {
+      // eslint-disable-next-line
+      Swal.fire({
+        html: exportSettingsModal,
+        icon: 'info',
+        // eslint-disable-next-line
+        iconHtml: '<svg style="fill:currentColor;width:2rem;height: auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path d="M0 0h48v48H0z" fill="none"/><path d="M34 6H10c-2.21 0-4 1.79-4 4v28c0 2.21 1.79 4 4 4h28c2.21 0 4-1.79 4-4V14l-8-8zM24 38c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6zm6-20H10v-8h20v8z"/></svg>',
+        iconColor: '#fff',
+        showCloseButton: true,
+        confirmButtonColor: '#0a8658',
+        confirmButtonText: 'SKOPIUJ DO SCHOWKA',
+        width: "80%",
+      }).then(result => {
+        if (result.isConfirmed) {
+          const exportedData = $(`#${EL$3.ID.EXPORT_TEXTAREA}`);
+          exportedData.select();
+          document.execCommand('copy');
+        }
+      });
+    };
+
     /**
      * Assigns proper state to inputs in settings, based on saved settings object
      */
@@ -1331,6 +1599,8 @@
           el.checked = settings[category][el.name];
         } else if (el.type === 'text' && el.name !== 'nsQ') {
           el.value = settings[category][el.name] || '';
+        } else if (el.type === 'color') {
+          el.value = settings[category][el.name];
         }
       });    
     };
@@ -1362,6 +1632,10 @@
           settings[category][name] = !settings[category][name];
           localStorage.setItem(STORAGE_KEY_NAMES.WH_SETTINGS, JSON.stringify(settings));
         }
+        if (event.target.type === 'color') {
+          settings[category][name] = event.target.value;
+          localStorage.setItem(STORAGE_KEY_NAMES.WH_SETTINGS, JSON.stringify(settings));
+        }
       }, {passive: true});
 
       settingsFormElement.addEventListener('click', event => {
@@ -1384,14 +1658,37 @@
         if (event.target.id === EL$3.ID.WARN_ON_RELOAD_INFO_LINK) {
           showModalWithWarnOnReloadExplanation();
         }
+        if (event.target.id === EL$3.ID.IMPORT_BUTTON) {
+          event.preventDefault();
+          showModalWithImport();
+        }
+        if (event.target.id === EL$3.ID.EXPORT_BUTTON) {
+          event.preventDefault();
+          showModalWithExport();
+        }
       }, {passive: false});
+
+      document.addEventListener('click', event => {
+        if (event.target.id === EL$3.ID.EXPORT_SETTINGS_BUTTON) {
+          $(`#${EL$3.ID.EXPORT_TEXTAREA}`).innerText = '';
+          $(`#${EL$3.ID.EXPORT_TEXTAREA}`).innerText = JSON.stringify(settings);
+        }
+        if (event.target.id === EL$3.ID.EXPORT_MARKED_BUTTON) {
+          $(`#${EL$3.ID.EXPORT_TEXTAREA}`).innerText = '';
+          $(`#${EL$3.ID.EXPORT_TEXTAREA}`).innerText = JSON.stringify(markedUsers);
+        }
+        if (event.target.id === EL$3.ID.EXPORT_BLACKLIST_BUTTON) {
+          $(`#${EL$3.ID.EXPORT_TEXTAREA}`).innerText = '';
+          $(`#${EL$3.ID.EXPORT_TEXTAREA}`).innerText = JSON.stringify(blacklist);
+        }
+      }, {passive: true});
 
       settingsFormElement.addEventListener('keyup', event => {
         const category = event.target.getAttribute('category');
         const name = event.target.name;
 
         if (event.target.type === 'text') {
-          settings[category][name] = event.target.value.toLowerCase();
+          settings[category][name] = event.target.value;
           localStorage.setItem(STORAGE_KEY_NAMES.WH_SETTINGS, JSON.stringify(settings));
         }
       }, {passive: true});
@@ -1435,25 +1732,29 @@
    * Util function that is supposed to run only once, immediately after script update.
    */
   const runOnceOnUpdate = () => {
-    let settings;
-
-    // preparation
-    if (localStorage.getItem(STORAGE_KEY_NAMES.WH_SETTINGS)) {
-      settings = getLocalStorage('settings');
-      if (!settings.GENERAL.SUSPECT_DOMAINS) {
-        settings.GENERAL.SUSPECT_DOMAINS = rawDomains;
-      }
-      if (!settings.GENERAL.SUSPECT_DOMAINS_LABEL) {
-        settings.GENERAL.SUSPECT_DOMAINS_LABEL = 'Uwa\u017Caj! \u0179r\xF3d\u0142o tego znaleziska jest podejrzewane o szerzenie rosyjskiej propagandy.';
-      }
+    if (!localStorage.getItem(STORAGE_KEY_NAMES.BLACKLIST)) {
+      const initialBlacklist = [];
+      localStorage.setItem(STORAGE_KEY_NAMES.BLACKLIST, JSON.stringify(initialBlacklist));
     }
-
-    localStorage.setItem(STORAGE_KEY_NAMES.WH_SETTINGS, JSON.stringify(settings));
   };
 
   /* eslint max-len: 0 */
 
-  const version = `0.65`;
+  const changesArray = [
+    'W ustawieniach mo\u017Cna wybra\u0107 <strong>domy\u015Blny</strong> kolor odznaki, kt\xF3ry b\u0119dzie nadawany ka\u017Cdemu nowemu oznaczonemu.',
+    '...Ale kolor ten mo\u017Cna zmieni\u0107 dla ka\u017Cdego z osobna -  w popupie aktywowanym klikni\u0119ciem w odznak\u0119 przy danym userze.',
+    'Dodatkowo, w popupie usera mo\u017Cna zadecydowa\u0107 o wrzuceniu usera na <strong>super</strong> czarn\u0105 list\u0119. Ale <strong>ostro\u017Cnie</strong> - po zczarnolistowaniu, posty danego u\u017Cytkownika b\u0119d\u0105 <em>ca\u0142kowicie</em> usuwane, a nie tylko chowane jak w wykopowej czarnej li\u015Bcie. P\xF3\u017Aniej - aby u\u017Cytkownikowi wybaczy\u0107, i z czarnej listy go zdj\u0105\u0107 - nale\u017Cy uda\u0107 si\u0119 do jego profilu (wykop.pl/ludzie/NICK) i klikn\u0105\u0107 na ikon\u0119 k\u0142\xF3dki przy jego nicku. O tym, \u017Ce dany user jest zczarnolistowany, \u015Bwiadczy w jego profilu ta k\u0142\xF3dka, oraz lekko przytumiony nick.',
+    'Dodano funkcj\u0119, aktywowan\u0105 w ustawieniach, umo\u017Cliwiaj\u0105c\u0105 usuwanie tekstu "via [nazwa aplikacji]" w komentarzach u\u017Cytkownik\xF3w. Przy d\u0142u\u017Cszych nickach, albo przy stosowaniu innych dodatk\xF3w (np. pokazuj\u0105cych czy dany user wykopa\u0142 czy zakopa\u0142 znalezisko) ta ma\u0142o u\u017Cyteczna informacja o aplikacji jakiej kto\u015B u\u017Cywa potrafi spowodowa\u0107 nachodzenie na siebie r\xF3\u017Cnych tekst\xF3w.',
+    'W ustawieniach mo\u017Cna r\xF3wnie\u017C od teraz eksportowa\u0107 i importowa\u0107 swoje ustawienia i listy oznaczonych i czarnolistowanych u\u017Cytkownik\xF3w. Na razie jest to proces raczej r\u0119czny (wymaga kopiowania i przeklejania ci\u0105g\xF3w znak\xF3w mi\u0119dzy przegl\u0105darkami); mo\u017Cliwe, \u017Ce w przysz\u0142o\u015Bci co\u015B tutaj zostanie udoskonalone, chocia\u017C nie ukrywam, \u017Ce wynika to z mojej niech\u0119ci do u\u017Cywania zewn\u0119trznych us\u0142ug - bo wtedy wchodzi\u0142yby w gr\u0119 kwestie prywatno\u015Bci, dost\u0119p\xF3w, \u015Bledzenia i tak dalej i tak dalej... a tego chc\u0119 za wszelk\u0105 cen\u0119 unikn\u0105\u0107.',
+    'Od teraz odznaka b\u0119dzie si\u0119 wy\u015Bwietla\u0107 dok\u0142adnie tak, jak to ustawisz w ustawieniach b\u0105d\u017A konkretnemu userowi. Do tej pory wymuszana by\u0142a konwencja rozpoczynania tekstu wielk\u0105 liter\u0105, a reszta ma\u0142ymi - ale ju\u017C nie jest. Je\u015Bli chcesz, mo\u017Cesz nawet pisa\u0107 po pOkEmOnOwEmU :)',
+    'Par\u0119 wizualnych zmian (ikony itp.; nic prze\u0142omowego). Redesign ca\u0142o\u015Bci, a zw\u0142aszcza popupu odznaki, wkr\xF3tce - bo powoli robi si\u0119 ma\u0142o estetyczny ba\u0142agan.',
+    'Znikn\u0119\u0142o sporo pomniejszych bug\xF3w.',
+    'Z pewno\u015Bci\u0105 pojawi\u0142o si\u0119 sporo nowych bug\xF3w :)'
+  ];
+
+  const listItem = text => `<li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">${text}</li>`;
+
+  const version = `0.70`;
 
   const welcomeText = {
     title: "WykopHelper zainstalowany!",
@@ -1465,23 +1766,9 @@
   const updateText = {
     title: "WykopHelper zaktualizowany!",
     content: `
-Dodatek WykopHelper został właśnie zaktualizowany do wersji ${version}. Wprowadzone zmiany to: <br>
+Dodatek WykopHelper został właśnie zaktualizowany do wersji <strong>${version}</strong>. Wprowadzone zmiany to: <br>
 <ul class="${DOM.MODAL.CLASSNAME.LIST}">
-  <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
-    Funkcja ostrzegania przed znaleziskami podejrzanymi o szerzenie propagandy rosyjskiej została zmodyfikowana. Od teraz możesz samodzielnie ustalić, czy takie ostrzeżenie ma w ogóle być pokazywane, a także jaka ma być jego treść i dla jakich domen ma się aktywować. Zdecydować o tym możesz oczywiście w ustawieniach (ikona zębatki przy odpowiednim checkboxie).
-  </li>
-  <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
-    Funkcja ostrzegająca przed zamknięciem strony gdy wykryte zostanie pisanie komentarza <em>powinna</em> już działać poprawnie.
-  </li>
-  <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
-    Pojawiła się opcja wyłączenia komentarzy we <strong>wszystkich</strong> znaleziskach. Teraz możesz zdecydować, czy komentarze wyłączasz globalnie, tylko w wybranych (poprzez tagi) znaleziskach, czy nigdzie. Domyślnie opcja oczywiście nie jest włączona.
-  </li>
-  <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
-    Od teraz odznaka widoczna będzie również w profilu użytkownika, między avatarem a nickiem.
-  </li>
-  <li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">
-    Drobne poprawki stylistyczne tu i ówdzie (np. nowy kolor przycisku "zapisz" w popupie odznaki; redesign całego popupu wkrótce)
-  </li>
+  ${changesArray.map(el => listItem(el)).join('')}
 </ul>
 `,
     button: "Okej!",
@@ -1498,6 +1785,7 @@ Dodatek WykopHelper został właśnie zaktualizowany do wersji ${version}. Wprow
         html: updateText.content,
         showCloseButton: true,
         icon: 'info',
+        iconHtml: '<svg xmlns="http://www.w3.org/2000/svg" style="fill:currentColor;width:2rem;height: auto" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 48 48"><defs><path d="M0 0h48v48H0V0z" id="a"/></defs><clipPath id="b"><use overflow="visible" xlink:href="#a"/></clipPath><path clip-path="url(#b)" d="M40 8H8c-2.21 0-3.98 1.79-3.98 4L4 36c0 2.21 1.79 4 4 4h32c2.21 0 4-1.79 4-4V12c0-2.21-1.79-4-4-4zM17 30h-2.4l-5.1-7v7H7V18h2.5l5 7v-7H17v12zm10-9.49h-5v2.24h5v2.51h-5v2.23h5V30h-8V18h8v2.51zM41 28c0 1.1-.9 2-2 2h-8c-1.1 0-2-.9-2-2V18h2.5v9.01h2.25v-7.02h2.5v7.02h2.25V18H41v10z"/></svg>',
         width: '80%',
         confirmButtonText: updateText.button
       });
@@ -1509,6 +1797,7 @@ Dodatek WykopHelper został właśnie zaktualizowany do wersji ${version}. Wprow
         title: welcomeText.title,
         html: welcomeText.content,
         icon: 'warning',
+        iconHtml: '<svg xmlns="http://www.w3.org/2000/svg" style="fill:currentColor;width:2rem;height: auto" viewBox="0 0 48 48"><path d="M0 0h48v48H0z" fill="none"/><path d="M2 42h8V18H2v24zm44-22c0-2.21-1.79-4-4-4H29.37l1.91-9.14c.04-.2.07-.41.07-.63 0-.83-.34-1.58-.88-2.12L28.34 2 15.17 15.17C14.45 15.9 14 16.9 14 18v20c0 2.21 1.79 4 4 4h18c1.66 0 3.08-1.01 3.68-2.44l6.03-14.1A4 4 0 0046 24v-3.83l-.02-.02L46 20z"/></svg>',
         width: '80%',
         confirmButtonText: welcomeText.button
       });
@@ -1682,6 +1971,33 @@ Dodatek WykopHelper został właśnie zaktualizowany do wersji ${version}. Wprow
     }
   };
 
+  const removePostedViaApp = () => {
+    /**
+     * Check if user settings allow for removing this text.
+     * @return {boolean} True if yes, false otherwise
+     */
+    const isSettingActive = () => {
+      const settings = getLocalStorage('settings');
+
+      if (settings.GENERAL.REMOVE_POSTED_VIA_APP) {
+        return true;
+      }
+
+      return false;
+    };
+
+    const handleRemoval = () => {
+      $$(`.${DOM.BADGE.CLASSNAME.NICK_ELEMENT}`).forEach(el => {
+        // tests show that using style.display = 'none' is significantly (around 3 times) faster than remove().
+        el.querySelector('a + small').style.display = 'none';
+      });
+    };
+
+    if (isSettingActive()) {
+      handleRemoval();
+    }
+  };
+
   /**
   * Capitalize first letter
   */
@@ -1700,12 +2016,15 @@ Dodatek WykopHelper został właśnie zaktualizowany do wersji ${version}. Wprow
   }
   if (isPath.main()) {
     handleBadges();
+    handleRemovalOfBlacklisted();
     warnOnReload();
     embedOnPaste();
     hideMarkedUsers();
+    removePostedViaApp();
   }
   if (isPath.userProfile()) {
     displayBadgeInUserProfile();
+    handleBlacklistedProfile();
   }
   if (isPath.settings()) {
     createSettingsPage();
