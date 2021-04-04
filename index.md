@@ -145,9 +145,10 @@ Po zainstalowaniu dodatek będzie aktualizował się automatycznie. Po każdej i
 Czego można się spodziewać? (🐾 - oznacza, że nad tym aktualnie pracuję, i zapewne znajdzie się to w najbliższej aktualizacji)
 
  * Zintegrowanie funkcjonalności podobnych do tych, jakie można odnaleźć w tych dodatkach: https://www.wykop.pl/dodatki/pokaz/1021/ , https://www.wykop.pl/dodatki/pokaz/1013/ , https://www.wykop.pl/dodatki/pokaz/231/
- * Opcja ograniczania dostępu do wypoku - przy walce z uzależnieniem ;) 🐾
+ * Opcja ograniczania dostępu do wypoku - przy walce z uzależnieniem ;)
  * możliwość włączenia podglądu na żywo, jak wyglądać będzie post po opublikowaniu 🐾
  * ostrzeżenie "paywall" przy znaleziskach ze źródłem z paywallem; wyświetlane analogicznie do ostrzeżenia 18+. 🐾
+ * customowa czarna lista tagów :) 🐾
  * Redesign całości
    - ujednolicenie wyglądu poszczególnych elementów
    - wsparcie dla trybu dziennego
