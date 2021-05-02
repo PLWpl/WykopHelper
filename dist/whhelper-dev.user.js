@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         WykopHelper - DEV
-// @version      0.70
+// @version      0.71
 // @updateURL    https://cdn.jsdelivr.net/gh/plwpl/WykopHelper/dist/whhelper-dev.user.js
 // @downloadURL  https://cdn.jsdelivr.net/gh/plwpl/WykopHelper/dist/whhelper-dev.user.js
 // @description  Zestaw narzędzi pomocnych na wykopie.
@@ -632,6 +632,69 @@
     document.body.insertAdjacentHTML('afterbegin', styleMarkup);
   };
 
+  /**
+   * Handles removal of comments of users that are blacklisted.
+   */
+  const handleRemovalOfBlacklisted = () => {
+    const blacklist = getLocalStorage('blacklist');
+    const isBlacklisted = nick => blacklist.includes(nick);
+    $$(DOM.BADGE.SELECTOR.NICK).forEach(el => {
+      if (isBlacklisted(el.innerText)) {
+        if (el.closest(DOM.COMMON.SELECTOR.COMMENT)) {
+          el.closest(DOM.COMMON.SELECTOR.COMMENT).remove();
+        } else if (el.closest(DOM.COMMON.SELECTOR.THREAD)) {
+          el.closest(DOM.COMMON.SELECTOR.THREAD).remove();
+        }
+      }
+    });
+  };
+
+  /**
+   * Function removes provided nick from the blacklist.
+   * @param {String} nick - nick to remove from blacklist
+   */
+  const removeFromBlackList = nickToRemove => {
+    const blacklist = getLocalStorage('blacklist');
+    const isBlacklisted = nick => blacklist.includes(nick);
+
+    if (isBlacklisted(nickToRemove)) {
+      const newBlacklist = blacklist.filter(el => el !== nickToRemove);
+    
+      localStorage.setItem(
+        STORAGE_KEY_NAMES.BLACKLIST,
+        JSON.stringify(newBlacklist)
+      );
+    }
+  };
+
+  /**
+   * Decides how user profile is handled (wykop.pl/ludzie/*)
+   */
+  const handleBlacklistedProfile = () => {
+    /** nick from location.path */
+    const nick = location.pathname.split('/')[2];
+    const blacklist = getLocalStorage('blacklist');
+    const isBlacklisted = nick => blacklist.includes(nick);
+
+    /**
+     * if nick is blacklisted, make it greyed out, and add a padlock emoji
+     */
+    if (isBlacklisted(nick)) {
+      $(`${DOM.BADGE.SELECTOR.USER_PROFILE_NICK}:not(:first-child)`).style.filter = 'grayscale(65%)';
+      // eslint-disable-next-line max-len
+      $(DOM.BADGE.SELECTOR.USER_PROFILE_NICK_ELEMENT).insertAdjacentHTML('beforeend', `<span class="${DOM.BADGE.CLASSNAME.PROFILE_BLACKLISTED}" id="${DOM.BADGE.ID.PROFILE_BLACKLISTED}">🔐</span>`);
+    }
+
+    /**
+     * If user clicks on the padlock, remove user from blacklist
+     */
+    document.addEventListener('click', event => {
+      if (event.target.id === DOM.BADGE.ID.PROFILE_BLACKLISTED) {
+        removeFromBlackList(nick);
+      }
+    });
+  };
+
   const { BADGE: EL } = DOM;
 
   const handleBadges = () => {
@@ -845,6 +908,8 @@
         JSON.stringify(unique)
       );
 
+      removeFromBlackList(nick);
+
       setTimeout(() => {
         updateView();
       }, 780);
@@ -1031,46 +1096,6 @@
           }
         });
     }
-  };
-
-  /**
-   * Handles removal of comments of users that are blacklisted.
-   */
-  const handleRemovalOfBlacklisted = () => {
-    const blacklist = getLocalStorage('blacklist');
-    const isBlacklisted = nick => blacklist.includes(nick);
-    $$(DOM.BADGE.SELECTOR.NICK).forEach(el => {
-      if (isBlacklisted(el.innerText)) {
-        if (el.closest(DOM.COMMON.SELECTOR.COMMENT)) {
-          el.closest(DOM.COMMON.SELECTOR.COMMENT).remove();
-        } else if (el.closest(DOM.COMMON.SELECTOR.THREAD)) {
-          el.closest(DOM.COMMON.SELECTOR.THREAD).remove();
-        }
-      }
-    });
-  };
-
-  const handleBlacklistedProfile = () => {
-    const nick = location.pathname.split('/')[2];
-    const blacklist = getLocalStorage('blacklist');
-    const isBlacklisted = nick => blacklist.includes(nick);
-
-    if (isBlacklisted(nick)) {
-      $(`${DOM.BADGE.SELECTOR.USER_PROFILE_NICK}:not(:first-child)`).style.filter = 'grayscale(65%)';
-      // eslint-disable-next-line max-len
-      $(DOM.BADGE.SELECTOR.USER_PROFILE_NICK_ELEMENT).insertAdjacentHTML('beforeend', `<span class="${DOM.BADGE.CLASSNAME.PROFILE_BLACKLISTED}" id="${DOM.BADGE.ID.PROFILE_BLACKLISTED}">🔐</span>`);
-    }
-
-    document.addEventListener('click', event => {
-      if (event.target.id === DOM.BADGE.ID.PROFILE_BLACKLISTED) {
-        const newBlacklist = blacklist.filter(el => el !== nick);
-        localStorage.setItem(
-          STORAGE_KEY_NAMES.BLACKLIST,
-          JSON.stringify(newBlacklist)
-        );
-        location.reload();
-      }
-    });
   };
 
   const { BADGE: EL$1 } = DOM;
@@ -1741,20 +1766,14 @@
   /* eslint max-len: 0 */
 
   const changesArray = [
-    'W ustawieniach mo\u017Cna wybra\u0107 <strong>domy\u015Blny</strong> kolor odznaki, kt\xF3ry b\u0119dzie nadawany ka\u017Cdemu nowemu oznaczonemu.',
-    '...Ale kolor ten mo\u017Cna zmieni\u0107 dla ka\u017Cdego z osobna -  w popupie aktywowanym klikni\u0119ciem w odznak\u0119 przy danym userze.',
-    'Dodatkowo, w popupie usera mo\u017Cna zadecydowa\u0107 o wrzuceniu usera na <strong>super</strong> czarn\u0105 list\u0119. Ale <strong>ostro\u017Cnie</strong> - po zczarnolistowaniu, posty danego u\u017Cytkownika b\u0119d\u0105 <em>ca\u0142kowicie</em> usuwane, a nie tylko chowane jak w wykopowej czarnej li\u015Bcie. P\xF3\u017Aniej - aby u\u017Cytkownikowi wybaczy\u0107, i z czarnej listy go zdj\u0105\u0107 - nale\u017Cy uda\u0107 si\u0119 do jego profilu (wykop.pl/ludzie/NICK) i klikn\u0105\u0107 na ikon\u0119 k\u0142\xF3dki przy jego nicku. O tym, \u017Ce dany user jest zczarnolistowany, \u015Bwiadczy w jego profilu ta k\u0142\xF3dka, oraz lekko przytumiony nick.',
-    'Dodano funkcj\u0119, aktywowan\u0105 w ustawieniach, umo\u017Cliwiaj\u0105c\u0105 usuwanie tekstu "via [nazwa aplikacji]" w komentarzach u\u017Cytkownik\xF3w. Przy d\u0142u\u017Cszych nickach, albo przy stosowaniu innych dodatk\xF3w (np. pokazuj\u0105cych czy dany user wykopa\u0142 czy zakopa\u0142 znalezisko) ta ma\u0142o u\u017Cyteczna informacja o aplikacji jakiej kto\u015B u\u017Cywa potrafi spowodowa\u0107 nachodzenie na siebie r\xF3\u017Cnych tekst\xF3w.',
-    'W ustawieniach mo\u017Cna r\xF3wnie\u017C od teraz eksportowa\u0107 i importowa\u0107 swoje ustawienia i listy oznaczonych i czarnolistowanych u\u017Cytkownik\xF3w. Na razie jest to proces raczej r\u0119czny (wymaga kopiowania i przeklejania ci\u0105g\xF3w znak\xF3w mi\u0119dzy przegl\u0105darkami); mo\u017Cliwe, \u017Ce w przysz\u0142o\u015Bci co\u015B tutaj zostanie udoskonalone, chocia\u017C nie ukrywam, \u017Ce wynika to z mojej niech\u0119ci do u\u017Cywania zewn\u0119trznych us\u0142ug - bo wtedy wchodzi\u0142yby w gr\u0119 kwestie prywatno\u015Bci, dost\u0119p\xF3w, \u015Bledzenia i tak dalej i tak dalej... a tego chc\u0119 za wszelk\u0105 cen\u0119 unikn\u0105\u0107.',
-    'Od teraz odznaka b\u0119dzie si\u0119 wy\u015Bwietla\u0107 dok\u0142adnie tak, jak to ustawisz w ustawieniach b\u0105d\u017A konkretnemu userowi. Do tej pory wymuszana by\u0142a konwencja rozpoczynania tekstu wielk\u0105 liter\u0105, a reszta ma\u0142ymi - ale ju\u017C nie jest. Je\u015Bli chcesz, mo\u017Cesz nawet pisa\u0107 po pOkEmOnOwEmU :)',
-    'Par\u0119 wizualnych zmian (ikony itp.; nic prze\u0142omowego). Redesign ca\u0142o\u015Bci, a zw\u0142aszcza popupu odznaki, wkr\xF3tce - bo powoli robi si\u0119 ma\u0142o estetyczny ba\u0142agan.',
-    'Znikn\u0119\u0142o sporo pomniejszych bug\xF3w.',
-    'Z pewno\u015Bci\u0105 pojawi\u0142o si\u0119 sporo nowych bug\xF3w :)'
+    'Poprawki w funkcjonalno\u015Bci usuwania informacji o postowaniu przez aplikacj\u0119;',
+    'Usuni\u0119ty b\u0142\u0105d uniemo\u017Cliwiaj\u0105cy korzystanie z funkcjonalno\u015Bci oznaczania autora w\u0105tku na mikroblogu;',
+    'Usuni\u0119ty b\u0142\u0105d kt\xF3ry powodowa\u0142, \u017Ce je\u015Bli X zosta\u0142 dodany na czarn\u0105 list\u0119, a potem zosta\u0142o usuni\u0119te odznaczenie, to zostawa\u0142 na czarnej li\u015Bcie na zawsze.'
   ];
 
   const listItem = text => `<li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">${text}</li>`;
 
-  const version = `0.70`;
+  const version = `0.71`;
 
   const welcomeText = {
     title: "WykopHelper zainstalowany!",
@@ -1989,7 +2008,10 @@ Dodatek WykopHelper został właśnie zaktualizowany do wersji <strong>${version
     const handleRemoval = () => {
       $$(`.${DOM.BADGE.CLASSNAME.NICK_ELEMENT}`).forEach(el => {
         // tests show that using style.display = 'none' is significantly (around 3 times) faster than remove().
-        el.querySelector('a + small').style.display = 'none';
+        const postedViaAppElement = el.querySelector('a + small');
+        if (postedViaAppElement) {
+          postedViaAppElement.style.display = 'none';
+        }
       });
     };
 
