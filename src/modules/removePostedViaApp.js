@@ -20,7 +20,10 @@ export const removePostedViaApp = () => {
   const handleRemoval = () => {
     $$(`.${DOM.BADGE.CLASSNAME.NICK_ELEMENT}`).forEach(el => {
       // tests show that using style.display = 'none' is significantly (around 3 times) faster than remove().
-      el.querySelector('a + small').style.display = 'none';
+      const postedViaAppElement = el.querySelector('a + small');
+      if (postedViaAppElement) {
+        postedViaAppElement.style.display = 'none';
+      }
     });
   }
 
