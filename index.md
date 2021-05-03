@@ -146,9 +146,9 @@ Czego można się spodziewać? (🐾 - oznacza, że nad tym aktualnie pracuję, 
 
  * Zintegrowanie funkcjonalności podobnych do tych, jakie można odnaleźć w tych dodatkach: https://www.wykop.pl/dodatki/pokaz/1021/ , https://www.wykop.pl/dodatki/pokaz/1013/ , https://www.wykop.pl/dodatki/pokaz/231/
  * Opcja ograniczania dostępu do wypoku - przy walce z uzależnieniem ;)
- * możliwość włączenia podglądu na żywo, jak wyglądać będzie post po opublikowaniu 🐾
+ * możliwość włączenia podglądu na żywo, jak wyglądać będzie post po opublikowaniu
  * ostrzeżenie "paywall" przy znaleziskach ze źródłem z paywallem; wyświetlane analogicznie do ostrzeżenia 18+. 🐾
- * customowa czarna lista tagów :) 🐾
+ * fix dla linków do youtube; do wyboru - albo zmiana języka z FR na PL, albo pominięcie ekranu zgody w całości 🐾
  * Redesign całości
    - ujednolicenie wyglądu poszczególnych elementów
    - wsparcie dla trybu dziennego
