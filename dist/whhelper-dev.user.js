@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         WykopHelper - DEV
-// @version      0.71
+// @version      0.72
 // @updateURL    https://cdn.jsdelivr.net/gh/plwpl/WykopHelper/dist/whhelper-dev.user.js
 // @downloadURL  https://cdn.jsdelivr.net/gh/plwpl/WykopHelper/dist/whhelper-dev.user.js
 // @description  Zestaw narzędzi pomocnych na wykopie.
@@ -1779,6 +1779,7 @@
   /* eslint max-len: 0 */
 
   const changesArray = [
+    'Dodana opcja "naprawiania" link\xF3w do YT; po jej w\u0142\u0105czeniu w ustawieniach, osadzone filmy z YT nie b\u0119d\u0105 ju\u017C linkowa\u0107 do jakiej\u015B francuskiej strony z wyra\u017Caniem zgody na kto-wie-co, tylko bezpo\u015Brednio do filmu.',
     'Poprawki w funkcjonalno\u015Bci usuwania informacji o postowaniu przez aplikacj\u0119;',
     'Usuni\u0119ty b\u0142\u0105d uniemo\u017Cliwiaj\u0105cy korzystanie z funkcjonalno\u015Bci oznaczania autora w\u0105tku na mikroblogu;',
     'Usuni\u0119ty b\u0142\u0105d kt\xF3ry powodowa\u0142, \u017Ce je\u015Bli X zosta\u0142 dodany na czarn\u0105 list\u0119, a potem zosta\u0142o usuni\u0119te odznaczenie, to zostawa\u0142 na czarnej li\u015Bcie na zawsze.'
@@ -1786,7 +1787,7 @@
 
   const listItem = text => `<li class="${DOM.MODAL.CLASSNAME.LIST_ITEM}">${text}</li>`;
 
-  const version = `0.71`;
+  const version = `0.72`;
 
   const welcomeText = {
     title: "WykopHelper zainstalowany!",
