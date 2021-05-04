@@ -3,6 +3,7 @@
  *  - add it as a default in /utils/handleLocalStorage
  *  - add HTML for it in /model/modules/settings.model
  *  - add check in appropriate module. If you want it to be ON by default, you will need to make it so using /utils/runOnceOnUpdate
+ *  - add module to index.js
  */
 
 import { $, $$ } from '../utils/dom';
