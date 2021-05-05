@@ -3,6 +3,7 @@ export const DOM = {
     CLASSNAME: {
       // wykop.pl elements
       WOODLE: 'woodle',
+      YT_EMBED: 'embed-youtube',
       // custom WH elements
       BUTTON: 'buttonWH',
     },

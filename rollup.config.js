@@ -1,14 +1,14 @@
 import {terser} from 'rollup-plugin-terser';
-import { eslint } from "rollup-plugin-eslint";
+// import { eslint } from "rollup-plugin-eslint";
 import banner from 'rollup-plugin-banner';
 import ascii from 'rollup-plugin-ascii';
 
 export default {
   input: 'src/index.js',
   plugins: [
-    eslint({
-      fix: true,
-    }),
+    // eslint({
+    //   fix: true,
+    // }),
     ascii()
   ],
   output: [

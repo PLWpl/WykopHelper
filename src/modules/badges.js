@@ -8,6 +8,7 @@ import { buttonMarkup, badge, markedInBulk, buttonBulkMarkup } from "../model/mo
 import { badgeUserModal } from "../model/utils/modals";
 import { injectStyles } from "../utils/inject";
 import { getLocalStorage } from "../utils/handleLocalStorage";
+import { removeFromBlackList } from "./handleBlacklist";
 
 const { BADGE: EL } = DOM;
 
@@ -221,6 +222,8 @@ export const handleBadges = () => {
       STORAGE_KEY_NAMES.UNIQUE_USERS,
       JSON.stringify(unique)
     );
+
+    removeFromBlackList(nick);
 
     setTimeout(() => {
       updateView();
