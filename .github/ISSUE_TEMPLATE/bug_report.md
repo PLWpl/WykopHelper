@@ -20,3 +20,5 @@ Jakie były Twoje oczekiwania, co powinno było się stać?
 
 **Dodatkowe info**
 :)
+
+_nie ustawiaj żadnych dodatkowych informacji w panelu po prawej, wypełnij tylko tę formatkę i tytuł i zapisz raport._
