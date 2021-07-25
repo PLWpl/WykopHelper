@@ -1,3 +1,5 @@
+import * as tingle from './vendor/tingle';
+
 import isPath from './utils/checkPath';
 import { handleBadges } from './modules/badges';
 import { handleRemovalOfBlacklisted, handleBlacklistedProfile } from './modules/handleBlacklist';
