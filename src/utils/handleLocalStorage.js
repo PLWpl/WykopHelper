@@ -19,7 +19,6 @@ const initialSettings = {
     REMOVE_COMMENTS: '',
     REMOVE_ALL_COMMENTS: false,
     REMOVE_POSTED_VIA_APP: false,
-    FIX_YOUTUBE: false,
   },
 };
 const initialUnique = [];

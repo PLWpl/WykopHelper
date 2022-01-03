@@ -7,6 +7,9 @@ assignees: ''
 
 ---
 
+**Wersja dodatku?**
+Do odnalezienia w ustawieniach, lub w menu menadżera skryptów (np. Tampermonkey)
+
 **Co się stało się?**
 W skrócie, screenshoty / logi z konsoli mile widziane.
 
