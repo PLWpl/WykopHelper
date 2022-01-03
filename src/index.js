@@ -14,7 +14,6 @@ import { removeWoodle } from './modules/removeWoodle';
 import { removeCommentsByTag } from './modules/removeCommentsByTag';
 import { removeAllComments } from './modules/removeAllComments';
 import { removePostedViaApp } from './modules/removePostedViaApp';
-import { fixYoutubeLinks } from './modules/fixYoutubeLinks';
 
 /**
 * Capitalize first letter
@@ -39,7 +38,6 @@ if (isPath.main()) {
   embedOnPaste();
   hideMarkedUsers();
   removePostedViaApp();
-  fixYoutubeLinks();
 }
 if (isPath.userProfile()) {
   displayBadgeInUserProfile();

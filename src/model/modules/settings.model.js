@@ -55,16 +55,6 @@ export const settingsMarkup = `
         class="checkbox"
         type="checkbox"
         category="GENERAL"
-        name="FIX_YOUTUBE"
-        id="fixYoutube"
-      />
-      <label class="inline" for="fixYoutube">Napraw linki do YouTube (usuwa przekierowanie na francuską stronę z wyrażaniem zgody)</label>
-    </div>
-    <div class="row">
-      <input
-        class="checkbox"
-        type="checkbox"
-        category="GENERAL"
         name="REMOVE_ALL_COMMENTS"
         id="removeAllComments"
       />
