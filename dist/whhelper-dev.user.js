@@ -462,7 +462,6 @@
       REMOVE_COMMENTS: '',
       REMOVE_ALL_COMMENTS: false,
       REMOVE_POSTED_VIA_APP: false,
-      FIX_YOUTUBE: false,
     },
   };
   const initialUnique = [];
@@ -1322,16 +1321,6 @@
         class="checkbox"
         type="checkbox"
         category="GENERAL"
-        name="FIX_YOUTUBE"
-        id="fixYoutube"
-      />
-      <label class="inline" for="fixYoutube">Napraw linki do YouTube (usuwa przekierowanie na francuską stronę z wyrażaniem zgody)</label>
-    </div>
-    <div class="row">
-      <input
-        class="checkbox"
-        type="checkbox"
-        category="GENERAL"
         name="REMOVE_ALL_COMMENTS"
         id="removeAllComments"
       />
@@ -2034,48 +2023,6 @@ Dodatek WykopHelper został właśnie zaktualizowany do wersji <strong>${version
     }
   };
 
-  const fixYoutubeLinks = () => {
-    /**
-     * Check if user settings allow for marking domains.
-     * @return {boolean} True if yes, false otherwise
-     */
-    const isSettingActive = () => {
-      const settings = getLocalStorage('settings');
-
-      if (settings.GENERAL.FIX_YOUTUBE) {
-        return true;
-      }
-
-      return false;
-    };
-
-    /**
-     * Parses any and all `href`s of embeded youtube elements, removing useless "consent" part and further accompanying parameters, leaving only clean youtube address.
-     */
-    const fixYoutube = () => {
-      if (isSettingActive()) {
-        const ytPosts = $$(`.${DOM.COMMON.CLASSNAME.YT_EMBED} a.ajax`);
-
-        ytPosts?.forEach(el => {
-          let ytUrl = el.href;
-
-          if (ytUrl.startsWith('https://consent.youtube.com/m?continue=')) {
-            const decodedYtUrl = decodeURIComponent(ytUrl);
-            const replacedUrl = decodedYtUrl.replace('https://consent.youtube.com/m?continue=', '');
-            const newYtUrl = replacedUrl.split('&gl=')[0];
-    
-            el.href = newYtUrl;
-            el.innerText = '[zobacz film z youtube.com]';
-          }
-        });
-      }
-    };
-
-    if (isSettingActive()) {
-      fixYoutube();
-    }
-  };
-
   /**
   * Capitalize first letter
   */
@@ -2099,7 +2046,6 @@ Dodatek WykopHelper został właśnie zaktualizowany do wersji <strong>${version
     embedOnPaste();
     hideMarkedUsers();
     removePostedViaApp();
-    fixYoutubeLinks();
   }
   if (isPath.userProfile()) {
     displayBadgeInUserProfile();
@@ -2120,4 +2066,4 @@ Dodatek WykopHelper został właśnie zaktualizowany do wersji <strong>${version
     highlightOp();
   }
 
-}());
+})();
