@@ -7,6 +7,9 @@ assignees: ''
 
 ---
 
+**Wersja dodatku?**
+Do odnalezienia w ustawieniach, lub w menu menadżera skryptów (np. Tampermonkey)
+
 **Co się stało się?**
 W skrócie, screenshoty / logi z konsoli mile widziane.
 
@@ -20,3 +23,5 @@ Jakie były Twoje oczekiwania, co powinno było się stać?
 
 **Dodatkowe info**
 :)
+
+_nie ustawiaj żadnych dodatkowych informacji w panelu po prawej, wypełnij tylko tę formatkę i tytuł i zapisz raport._
